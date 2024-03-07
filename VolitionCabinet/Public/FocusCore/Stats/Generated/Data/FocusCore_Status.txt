@@ -1,0 +1,6 @@
+new entry "FOCUSCORE_MONKANIMATION"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "FOCUSCORE_MONKANIMATION"
+data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator"
+data "DynamicAnimationTag" "c4598bdb-fc07-40dd-a62c-90cc138bd76f"

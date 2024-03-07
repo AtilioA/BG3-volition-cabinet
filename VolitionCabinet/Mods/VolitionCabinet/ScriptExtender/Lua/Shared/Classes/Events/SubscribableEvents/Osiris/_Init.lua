@@ -1,0 +1,18 @@
+RequireFiles("Shared/Classes/Events/SubscribableEvents/Osiris/", {
+    "_OsirisEvent",
+    "CastedSpell",
+    "Combined",
+    "Equipped",
+    "ItemMoved",
+    "ObjectTimerFinished",
+    "RequestCanCombine",
+    "Saw",
+    "StartedPreviewingSpell",
+    "StatusApplied",
+    "StatusRemoved",
+    "TemplateAddedTo",
+    "Unequipped",
+    "UseFinished",
+    "UsedItem",
+    "UsingSpell",
+})
