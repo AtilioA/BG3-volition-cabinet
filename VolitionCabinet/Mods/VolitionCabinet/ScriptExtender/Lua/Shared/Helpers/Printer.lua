@@ -1,4 +1,5 @@
 ---@class VolitionCabinetPrinter: MetaClass
+---@field Authorship string
 ---@field Prefix string
 ---@field Machine "S"|"C"
 ---@field Beautify boolean
@@ -10,7 +11,9 @@
 ---@field FontColor vec3
 ---@field BackgroundColor vec3
 ---@field ApplyColor boolean
+---@field DebugLevel integer
 VolitionCabinetPrinter = _Class:Create("VolitionCabinetPrinter", nil, {
+    Authorship = "Volitio's",
     Prefix = "VolitionCabinetPrinter",
     Machine = Ext.IsServer() and "S" or "C",
     Beautify = true,
@@ -21,7 +24,8 @@ VolitionCabinetPrinter = _Class:Create("VolitionCabinetPrinter", nil, {
     LimitDepth = 1,
     FontColor = { 192, 192, 192 },
     BackgroundColor = { 12, 12, 12 },
-    ApplyColor = false
+    ApplyColor = false,
+    DebugLevel = 0,
 })
 
 ---@param r integer 0-255
@@ -52,112 +56,148 @@ end
 
 function VolitionCabinetPrinter:ToggleApplyColor()
     self.ApplyColor = not self.ApplyColor
-    self:Print("Applying Color: %s", self.ApplyColor)
+    self:Print(0, "Applying Color: %s", self.ApplyColor)
 end
 
 ---@vararg any
-function VolitionCabinetPrinter:Print(...)
-    local s = string.format("[%s %s] ", self.Machine, self.Prefix)
-    if self.ApplyColor then
-        s = self:Colorize(s)
-    end
+function VolitionCabinetPrinter:Print(debugLevel, ...)
+    if self.DebugLevel > tonumber(debugLevel) then
+        local s
+        if self.DebugLevel > 0 then
+            s = string.format("[%s %s %s][D%s] ", self.Machine, self.Authorship, self.Prefix, self.DebugLevel)
+        else
+            s = string.format("[%s %s] ", self.Authorship, self.Prefix)
+        end
 
-    local f
-    if #{ ... } <= 1 then
-        f = tostring(...)
-    else
-        f = string.format(...)
-    end
+        if self.ApplyColor then
+            s = self:Colorize(s)
+        end
 
-    Ext.Utils.Print(s .. f)
+        local f
+        if #{ ... } <= 1 then
+            f = tostring(...)
+        else
+            f = string.format(...)
+        end
+
+        Ext.Utils.Print(s .. f)
+    end
 end
 
----@vararg any
-function VolitionCabinetPrinter:PrintTest(...)
-    local s = string.format("[%s %s][%s][%s] ", self.Machine, self.Prefix, "TEST", Ext.Utils.MonotonicTime())
-    if self.ApplyColor then
-        s = self:Colorize(s)
-    end
+function VolitionCabinetPrinter:PrintTest(debugLevel, ...)
+    if self.DebugLevel > tonumber(debugLevel) then
+        local s
+        if self.DebugLevel > 1 then
+            s = string.format("[%s %s %s][%s][%s] ", self.Machine, self.Authorship, self.Prefix, "TEST",
+                String:MonotonicTimeToString())
+        else
+            s = string.format("[%s %s][%s][%s] ", self.Authorship, self.Prefix, "TEST", String:MonotonicTimeToString())
+        end
 
-    local f
-    if #{ ... } <= 1 then
-        f = tostring(...)
-    else
-        f = string.format(...)
-    end
+        if self.ApplyColor then
+            s = self:Colorize(s)
+        end
 
-    Ext.Utils.Print(s .. f)
+        local f
+        if #{ ... } <= 1 then
+            f = tostring(...)
+        else
+            f = string.format(...)
+        end
+
+        Ext.Utils.Print(s .. f)
+    end
 end
 
-function VolitionCabinetPrinter:PrintWarning(...)
-    local s = string.format("[%s %s][%s] ", self.Machine, self.Prefix, "WARN")
-    if self.ApplyColor then
-        s = self:Colorize(s)
-    end
+function VolitionCabinetPrinter:PrintWarning(debugLevel, ...)
+    if self.DebugLevel > tonumber(debugLevel) then
+        local s
+        if self.DebugLevel > 1 then
+            s = string.format("[%s %s %s][%s] ", self.Machine, self.Authorship, self.Prefix, "WARN")
+        else
+            s = string.format("[%s %s][%s] ", self.Authorship, self.Prefix, "WARN")
+        end
 
-    local f
-    if #{ ... } <= 1 then
-        f = tostring(...)
-    else
-        f = string.format(...)
-    end
+        if self.ApplyColor then
+            s = self:Colorize(s)
+        end
 
-    Ext.Utils.PrintWarning(s .. f)
+        local f
+        if #{ ... } <= 1 then
+            f = tostring(...)
+        else
+            f = string.format(...)
+        end
+
+        Ext.Utils.PrintWarning(s .. f)
+    end
 end
 
-function VolitionCabinetPrinter:PrintDebug(...)
-    local s = string.format("[%s %s][%s][%s] ", self.Machine, self.Prefix, "DEBUG", Ext.Utils.MonotonicTime())
-    if self.ApplyColor then
-        s = self:Colorize(s)
-    end
+function VolitionCabinetPrinter:PrintDebug(debugLevel, ...)
+    if self.DebugLevel > tonumber(debugLevel) then
+        local s
+        if self.DebugLevel > 1 then
+            s = string.format("[%s %s %s][%s][%s] ", self.Machine, self.Authorship, self.Prefix, "DEBUG",
+                String:MonotonicTimeToString())
+        else
+            s = string.format("[%s %s][%s][%s] ", self.Authorship, self.Prefix, "DEBUG", String:MonotonicTimeToString())
+        end
 
-    local f
-    if #{ ... } <= 1 then
-        f = tostring(...)
-    else
-        f = string.format(...)
-    end
+        if self.ApplyColor then
+            s = self:Colorize(s)
+        end
 
-    Ext.Utils.Print(s .. f)
+        local f
+        if #{ ... } <= 1 then
+            f = tostring(...)
+        else
+            f = string.format(...)
+        end
+
+        Ext.Utils.Print(s .. f)
+    end
 end
 
----@param info any
----@param useOptions? boolean
----@param includeTime? boolean
 function VolitionCabinetPrinter:Dump(info, useOptions, includeTime)
-    local s = string.format("[%s %s][%s]", self.Machine, self.Prefix, "DUMP")
-    if self.ApplyColor then
-        s = self:Colorize(s)
-    end
+    if self.DebugLevel > 0 then
+        s = string.format("[%s %s %s][%s]", self.Machine, self.Authorship, self.Prefix, "DUMP")
 
-    if includeTime == true then
-        s = string.format("%s[%s]", s, Ext.Utils.MonotonicTime())
-    end
+        if self.ApplyColor then
+            s = self:Colorize(s)
+        end
 
-    s = s .. " "
+        if includeTime == true then
+            s = string.format("%s[%s]", s, String:MonotonicTimeToString())
+        end
 
-    local infoString
-    if useOptions == true then
-        infoString = Ext.Json.Stringify(info, {
-            Beautify = self.Beautify,
-            StringifyInternalTypes = self.StringifyInternalTypes,
-            IterateUserdata = self.IterateUserdata,
-            AvoidRecursion = self.AvoidRecursion,
-            LimitArrayElements = self.LimitArrayElements,
-            LimitDepth = self.LimitDepth
-        })
-    else
-        infoString = Ext.DumpExport(info)
+        s = s .. " "
+
+        local infoString
+        if useOptions == true then
+            infoString = Ext.Json.Stringify(info, {
+                Beautify = self.Beautify,
+                StringifyInternalTypes = self.StringifyInternalTypes,
+                IterateUserdata = self.IterateUserdata,
+                AvoidRecursion = self.AvoidRecursion,
+                LimitArrayElements = self.LimitArrayElements,
+                LimitDepth = self.LimitDepth
+            })
+        else
+            infoString = Ext.DumpExport(info)
+        end
+        Ext.Utils.Print(s, infoString)
     end
-    Ext.Utils.Print(s, infoString)
 end
 
+---@param debugLevel integer
 ---@param array FlashArray
 ---@param arrayName? string
 function VolitionCabinetPrinter:DumpArray(array, arrayName)
-    local name = arrayName or "array"
-    for i = 1, #array do
-        self:Print("%s[%s]: %s", name, i, array[i])
+    if self.DebugLevel > 0 then
+        local name = arrayName or "array"
+        for i = 1, #array do
+            self:Print(0, "%s[%s]: %s", name, i, array[i])
+        end
     end
 end
 
