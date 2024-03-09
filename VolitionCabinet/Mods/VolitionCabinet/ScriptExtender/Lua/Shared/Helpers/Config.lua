@@ -1,20 +1,20 @@
 -- TODO: add typedocs and more comments
 
----@class Config
-Config = _Class:Create("Config")
+---@class HelperConfig: Helper
+Helpers.Config = _Class:Create("HelperConfig", Helper)
 
-function Config:Create()
-  local cls = {}
-  setmetatable(cls, Config)
-  cls.FolderName = "DefaultFolder"
-  cls.configFilePath = "default_config.json"
-  cls.defaultConfig = {
-    -- Default configurations
-  }
+function Helpers.Config:Create()
+  local cls = setmetatable({}, { __index = Helpers.Config })
+
+  cls.FolderName = nil
+  cls.configFilePath = nil
+  cls.defaultConfig = {}
+  cls.currentConfig = {}
+
   return cls
 end
 
-function Config:Init()
+function Helpers.Config:Init()
   -- Initialization code here, if needed
 end
 
@@ -22,33 +22,33 @@ end
 ---@param folderName string The name of the folder
 ---@param configFilePath string The file path for the config
 ---@param defaultConfig table The default configuration
-function Config:SetConfig(folderName, configFilePath, defaultConfig)
+function Helpers.Config:SetConfig(folderName, configFilePath, defaultConfig)
   self.FolderName = folderName or self.FolderName
   self.configFilePath = configFilePath or self.configFilePath
   self.defaultConfig = defaultConfig or self.defaultConfig
 end
 
-function Config:GetModPath(filePath)
+function Helpers.Config:GetModPath(filePath)
   return self.FolderName .. '/' .. filePath
 end
 
-function Config:LoadConfig(filePath)
+function Helpers.Config:LoadConfig(filePath)
   local configFileContent = Ext.IO.LoadFile(self:GetModPath(filePath))
   if configFileContent and configFileContent ~= "" then
-    Utils.DebugPrint(1, "Loaded config file: " .. filePath)
+    _P("Loaded config file: " .. filePath)
     return Ext.Json.Parse(configFileContent)
   else
-    Utils.DebugPrint(1, "File not found: " .. filePath)
+    _P("File not found: " .. filePath)
     return nil
   end
 end
 
-function Config:SaveConfig(filePath, config)
+function Helpers.Config:SaveConfig(filePath, config)
   local configFileContent = Ext.Json.Stringify(config, { Beautify = true })
   Ext.IO.SaveFile(self:GetModPath(filePath), configFileContent)
 end
 
-function Config:UpdateConfig(existingConfig, defaultConfig)
+function Helpers.Config:UpdateConfig(existingConfig, defaultConfig)
   local updated = false
 
   for key, newValue in pairs(defaultConfig) do
@@ -59,7 +59,7 @@ function Config:UpdateConfig(existingConfig, defaultConfig)
       -- Add missing keys from the default config
       existingConfig[key] = newValue
       updated = true
-      Utils.DebugPrint(1, "Added new config option:", key)
+      _P("Added new config option:", key)
     elseif type(oldValue) ~= type(newValue) then
       -- If the type has changed...
       if type(newValue) == "table" then
@@ -71,16 +71,16 @@ function Config:UpdateConfig(existingConfig, defaultConfig)
           end
         end
         updated = true
-        Utils.DebugPrint(1, "Updated config structure for:", key)
+        _P("Updated config structure for:", key)
       else
         -- ...otherwise, just replace with the new value
         existingConfig[key] = newValue
         updated = true
-        Utils.DebugPrint(1, "Updated config value for:", key)
+        _P("Updated config value for:", key)
       end
     elseif type(newValue) == "table" then
       -- Recursively update for nested tables
-      if Config.UpdateConfig(oldValue, newValue) then
+      if self:UpdateConfig(oldValue, newValue) then
         updated = true
       end
     end
@@ -92,36 +92,38 @@ function Config:UpdateConfig(existingConfig, defaultConfig)
       -- Remove keys that are not in the default config
       existingConfig[key] = nil
       updated = true
-      Utils.DebugPrint(1, "Removed deprecated config option:", key)
+      _P("Removed deprecated config option:", key)
     end
   end
 
   return updated
 end
 
-function Config:LoadJSONConfig()
+function Helpers.Config:LoadJSONConfig()
   local jsonConfig = self:LoadConfig(self.configFilePath)
   if not jsonConfig then
     jsonConfig = self.defaultConfig
     self:SaveConfig(self.configFilePath, jsonConfig)
-    Utils.DebugPrint(1, "Default config file loaded.")
+    _P("Default config file loaded.")
   else
     if self:UpdateConfig(jsonConfig, self.defaultConfig) then
       self:SaveConfig(self.configFilePath, jsonConfig)
-      Utils.DebugPrint(1, "Config file updated with new options.")
+      _P("Config file updated with new options.")
     else
-      Utils.DebugPrint(1, "Config file loaded.")
+      _P("Config file loaded.")
     end
   end
 
   return jsonConfig
 end
 
--- TODO:
-function Config:ReloadConfigCmd()
-  self:LoadJSONConfig()
-  Utils.DebugPrint(1, "Config reloaded.")
+function Helpers.Config:UpdateCurrentConfig()
+  self.currentConfig = self:LoadJSONConfig()
+end
+
+function Helpers.Config:cfg()
+  return self.currentConfig
 end
 
 -- Reload the JSON config when executing `reload_config` on SE console
-Ext.RegisterConsoleCommand('reload_config', function() Config:ReloadConfigCmd() end)
+Ext.RegisterConsoleCommand('reload_config', Helpers.Config.LoadJSONConfig)

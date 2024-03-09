@@ -7,7 +7,9 @@ Helpers = {
     IsServer = Ext.IsServer(),
     IsClient = Ext.IsClient()
 }
+
 RequireFiles("Shared/Helpers/", {
+    "Config",
     "Printer",
     "Format",
     "ModVars",
