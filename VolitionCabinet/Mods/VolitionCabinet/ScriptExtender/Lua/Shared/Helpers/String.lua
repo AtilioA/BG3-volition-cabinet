@@ -1,6 +1,16 @@
 ---@class String
 String = _Class:Create("String")
 
+function String:MonotonicTimeToString()
+  local timeInMilliseconds = Ext.Utils.MonotonicTime()
+  local seconds = math.floor(timeInMilliseconds / 1000)
+  local minutes = math.floor(seconds / 60)
+  local hours = math.floor(minutes / 60)
+
+  local timeString = string.format("%02d:%02d:%02d.%03d", hours, minutes % 60, seconds % 60, timeInMilliseconds % 1000)
+  return timeString
+end
+
 function String:LevenshteinDistance(str1, str2, case_sensitive)
   if not case_sensitive then
     str1 = string.lower(str1)

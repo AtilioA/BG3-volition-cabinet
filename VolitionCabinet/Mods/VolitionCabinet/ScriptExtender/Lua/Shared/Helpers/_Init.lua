@@ -28,6 +28,7 @@ RequireFiles("Shared/Helpers/", {
     "SpellCast",
     "SpellBook",
     "Status",
+    "String",
     "Timer",
     "Commander",
 })
