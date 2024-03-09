@@ -6,7 +6,7 @@ Helpers.Config = _Class:Create("HelperConfig", Helper)
 function Helpers.Config:Create()
   local cls = setmetatable({}, { __index = Helpers.Config })
 
-  cls.FolderName = nil
+  cls.folderName = nil
   cls.configFilePath = nil
   cls.defaultConfig = {}
   cls.currentConfig = {}
@@ -19,13 +19,13 @@ end
 ---@param configFilePath string The file path for the config
 ---@param defaultConfig table The default configuration
 function Helpers.Config:SetConfig(folderName, configFilePath, defaultConfig)
-  self.FolderName = folderName or self.FolderName
+  self.folderName = folderName or self.folderName
   self.configFilePath = configFilePath or self.configFilePath
   self.defaultConfig = defaultConfig or self.defaultConfig
 end
 
 function Helpers.Config:GetModConfigPath(filePath)
-  return self.FolderName .. '/' .. filePath
+  return self.folderName .. '/' .. filePath
 end
 
 function Helpers.Config:LoadConfig(filePath)
