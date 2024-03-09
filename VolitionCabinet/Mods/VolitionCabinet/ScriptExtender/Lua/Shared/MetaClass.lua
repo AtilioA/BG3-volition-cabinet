@@ -20,15 +20,20 @@ local _DebugMetaTable = {
     end
 }
 
----@generic T
----@param class T
----@param o any
----@return T
+--- Creates a new instance of a class, initializing it with the provided parameters.
+--- @generic T
+--- @param class T -- The class table.
+--- @param o any -- The initial set of parameters for the new instance.
+--- @return T -- The new instance.
 function _MetaClass.New(class, o)
     o = o or {}
     setmetatable(o, class)
     class.__index = class
-    o:Init()
+
+    if class.Init then
+        o:Init()
+    end
+
     return o
 end
 
