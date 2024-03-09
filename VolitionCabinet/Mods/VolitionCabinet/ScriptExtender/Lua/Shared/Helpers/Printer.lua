@@ -161,25 +161,7 @@ function VolitionCabinetPrinter:DumpArray(array, arrayName)
     end
 end
 
-function VolitionCabinetPrinter:PrintNXM()
-    local text = "\n" .. [[
-        __/\\\\\_____/\\\__/\\\_______/\\\__/\\\\____________/\\\\_______________
-         _\/\\\\\\___\/\\\_\///\\\___/\\\/__\/\\\\\\________/\\\\\\_______________
-          _\/\\\/\\\__\/\\\___\///\\\\\\/____\/\\\//\\\____/\\\//\\\______/\\\_____
-           _\/\\\//\\\_\/\\\_____\//\\\\______\/\\\\///\\\/\\\/_\/\\\_____\/\\\_____
-            _\/\\\\//\\\\/\\\______\/\\\\______\/\\\__\///\\\/___\/\\\__/\\\\\\\\\\\_
-             _\/\\\_\//\\\/\\\______/\\\\\\_____\/\\\____\///_____\/\\\_\/////\\\///__
-              _\/\\\__\//\\\\\\____/\\\////\\\___\/\\\_____________\/\\\_____\/\\\_____
-               _\/\\\___\//\\\\\__/\\\/___\///\\\_\/\\\_____________\/\\\_____\///______
-                _\///_____\/////__\///_______\///__\///______________\///________________
-    ]]
-    text = text:gsub(".", {
-        ["_"] = self:Colorize("_", { 0, 50, 125 }, { 12, 12, 12 }),
-        ["/"] = self:Colorize("/", { 255, 255, 0 }, { 12, 12, 12 }),
-        ["\\"] = self:Colorize("\\", { 255, 255, 0 }, { 12, 12, 12 })
-    })
-    self:Print(text)
-end
+--- VC printers
 
 VCPrinter = VolitionCabinetPrinter:New { Prefix = "VolitionCabinet", ApplyColor = true }
 function VCPrint(...)
@@ -193,12 +175,12 @@ function VCTest(...)
 end
 
 function VCDebug(...)
-    VCPrinter:SetFontColor(200, 100, 50)
+    VCPrinter:SetFontColor(200, 200, 0)
     VCPrinter:PrintDebug(...)
 end
 
 function VCWarn(...)
-    VCPrinter:SetFontColor(200, 200, 0)
+    VCPrinter:SetFontColor(200, 100, 50)
     VCPrinter:PrintWarning(...)
 end
 
