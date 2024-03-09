@@ -14,10 +14,6 @@ function Helpers.Config:Create()
   return cls
 end
 
-function Helpers.Config:Init()
-  -- Initialization code here, if needed
-end
-
 --- Set the folder name, config file path, and default config for the Config object
 ---@param folderName string The name of the folder
 ---@param configFilePath string The file path for the config
@@ -28,24 +24,24 @@ function Helpers.Config:SetConfig(folderName, configFilePath, defaultConfig)
   self.defaultConfig = defaultConfig or self.defaultConfig
 end
 
-function Helpers.Config:GetModPath(filePath)
+function Helpers.Config:GetModConfigPath(filePath)
   return self.FolderName .. '/' .. filePath
 end
 
 function Helpers.Config:LoadConfig(filePath)
-  local configFileContent = Ext.IO.LoadFile(self:GetModPath(filePath))
+  local configFileContent = Ext.IO.LoadFile(self:GetModConfigPath(filePath))
   if configFileContent and configFileContent ~= "" then
-    _P("Loaded config file: " .. filePath)
+    -- VCPrint(1, "Loaded config file: " .. filePath)
     return Ext.Json.Parse(configFileContent)
   else
-    _P("File not found: " .. filePath)
+    VCPrint(0, "File not found: " .. filePath)
     return nil
   end
 end
 
 function Helpers.Config:SaveConfig(filePath, config)
   local configFileContent = Ext.Json.Stringify(config, { Beautify = true })
-  Ext.IO.SaveFile(self:GetModPath(filePath), configFileContent)
+  Ext.IO.SaveFile(self:GetModConfigPath(filePath), configFileContent)
 end
 
 function Helpers.Config:UpdateConfig(existingConfig, defaultConfig)
@@ -59,7 +55,7 @@ function Helpers.Config:UpdateConfig(existingConfig, defaultConfig)
       -- Add missing keys from the default config
       existingConfig[key] = newValue
       updated = true
-      _P("Added new config option:", key)
+      VCPrint(0, "Added new config option: " .. tostring(key))
     elseif type(oldValue) ~= type(newValue) then
       -- If the type has changed...
       if type(newValue) == "table" then
@@ -71,12 +67,12 @@ function Helpers.Config:UpdateConfig(existingConfig, defaultConfig)
           end
         end
         updated = true
-        _P("Updated config structure for:", key)
+        VCPrint(0, "Updated config structure for: " .. tostring(key))
       else
         -- ...otherwise, just replace with the new value
         existingConfig[key] = newValue
         updated = true
-        _P("Updated config value for:", key)
+        VCPrint(0, "Updated config value for: " .. tostring(key))
       end
     elseif type(newValue) == "table" then
       -- Recursively update for nested tables
@@ -92,7 +88,7 @@ function Helpers.Config:UpdateConfig(existingConfig, defaultConfig)
       -- Remove keys that are not in the default config
       existingConfig[key] = nil
       updated = true
-      _P("Removed deprecated config option:", key)
+      VCPrint(0, "Removed deprecated config option: " .. tostring(key))
     end
   end
 
@@ -104,13 +100,13 @@ function Helpers.Config:LoadJSONConfig()
   if not jsonConfig then
     jsonConfig = self.defaultConfig
     self:SaveConfig(self.configFilePath, jsonConfig)
-    _P("Default config file loaded.")
+    VCPrint(0, "Default config file loaded.")
   else
     if self:UpdateConfig(jsonConfig, self.defaultConfig) then
       self:SaveConfig(self.configFilePath, jsonConfig)
-      _P("Config file updated with new options.")
+      VCPrint(0, "Config file updated with new options.")
     else
-      _P("Config file loaded.")
+      -- VCPrint(1, "Config file loaded.")
     end
   end
 
@@ -125,5 +121,10 @@ function Helpers.Config:cfg()
   return self.currentConfig
 end
 
--- Reload the JSON config when executing `reload_config` on SE console
-Ext.RegisterConsoleCommand('reload_config', Helpers.Config.LoadJSONConfig)
+function Helpers.Config:GetCurrentDebugLevel()
+  if self.currentConfig then
+    return tonumber(self.currentConfig.DEBUG.level)
+  else
+    return 0
+  end
+end
