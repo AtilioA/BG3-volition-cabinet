@@ -24,3 +24,12 @@ function Helpers.Teleporting:TeleportPartyMembersToCharacter(character)
     VCWarn("Helpers.Teleporting:TeleportPartyMembersToCharacter() - Character position not found.")
   end
 end
+
+function Helpers.Teleporting:TeleportLinkedMembersToCharacter(character)
+  local x, y, z = Osi.GetPosition(character)
+  if x and y and z then
+    Helpers.Teleporting:TeleportToPosition(character, x, y, z)
+  else
+    VCWarn("Helpers.Teleporting:TeleportLinkedMembersToCharacter() - Character position not found.")
+  end
+end
