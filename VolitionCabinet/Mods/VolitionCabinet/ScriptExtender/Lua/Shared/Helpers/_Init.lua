@@ -14,6 +14,8 @@ RequireFiles("Shared/Helpers/", {
     "Format",
     "ModVars",
     "UserVars",
+    "Character",
+    "Teleporting",
     "Grid",
     "Object",
     "Appearance",
