@@ -117,7 +117,9 @@ function Helpers.Config:UpdateCurrentConfig()
   self.currentConfig = self:LoadJSONConfig()
 end
 
-function Helpers.Config:cfg()
+--- Accessor for the current configuration.
+--- @return table The current configuration.
+function Helpers.Config:getCfg()
   return self.currentConfig
 end
 
