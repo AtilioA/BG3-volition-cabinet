@@ -6,28 +6,13 @@
     Usage: This module defines a Config object that is used to manage mod configurations. It supports loading from a JSON file, saving updates back to the file, and dynamically updating configuration settings based on in-game commands.
 ]]
 
-
--- TODO: add typedocs and more comments
-
 ---@class HelperConfig: Helper
 --- @field folderName string|nil The folder where the configuration files are located.
 --- @field configFilePath string|nil The path to the configuration JSON file.
 --- @field defaultConfig table The default configuration values for the mod, utilized when the configuration file is not found or when missing keys are detected.
 --- @field currentConfig table The current configuration values after loading and potentially updating from a file.
+--- @field onConfigReloaded table A list of callbacks to be executed when the configuration is reloaded.
 Helpers.Config = _Class:Create("HelperConfig", Helper)
-
---- Constructor for the Helpers.Config class.
---- @return HelperConfig cls The created instance of Helpers.Config.
-function Helpers.Config:Create()
-  local cls = setmetatable({}, { __index = Helpers.Config })
-
-  cls.folderName = nil
-  cls.configFilePath = nil
-  cls.defaultConfig = {}
-  cls.currentConfig = {}
-
-  return cls
-end
 
 --- Sets basic configuration properties: folder name, config file path, and default config for the Config object
 --- @param folderName string The name of the folder where the config file is stored.
@@ -170,4 +155,30 @@ function Helpers.Config:GetCurrentDebugLevel()
   else
     return 0
   end
+end
+
+function Helpers.Config:AddConfigReloadedCallback(callback)
+  if self.onConfigReloaded == nil then
+    self.onConfigReloaded = {}
+  end
+
+  table.insert(self.onConfigReloaded, callback)
+end
+
+function Helpers.Config:NotifyConfigReloaded()
+  if self.onConfigReloaded == nil then
+    return
+  end
+
+  for _, callback in ipairs(self.onConfigReloaded) do
+    callback(self)
+  end
+end
+
+function Helpers.Config:RegisterReloadConfigCommand(prefix)
+  local commandName = prefix:lower() .. "_reload_config"
+  Ext.RegisterConsoleCommand(commandName, function()
+    self:UpdateCurrentConfig()
+    self:NotifyConfigReloaded() -- Notify all subscribers that config has been reloaded.
+  end)
 end
