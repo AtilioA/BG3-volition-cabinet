@@ -61,12 +61,12 @@ end
 
 ---@vararg any
 function VolitionCabinetPrinter:Print(debugLevel, ...)
-    if self.DebugLevel > tonumber(debugLevel) then
+    if self.DebugLevel >= tonumber(debugLevel) then
         local s
         if self.DebugLevel > 0 then
-            s = string.format("[%s %s %s][D%s] ", self.Machine, self.Authorship, self.Prefix, self.DebugLevel)
+            s = string.format("[%s %s][D%s]: ", self.Authorship, self.Prefix, self.DebugLevel)
         else
-            s = string.format("[%s %s] ", self.Authorship, self.Prefix)
+            s = string.format("[%s %s]: ", self.Authorship, self.Prefix)
         end
 
         if self.ApplyColor then
@@ -85,13 +85,13 @@ function VolitionCabinetPrinter:Print(debugLevel, ...)
 end
 
 function VolitionCabinetPrinter:PrintTest(debugLevel, ...)
-    if self.DebugLevel > tonumber(debugLevel) then
+    if self.DebugLevel >= tonumber(debugLevel) then
         local s
         if self.DebugLevel > 1 then
-            s = string.format("[%s %s %s][%s][%s] ", self.Machine, self.Authorship, self.Prefix, "TEST",
+            s = string.format("[%s %s][%s][%s]: ", self.Authorship, self.Prefix, "TEST",
                 String:MonotonicTimeToString())
         else
-            s = string.format("[%s %s][%s][%s] ", self.Authorship, self.Prefix, "TEST", String:MonotonicTimeToString())
+            s = string.format("[%s %s][%s][%s]: ", self.Authorship, self.Prefix, "TEST", String:MonotonicTimeToString())
         end
 
         if self.ApplyColor then
@@ -110,12 +110,12 @@ function VolitionCabinetPrinter:PrintTest(debugLevel, ...)
 end
 
 function VolitionCabinetPrinter:PrintWarning(debugLevel, ...)
-    if self.DebugLevel > tonumber(debugLevel) then
+    if self.DebugLevel >= tonumber(debugLevel) then
         local s
         if self.DebugLevel > 1 then
-            s = string.format("[%s %s %s][%s] ", self.Machine, self.Authorship, self.Prefix, "WARN")
+            s = string.format("[%s %s][%s]: ", self.Authorship, self.Prefix, "WARN")
         else
-            s = string.format("[%s %s][%s] ", self.Authorship, self.Prefix, "WARN")
+            s = string.format("[%s %s][%s]: ", self.Authorship, self.Prefix, "WARN")
         end
 
         if self.ApplyColor then
@@ -134,13 +134,13 @@ function VolitionCabinetPrinter:PrintWarning(debugLevel, ...)
 end
 
 function VolitionCabinetPrinter:PrintDebug(debugLevel, ...)
-    if self.DebugLevel > tonumber(debugLevel) then
+    if self.DebugLevel >= tonumber(debugLevel) then
         local s
         if self.DebugLevel > 1 then
-            s = string.format("[%s %s %s][%s][%s] ", self.Machine, self.Authorship, self.Prefix, "DEBUG",
+            s = string.format("[%s %s][%s][%s]: ", self.Authorship, self.Prefix, "DEBUG",
                 String:MonotonicTimeToString())
         else
-            s = string.format("[%s %s][%s][%s] ", self.Authorship, self.Prefix, "DEBUG", String:MonotonicTimeToString())
+            s = string.format("[%s %s][%s][%s]: ", self.Authorship, self.Prefix, "DEBUG", String:MonotonicTimeToString())
         end
 
         if self.ApplyColor then
@@ -160,14 +160,14 @@ end
 
 function VolitionCabinetPrinter:Dump(info, useOptions, includeTime)
     if self.DebugLevel > 0 then
-        s = string.format("[%s %s %s][%s]", self.Machine, self.Authorship, self.Prefix, "DUMP")
+        s = string.format("[%s %s][%s]: ", self.Authorship, self.Prefix, "DUMP")
 
         if self.ApplyColor then
             s = self:Colorize(s)
         end
 
         if includeTime == true then
-            s = string.format("%s[%s]", s, String:MonotonicTimeToString())
+            s = string.format("%s[%s]: ", s, String:MonotonicTimeToString())
         end
 
         s = s .. " "
