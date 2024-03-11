@@ -17,3 +17,67 @@ function Helpers.Character:GetOtherPartyMembers(characterGuid)
   return otherPartyMembers
 end
 
+function Helpers.Character:GetDisjointedLinkedCharacterSets()
+  local disjointSets = {}
+
+  -- Get the Party entity of the host character
+  local hostEntity = _C()
+  if not hostEntity or not hostEntity.PartyMember or not hostEntity.PartyMember.Party then
+    return disjointSets -- Return empty if no party info is found
+  end
+
+  local partyEntity = hostEntity.PartyMember.Party
+  if not partyEntity.PartyView or not partyEntity.PartyView.Views then
+    return disjointSets -- Return empty if no party view info is found
+  end
+
+  for _, view in ipairs(partyEntity.PartyView.Views) do
+    local charactersSet = {}
+    for _, characterEntity in ipairs(view.Characters) do
+      table.insert(charactersSet, characterEntity.Uuid.EntityUuid)
+    end
+    if #charactersSet > 0 then
+      table.insert(disjointSets, charactersSet)
+    end
+  end
+
+  return disjointSets
+end
+
+-- Function to get other party members present in the same PartyView.Views other than the character passed as argument
+---@param characterGuid string
+---@return string[] otherPartyMembers A table of guids of other party members
+function Helpers.Character:GetCharactersLinkedWith(characterGuid)
+  local otherPartyMembers = {}
+  local partyEntity = _C().PartyMember.Party
+  if not partyEntity or not partyEntity.PartyView or not partyEntity.PartyView.Views then
+    return otherPartyMembers -- Return empty if no party info is found
+  end
+
+  _D(partyEntity.PartyView.Views)
+
+  -- Find the View that includes the characterGuid
+  local targetView = nil
+  for _, view in ipairs(partyEntity.PartyView.Views) do
+    for _, characterEntity in ipairs(view.Characters) do
+      local currentGuid = characterEntity.Uuid.EntityUuid
+      if currentGuid == characterGuid then
+        targetView = view
+        break
+      end
+    end
+    if targetView then break end
+  end
+
+  -- If a target View is found, iterate over its Characters to find other party members, and add them to the otherPartyMembers table
+  if targetView then
+    for _, characterEntity in ipairs(targetView.Characters) do
+      local companionGuid = characterEntity.Uuid.EntityUuid
+      if companionGuid ~= characterGuid then
+        table.insert(otherPartyMembers, companionGuid)
+      end
+    end
+  end
+
+  return otherPartyMembers
+end
