@@ -1,9 +1,19 @@
 ---@class HelperCharacter: Helper
 Helpers.Character = _Class:Create("HelperCharacter", Helper)
 
+-- Detect if a character is sneaking
+---@param character Guid The character to check
+---@return boolean isSneaking true if the character is sneaking
+function Helpers.Character:IsSneaking(character)
+  local characterEntity = Ext.Entity.Get(character)
+  -- REVIEW: There's probably a better way to detect sneaking
+  return characterEntity.SpellModificationContainer and characterEntity.SpellModificationContainer.Modifications and
+      characterEntity.SpellModificationContainer.Modifications.Shout_Hide ~= nil
+end
+
 -- Function to return all other party members
----@param characterGuid string
----@return string[] otherPartyMembers A table of guids of other party members
+---@param characterGuid Guid
+---@return Guid[] otherPartyMembers A table of guids of other party members
 function Helpers.Character:GetOtherPartyMembers(characterGuid)
   local otherPartyMembers = {}
   local companions = Osi.DB_Players:Get(nil)
@@ -45,8 +55,8 @@ function Helpers.Character:GetDisjointedLinkedCharacterSets()
 end
 
 -- Function to get other party members present in the same PartyView.Views other than the character passed as argument
----@param characterGuid string
----@return string[] otherPartyMembers A table of guids of other party members
+---@param characterGuid Guid
+---@return Guid[] otherPartyMembers A table of guids of other party members
 function Helpers.Character:GetCharactersLinkedWith(characterGuid)
   local otherPartyMembers = {}
   local partyEntity = _C().PartyMember.Party
