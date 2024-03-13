@@ -34,9 +34,25 @@ function Helpers.Format:Parse(data)
 end
 
 ---@param guid Guid
----@return Guid
+---@return string guid
 function Helpers.Format:Guid(guid)
-    return string.sub(guid, -36)
+    return string.sub(tostring(guid), -36)
+end
+
+--- func desc
+---@param localtemplateUUID string
+---@return string result
+function Helpers.Format:GetTemplateName(localtemplateUUID)
+    if #localtemplateUUID <= 36 then
+        return localtemplateUUID -- Return the original string if it's too short
+    end
+
+    local result = string.sub(localtemplateUUID, 1, -37) -- Remove last 36 characters
+
+    -- Remove trailing underscore if present
+    result = result:gsub("_$", "")
+
+    return result
 end
 
 ---Copies an object and sets the copy's metatable as the original's.
@@ -84,24 +100,24 @@ end
 ---@param hex string
 ---@return vec3
 function Helpers.Format:HexToRGB(hex)
-    hex = hex:gsub('#','')
-    local r,g,b
+    hex = hex:gsub('#', '')
+    local r, g, b
 
-	if hex:len() == 3 then
-		r = tonumber('0x'..hex:sub(1,1)) * 17
-        g = tonumber('0x'..hex:sub(2,2)) * 17
-        b = tonumber('0x'..hex:sub(3,3)) * 17
-	elseif hex:len() == 6 then
-		r = tonumber('0x'..hex:sub(1,2))
-        g = tonumber('0x'..hex:sub(3,4))
-        b = tonumber('0x'..hex:sub(5,6))
+    if hex:len() == 3 then
+        r = tonumber('0x' .. hex:sub(1, 1)) * 17
+        g = tonumber('0x' .. hex:sub(2, 2)) * 17
+        b = tonumber('0x' .. hex:sub(3, 3)) * 17
+    elseif hex:len() == 6 then
+        r = tonumber('0x' .. hex:sub(1, 2))
+        g = tonumber('0x' .. hex:sub(3, 4))
+        b = tonumber('0x' .. hex:sub(5, 6))
     end
 
     r = r or 0
     g = g or 0
     b = b or 0
 
-    return {r,g,b}
+    return { r, g, b }
 end
 
 ---@param hex string
@@ -121,18 +137,19 @@ end
 ---@param rgb vec3
 ---@return string
 function Helpers.Format:EffectRGBToHex(rgb)
-    return string.format('%.2x%.2x%.2x', Ext.Math.Round(rgb[1] * 255), Ext.Math.Round(rgb[2] * 255), Ext.Math.Round(rgb[3] *255))
+    return string.format('%.2x%.2x%.2x', Ext.Math.Round(rgb[1] * 255), Ext.Math.Round(rgb[2] * 255),
+        Ext.Math.Round(rgb[3] * 255))
 end
 
 ---@return Guid
 function Helpers.Format:CreateUUID()
-    return string.gsub("xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx", "[xy]", function (c)
+    return string.gsub("xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx", "[xy]", function(c)
         return string.format("%x", c == "x" and Ext.Math.Random(0, 0xf) or Ext.Math.Random(8, 0xb))
     end)
 end
 
 function Helpers.Format:CreateHandle()
-    return "h"..string.gsub("xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx", "[xy-]", function(c)
+    return "h" .. string.gsub("xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx", "[xy-]", function(c)
         if c == "x" then
             return string.format("%x", Ext.Math.Random(0, 0xf))
         elseif c == "y" then
