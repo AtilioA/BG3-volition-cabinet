@@ -64,8 +64,6 @@ function Helpers.Character:GetCharactersLinkedWith(characterGuid)
     return otherPartyMembers -- Return empty if no party info is found
   end
 
-  _D(partyEntity.PartyView.Views)
-
   -- Find the View that includes the characterGuid
   local targetView = nil
   for _, view in ipairs(partyEntity.PartyView.Views) do
