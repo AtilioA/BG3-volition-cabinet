@@ -260,6 +260,11 @@ function Helpers.Object:GetRootTemplate(object)
     end
 end
 
+---@param object EntityHandle
+function Helpers.Object:GetItemUUID(object)
+  return object.TemplateName .. '_' .. object.Guid
+end
+
 ---@return EntityHandle|nil
 function Helpers.Object:GetHostEntity()
     if Ext.IsServer() then
