@@ -1,5 +1,5 @@
 --[[
-    Description: Handles loading, saving, and updating configuration settings for mods.
+    Handles loading, saving, and updating configuration settings for mods.
 
     Dependencies: Requires Ext.IO for file operations and Ext.Json for JSON parsing and stringification. Cannot use Printer since that one relies on this module.
 
@@ -176,7 +176,7 @@ function Helpers.Config:NotifyConfigReloaded()
 end
 
 function Helpers.Config:RegisterReloadConfigCommand(prefix)
-  local commandName = prefix:lower() .. "_reload_config"
+  local commandName = prefix:lower() .. "_reload"
   Ext.RegisterConsoleCommand(commandName, function()
     self:UpdateCurrentConfig()
     self:NotifyConfigReloaded() -- Notify all subscribers that config has been reloaded.
