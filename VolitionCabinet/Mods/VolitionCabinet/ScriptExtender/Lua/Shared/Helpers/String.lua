@@ -1,17 +1,24 @@
----@class String
-String = _Class:Create("String")
+---@class HelperString: Helper
+Helpers.String = _Class:Create("HelperString", Helper)
 
-function String:MonotonicTimeToString()
-  local timeInMilliseconds = Ext.Utils.MonotonicTime()
-  local seconds = math.floor(timeInMilliseconds / 1000)
-  local minutes = math.floor(seconds / 60)
-  local hours = math.floor(minutes / 60)
-
-  local timeString = string.format("%02d:%02d:%02d.%03d", hours, minutes % 60, seconds % 60, timeInMilliseconds % 1000)
-  return timeString
+---Check if string contains a substring (Courtesy of Fararagi although fr I was just lazy)
+---@param str string the string to check
+---@param substr string the substring
+---@param caseSensitive? boolean
+---@return boolean
+function Helpers.String:StringContains(str, substr, caseSensitive)
+  caseSensitive = caseSensitive or false
+  if caseSensitive then
+    return string.find(str, substr, 1, true) ~= nil
+  else
+    str = string.lower(str)
+    substr = string.lower(substr)
+    return string.find(str, substr, 1, true) ~= nil
+  end
 end
 
-function String:LevenshteinDistance(str1, str2, case_sensitive)
+
+function Helpers.String:LevenshteinDistance(str1, str2, case_sensitive)
   if not case_sensitive then
     str1 = string.lower(str1)
     str2 = string.lower(str2)
@@ -46,7 +53,7 @@ function String:LevenshteinDistance(str1, str2, case_sensitive)
   return matrix[len1][len2]
 end
 
-function String:FindClosestMatch(user_input, valid_options, case_sensitive)
+function Helpers.String:FindClosestMatch(user_input, valid_options, case_sensitive)
   local min_distance = math.huge -- Represents infinity, just to initialize the variable
   local closest_match = nil
   for _, option in ipairs(valid_options) do
