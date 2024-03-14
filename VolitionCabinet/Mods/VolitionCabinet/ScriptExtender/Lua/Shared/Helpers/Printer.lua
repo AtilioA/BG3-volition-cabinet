@@ -89,9 +89,10 @@ function VolitionCabinetPrinter:PrintTest(debugLevel, ...)
         local s
         if self.DebugLevel > 1 then
             s = string.format("[%s][%s%s][%s]: ", self.Prefix, "TEST-", debugLevel,
-                String:MonotonicTimeToString())
+                Helpers.Format:MonotonicTimeToString())
         else
-            s = string.format("[%s][%s%s][%s]: ", self.Prefix, "TEST-", debugLevel, String:MonotonicTimeToString())
+            s = string.format("[%s][%s%s][%s]: ", self.Prefix, "TEST-", debugLevel,
+                Helpers.Format:MonotonicTimeToString())
         end
 
         if self.ApplyColor then
@@ -138,9 +139,10 @@ function VolitionCabinetPrinter:PrintDebug(debugLevel, ...)
         local s
         if self.DebugLevel > 1 then
             s = string.format("[%s][%s%s][%s]: ", self.Prefix, "DEBUG-", debugLevel,
-                String:MonotonicTimeToString())
+                Helpers.Format:MonotonicTimeToString())
         else
-            s = string.format("[%s][%s%s][%s]: ", self.Prefix, "DEBUG-", debugLevel, String:MonotonicTimeToString())
+            s = string.format("[%s][%s%s][%s]: ", self.Prefix, "DEBUG-", debugLevel,
+                Helpers.Format:MonotonicTimeToString())
         end
 
         if self.ApplyColor then
@@ -167,7 +169,7 @@ function VolitionCabinetPrinter:Dump(info, useOptions, includeTime)
         end
 
         if includeTime == true then
-            s = string.format("%s[%s]: ", s, String:MonotonicTimeToString())
+            s = string.format("%s[%s]: ", s, Helpers.Format:MonotonicTimeToString())
         end
 
         s = s .. " "

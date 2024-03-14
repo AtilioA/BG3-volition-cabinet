@@ -159,3 +159,12 @@ function Helpers.Format:CreateHandle()
         end
     end)
 end
+
+function Helpers.Format:MonotonicTimeToString()
+    local timeInMilliseconds = Ext.Utils.MonotonicTime()
+    local seconds = math.floor(timeInMilliseconds / 1000)
+    local minutes = math.floor(seconds / 60)
+    local hours = math.floor(minutes / 60)
+
+    return string.format("%02d:%02d:%02d.%03d", hours, minutes % 60, seconds % 60, timeInMilliseconds % 1000)
+end
