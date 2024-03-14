@@ -42,7 +42,7 @@ function Helpers.Inventory:GetInventory(object, primaryOnly, shallow)
         end
     end
 
-    table.sort(items, function(a,b) return a.Name < b.Name end)
+    table.sort(items, function(a, b) return a.Name < b.Name end)
     return items
 end
 
@@ -73,12 +73,14 @@ function Helpers.Inventory:ItemIsInInventory(item, holder)
     local itemEntity = Helpers.Object:GetEntity(item)
     local holderEntity = Helpers.Object:GetEntity(holder)
     if itemEntity ~= nil and holderEntity ~= nil then
-        local parentInventory = itemEntity.InventoryMember and itemEntity.InventoryMember.Inventory.InventoryIsOwned.Owner
+        local parentInventory = itemEntity.InventoryMember and
+        itemEntity.InventoryMember.Inventory.InventoryIsOwned.Owner
         while parentInventory do
             if parentInventory == holderEntity then
                 return true
             else
-                parentInventory = parentInventory.InventoryMember and parentInventory.InventoryMember.Inventory.InventoryIsOwned.Owner
+                parentInventory = parentInventory.InventoryMember and
+                parentInventory.InventoryMember.Inventory.InventoryIsOwned.Owner
             end
         end
     end
@@ -100,8 +102,8 @@ function Helpers.Inventory:GetItemTemplateInInventory(template, holder)
                     if esvItem ~= nil then
                         local itemTemplate = esvItem.Template
                         if itemTemplate.Name == template
-                        or itemTemplate.TemplateName == templateGuid
-                        or itemTemplate.Id == templateGuid then
+                            or itemTemplate.TemplateName == templateGuid
+                            or itemTemplate.Id == templateGuid then
                             return itemObj.Item
                         else
                             local containedItem = self:GetItemTemplateInInventory(template, itemObj.Item.Uuid.EntityUuid)
@@ -124,7 +126,7 @@ end
 ---@return EntityHandle[]
 function Helpers.Inventory:GetAllItemsWithTemplateInInventory(template, holder, primaryOnly, shallow)
     local items = {}
-    for _,  item in pairs(self:GetInventory(holder, primaryOnly, shallow)) do
+    for _, item in pairs(self:GetInventory(holder, primaryOnly, shallow)) do
         if item.TemplateId == template then
             table.insert(items, item)
         end
@@ -147,9 +149,9 @@ function Helpers.Inventory:ItemTemplateIsInInventory(template, holder)
                     if object ~= nil then
                         local itemTemplate = object.Template
                         if itemTemplate.Name == template
-                        or itemTemplate.TemplateName == templateGuid
-                        or itemTemplate.Id == templateGuid
-                        or self:ItemTemplateIsInInventory(template, itemObj.Item.Uuid.EntityUuid) then
+                            or itemTemplate.TemplateName == templateGuid
+                            or itemTemplate.Id == templateGuid
+                            or self:ItemTemplateIsInInventory(template, itemObj.Item.Uuid.EntityUuid) then
                             return true
                         end
                     end
@@ -240,5 +242,30 @@ function Helpers.Inventory:GenerateTreasureTable(treasureTable, target, level, f
         Osi.ToInventory(bag, targetGuid)
     else
         Osi.GenerateTreasure(targetGuid, treasureTable, level, finder)
+    end
+end
+
+function Helpers.Inventory:IsItemInPartyInventory(item)
+    local itemEntity = Ext.Entity.Get(item)
+    -- For some reason InPartyInventory is not being set as one would expect 🤔
+    return itemEntity.InventoryMember ~= nil or itemEntity.ServerItem.InPartyInventory == true
+  end
+
+
+---Check if item is (probably) quest related. Adapted from Fararagi (this was from the Auto Sell Loot mod though, not Mark Book as Read)
+---@param item GUIDSTRING|ItemEntity
+---@return boolean
+function Helpers.Inventory:IsProbablyQuestItem(item)
+    if type(item) == "string" then
+        ---@cast item string
+        return Osi.IsStoryItem(item) == 1 or Helpers.String:StringContains(Osi.GetStatString(item), "quest") or
+            Helpers.String:StringContains(item, "quest")
+    elseif type(item) == "userdata" then
+        ---@cast item ItemEntity
+        local uuid = item.Uuid.EntityUuid or Helpers.Format.NullUuid
+        return Osi.IsStoryItem(uuid) == 1 or Helpers.String:StringContains(item.Data.StatsId, "quest") or
+            Helpers.String:StringContains(item.ServerItem.Template.Name, "quest")
+    else
+        return false
     end
 end
