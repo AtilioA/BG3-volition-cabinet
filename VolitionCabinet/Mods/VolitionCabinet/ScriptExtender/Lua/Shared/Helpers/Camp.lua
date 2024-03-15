@@ -6,7 +6,9 @@
 Helpers.Camp = _Class:Create("HelperCamp", Helper)
 
 
+--- Gets the local UUID of the camp chest template.
+---@return string
 function Helpers.Camp:GetChestTemplateUUID()
   local chestName = Osi.DB_Camp_UserCampChest:Get(nil, nil)[1][2]
-  return chestName
+  return tostring(chestName)
 end
