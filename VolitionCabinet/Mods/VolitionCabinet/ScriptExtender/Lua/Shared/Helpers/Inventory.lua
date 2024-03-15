@@ -91,7 +91,7 @@ end
 ---@param holder EntityHandle|Guid
 ---@return EntityHandle|nil
 function Helpers.Inventory:GetItemTemplateInInventory(template, holder)
-    local templateGuid = Helpers.Format:Guid(template)
+    local templateID = Helpers.Format:GetTemplateName(template)
     local holderEntity = Helpers.Object:GetEntity(holder)
     if holderEntity ~= nil then
         local inventory = holderEntity.InventoryOwner
@@ -101,9 +101,9 @@ function Helpers.Inventory:GetItemTemplateInInventory(template, holder)
                     local esvItem = Helpers.Object:GetItemObject(itemObj.Item)
                     if esvItem ~= nil then
                         local itemTemplate = esvItem.Template
-                        if itemTemplate.Name == template
-                            or itemTemplate.TemplateName == templateGuid
-                            or itemTemplate.Id == templateGuid then
+                        if itemTemplate.Name == templateID
+                            or itemTemplate.TemplateName == templateID
+                            or itemTemplate.Id == templateID then
                             return itemObj.Item
                         else
                             local containedItem = self:GetItemTemplateInInventory(template, itemObj.Item.Uuid.EntityUuid)
@@ -281,5 +281,5 @@ end
 ---@param item EntityHandle|Guid
 ---@return boolean
 function Helpers.Inventory:IsItemInCampChest(item)
-    return Helpers.Inventory:ItemIsInInventory(item, Helpers.Camp:GetChestTemplateUUID())
+    return Helpers.Inventory:GetItemTemplateInInventory(item, Helpers.Camp:GetChestTemplateUUID()) ~= nil
 end
