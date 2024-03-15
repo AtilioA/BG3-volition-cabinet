@@ -38,7 +38,14 @@ function Helpers.Config:LoadConfig(filePath)
   local configFileContent = Ext.IO.LoadFile(self:GetModConfigPath(filePath))
   if configFileContent and configFileContent ~= "" then
     -- VCPrint(1, "Loaded config file: " .. filePath)
-    return Ext.Json.Parse(configFileContent)
+    local success, parsed = pcall(Ext.Json.Parse, configFileContent)
+    if success then
+      return parsed
+    else
+      VCPrint(0, "Failed to parse config file: " .. filePath .. " - Regenerating default config.")
+      self:SaveConfig(self.configFilePath, self.defaultConfig)
+      return self.currentConfig
+    end
   else
     VCPrint(0, "File not found: " .. filePath)
     return nil
@@ -68,7 +75,6 @@ function Helpers.Config:UpdateConfig(existingConfig, defaultConfig)
 
   for key, newValue in pairs(defaultConfig) do
     local oldValue = existingConfig[key]
-
 
     if oldValue == nil then
       -- Add missing keys from the default config
@@ -122,7 +128,7 @@ function Helpers.Config:LoadJSONConfig()
   if not jsonConfig then
     jsonConfig = self.defaultConfig
     self:SaveConfig(self.configFilePath, jsonConfig)
-    VCPrint(0, "Default config file loaded.")
+    VCPrint(0, "Created config file with default options.")
   else
     if self:UpdateConfig(jsonConfig, self.defaultConfig) then
       self:SaveConfig(self.configFilePath, jsonConfig)
