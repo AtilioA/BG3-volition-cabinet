@@ -16,7 +16,7 @@ end
 ---@param character any character to check.
 ---@param shallow boolean If true, recursively checks inside bags and containers.
 ---@return table | nil - table of Book items in the character's inventory, or nil if none found.
-function Helpers.Book:GetBookInInventory(character, shallow)
+function Helpers.Book:GetBooksInInventory(character, shallow)
   local inventory = Helpers.Inventory:GetInventory(character, false, shallow)
   local matchedItems = {}
 
