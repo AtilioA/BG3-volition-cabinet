@@ -15,6 +15,7 @@ RequireFiles("Shared/Helpers/", {
     "ModVars",
     "UserVars",
     "Camp",
+    "Book",
     "Character",
     "Teleporting",
     "Grid",
@@ -34,4 +35,5 @@ RequireFiles("Shared/Helpers/", {
     "String",
     "Timer",
     "Commander",
+    "Ware",
 })
