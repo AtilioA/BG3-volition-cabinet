@@ -74,13 +74,13 @@ function Helpers.Inventory:ItemIsInInventory(item, holder)
     local holderEntity = Helpers.Object:GetEntity(holder)
     if itemEntity ~= nil and holderEntity ~= nil then
         local parentInventory = itemEntity.InventoryMember and
-        itemEntity.InventoryMember.Inventory.InventoryIsOwned.Owner
+            itemEntity.InventoryMember.Inventory.InventoryIsOwned.Owner
         while parentInventory do
             if parentInventory == holderEntity then
                 return true
             else
                 parentInventory = parentInventory.InventoryMember and
-                parentInventory.InventoryMember.Inventory.InventoryIsOwned.Owner
+                    parentInventory.InventoryMember.Inventory.InventoryIsOwned.Owner
             end
         end
     end
@@ -249,10 +249,9 @@ function Helpers.Inventory:IsItemInPartyInventory(item)
     local itemEntity = Ext.Entity.Get(item)
     -- For some reason InPartyInventory is not being set as one would expect 🤔
     return itemEntity.InventoryMember ~= nil or itemEntity.ServerItem.InPartyInventory == true
-  end
+end
 
-
----Check if item is (probably) quest related. Adapted from Fararagi (this was from the Auto Sell Loot mod though, not Mark Book as Read)
+--- Check if item is (probably) quest related. Adapted from Fararagi (this was from the Auto Sell Loot mod though, not Mark Book as Read)
 ---@param item GUIDSTRING|ItemEntity
 ---@return boolean
 function Helpers.Inventory:IsProbablyQuestItem(item)
@@ -268,4 +267,19 @@ function Helpers.Inventory:IsProbablyQuestItem(item)
     else
         return false
     end
+end
+
+--- Get the inventory of the camp chest
+---@param shallow? boolean
+function Helpers.Inventory:GetCampChestInventory(shallow)
+    local chestGUID = Helpers.Camp:GetChestTemplateUUID()
+    if chestGUID then
+        return Helpers.Inventory:GetInventory(chestGUID, true, shallow)
+    end
+end
+
+---@param item EntityHandle|Guid
+---@return boolean
+function Helpers.Inventory:IsItemInCampChest(item)
+    return Helpers.Inventory:ItemIsInInventory(item, Helpers.Camp:GetChestTemplateUUID())
 end
