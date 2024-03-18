@@ -80,7 +80,7 @@ function Helpers.Config:UpdateConfig(existingConfig, defaultConfig)
       -- Add missing keys from the default config
       existingConfig[key] = newValue
       updated = true
-      VCPrint(0, "Added new config option: " .. tostring(key))
+      VCPrint(0, "Added new config option: " .. tostring(key) .. " to " .. self.configFilePath)
     elseif type(oldValue) ~= type(newValue) then
       -- If the type has changed...
       if type(newValue) == "table" then
@@ -92,12 +92,12 @@ function Helpers.Config:UpdateConfig(existingConfig, defaultConfig)
           end
         end
         updated = true
-        VCPrint(0, "Updated config structure for: " .. tostring(key))
+        VCPrint(0, "Updated config structure for: " .. tostring(key) .. " (" .. self.configFilePath .. ")")
       else
         -- ...otherwise, just replace with the new value
         existingConfig[key] = newValue
         updated = true
-        VCPrint(0, "Updated config value for: " .. tostring(key))
+        VCPrint(0, "Updated config value for: " .. tostring(key) .. " (" .. self.configFilePath .. ")")
       end
     elseif type(newValue) == "table" then
       -- Recursively update for nested tables
@@ -113,7 +113,7 @@ function Helpers.Config:UpdateConfig(existingConfig, defaultConfig)
       -- Remove keys that are not in the default config
       existingConfig[key] = nil
       updated = true
-      VCPrint(0, "Removed deprecated config option: " .. tostring(key))
+      VCPrint(0, "Removed deprecated config option: " .. tostring(key) .. " (" .. self.configFilePath .. ")")
     end
   end
 
@@ -128,11 +128,11 @@ function Helpers.Config:LoadJSONConfig()
   if not jsonConfig then
     jsonConfig = self.defaultConfig
     self:SaveConfig(self.configFilePath, jsonConfig)
-    VCPrint(0, "Created config file with default options.")
+    VCPrint(0, "Created config file with default options." .. " (" .. self.configFilePath .. ")")
   else
     if self:UpdateConfig(jsonConfig, self.defaultConfig) then
       self:SaveConfig(self.configFilePath, jsonConfig)
-      VCPrint(0, "Config file updated with new options.")
+      VCPrint(0, "Config file updated with new options." .. " (" .. self.configFilePath .. ")")
     else
       -- Commented out because it's too verbose and we don't have access to a proper Printer object here
       -- VCPrint(1, "Config file loaded.")
