@@ -27,7 +27,7 @@ end
 --- Generates the full path to a configuration file, starting from the Script Extender folder.
 --- @param filePath string The file name or relative path within the folderName.
 --- @return string The full path to the config file.
-function VCHelpers.Config:GetModConfigPath(filePath)
+function VCHelpers.Config:GetModFolderPath(filePath)
   return self.folderName .. '/' .. filePath
 end
 
@@ -35,7 +35,7 @@ end
 --- @param filePath string The file path to load the configuration from.
 --- @return table|nil The loaded configuration table, or nil if loading failed.
 function VCHelpers.Config:LoadConfig(filePath)
-  local configFileContent = Ext.IO.LoadFile(self:GetModConfigPath(filePath))
+  local configFileContent = Ext.IO.LoadFile(self:GetModFolderPath(filePath))
   if configFileContent and configFileContent ~= "" then
     -- VCPrint(1, "Loaded config file: " .. filePath)
     local success, parsed = pcall(Ext.Json.Parse, configFileContent)
@@ -57,12 +57,12 @@ end
 --- @param config table The configuration table to save.
 function VCHelpers.Config:SaveConfig(filePath, config)
   local configFileContent = Ext.Json.Stringify(config, { Beautify = true })
-  Ext.IO.SaveFile(self:GetModConfigPath(filePath), configFileContent)
+  Ext.IO.SaveFile(self:GetModFolderPath(filePath), configFileContent)
 end
 
 --- Saves the current configuration to its file, using the object's values.
 function VCHelpers.Config:SaveCurrentConfig()
-  Ext.IO.SaveFile(self:GetModConfigPath(self.configFilePath), Ext.Json.Stringify(self.currentConfig, { Beautify = true }))
+  Ext.IO.SaveFile(self:GetModFolderPath(self.configFilePath), Ext.Json.Stringify(self.currentConfig, { Beautify = true }))
 end
 
 --- Updates an existing configuration with values from the default configuration.

@@ -35,6 +35,7 @@ end
 --- @param defaultItems table A table of default items to initialize the list with.
 function ItemList:New(filePath, defaultItems, listType)
     local self = setmetatable({}, ItemList)
+    -- self.filePath = VCHelpers.Config:GetModFolderPath(filePath)
     self.filePath = filePath
     self.listType = listType or ListTypes.BLOCKLIST -- Default to "blocklist" if not provided
     self.defaultItems = defaultItems or {}
