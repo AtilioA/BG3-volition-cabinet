@@ -3,12 +3,12 @@
 --]]
 
 ---@class HelperBook: Helper
-Helpers.Book = _Class:Create("HelperBook", Helper)
+VCHelpers.Book = _Class:Create("HelperBook", Helper)
 
 --- Checks if an object is a Book.
 ---@param object GUIDSTRING The object to check.
 ---@return boolean - true if the object is a Book, false otherwise.
-function Helpers.Book:IsBook(object)
+function VCHelpers.Book:IsBook(object)
   return Osi.GetBookID(object) ~= nil
 end
 
@@ -16,12 +16,12 @@ end
 ---@param character any character to check.
 ---@param shallow boolean If true, recursively checks inside bags and containers.
 ---@return table | nil - table of Book items in the character's inventory, or nil if none found.
-function Helpers.Book:GetBooksInInventory(character, shallow)
-  local inventory = Helpers.Inventory:GetInventory(character, false, shallow)
+function VCHelpers.Book:GetBooksInInventory(character, shallow)
+  local inventory = VCHelpers.Inventory:GetInventory(character, false, shallow)
   local matchedItems = {}
 
   for _, item in ipairs(inventory) do
-    local itemObject = Helpers.Object:GetItemUUID(item)
+    local itemObject = VCHelpers.Object:GetItemUUID(item)
     if self:IsBook(itemObject) then
       table.insert(matchedItems, itemObject)
     end

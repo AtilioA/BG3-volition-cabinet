@@ -4,9 +4,9 @@
 --]]
 
 ---@class HelperWare: Helper
-Helpers.Ware = _Class:Create("HelperWare", Helper)
+VCHelpers.Ware = _Class:Create("HelperWare", Helper)
 
-function Helpers.Ware:IsWare(object)
+function VCHelpers.Ware:IsWare(object)
   if type(object) == "string" then
     local objectEntity = Ext.Entity.Get(object)
     if objectEntity ~= nil then
@@ -19,8 +19,8 @@ function Helpers.Ware:IsWare(object)
   return false
 end
 
-function Helpers.Ware:MarkAsWare(item)
-  if not Helpers.Inventory:IsProbablyQuestItem(item) then
+function VCHelpers.Ware:MarkAsWare(item)
+  if not VCHelpers.Inventory:IsProbablyQuestItem(item) then
     if type(item) == "string" then
       -- VCPrint(2, "Marking " .. item .. " as ware")
       local itemEntity = Ext.Entity.Get(item)

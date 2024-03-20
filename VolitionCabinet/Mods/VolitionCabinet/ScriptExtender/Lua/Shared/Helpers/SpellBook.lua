@@ -1,13 +1,13 @@
 ---@class HelperSpellBook: Helper
-Helpers.SpellBook = _Class:Create("HelperSpellBook", Helper)
+VCHelpers.SpellBook = _Class:Create("HelperSpellBook", Helper)
 
 -- Spells from scrolls are sourceType "ActiveDefense"
 ---@param object any
 ---@param learnedSpell string
 ---@param sourceType SpellSourceType
 ---@param class Guid
-function Helpers.SpellBook:RemoveSpell(object, learnedSpell, sourceType, class)
-    local entity = Helpers.Object:GetEntity(object)
+function VCHelpers.SpellBook:RemoveSpell(object, learnedSpell, sourceType, class)
+    local entity = VCHelpers.Object:GetEntity(object)
     if entity == nil then return end
 
     if entity.HotbarContainer ~= nil then
@@ -120,7 +120,7 @@ local skills = {
 
 -- Character must have passive with "DynamicAnimationTag" "c4598bdb-fc07-40dd-a62c-90cc138bd76f"
 ---@param object Guid
-function Helpers.SpellBook:SetMonkAnimations(object)
+function VCHelpers.SpellBook:SetMonkAnimations(object)
     Osi.AddBoosts(object, "ActionResource(KiPoint, 10, 0)", "", object)
     Osi.ApplyStatus(object, "FOCUSCORE_MONKANIMATION", -1)
     Osi.AddSpell(object, "Projectile_RayOfFrost_Monk")
@@ -154,7 +154,7 @@ function Helpers.SpellBook:SetMonkAnimations(object)
                 entity:Replicate("SpellBook")
             end
         end
-    
+
         for _, spell in pairs(entity.AddedSpells.Spells) do
             if skills[spell.SpellId.OriginatorPrototype] then
                 spell.SpellId.SourceType = source
@@ -215,7 +215,7 @@ function Helpers.SpellBook:SetMonkAnimations(object)
 
     Ext.Entity.Subscribe("PlayerPrepareSpell", function()
         for _, spell in ipairs(entity.PlayerPrepareSpell.Spells) do
-            if skills[spell.OriginatorPrototype]then
+            if skills[spell.OriginatorPrototype] then
                 spell.SourceType = source
                 spell.ProgressionSource = progression
             end

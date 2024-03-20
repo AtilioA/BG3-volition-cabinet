@@ -35,9 +35,9 @@ end
 function Events.Osiris.StatusRemoved:CreateParams(target, status, causee, storyActionID)
     local params = VCParams.StatusRemoved:New {
         Target = Ext.Entity.Get(target),
-        TargetGuid = Helpers.Format:Guid(target),
+        TargetGuid = VCHelpers.Format:Guid(target),
         Attacker = Ext.Entity.Get(causee),
-        AttackerGuid = Helpers.Format:Guid(causee),
+        AttackerGuid = VCHelpers.Format:Guid(causee),
         StatusId = status,
         StoryID = storyActionID,
     }

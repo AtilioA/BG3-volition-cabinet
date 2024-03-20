@@ -17,10 +17,10 @@ Events.Osiris.UsedItem = VCOsirisEventBase:CreateEvent("VCEventUsedItem",
 ---@return VCUsedItemParams
 function Events.Osiris.UsedItem:CreateParams(character, template, item)
     return VCParams.UsedItem:New {
-        Character = Helpers.Object:GetCharacter(character),
-        CharacterGuid = Helpers.Format:Guid(character),
-        Template = Helpers.Format:Guid(template),
-        Item = Helpers.Object:GetItem(item),
-        ItemGuid = Helpers.Format:Guid(item),
+        Character = VCHelpers.Object:GetCharacter(character),
+        CharacterGuid = VCHelpers.Format:Guid(character),
+        Template = VCHelpers.Format:Guid(template),
+        Item = VCHelpers.Object:GetItem(item),
+        ItemGuid = VCHelpers.Format:Guid(item),
     }
 end

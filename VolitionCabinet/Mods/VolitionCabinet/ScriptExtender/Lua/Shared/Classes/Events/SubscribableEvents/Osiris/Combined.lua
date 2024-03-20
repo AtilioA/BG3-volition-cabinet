@@ -101,7 +101,7 @@ function Events.Osiris.Combined:CreateParams(item1, item2, item3, item4, item5, 
     for i, item in ipairs { item1, item2, item3, item4, item5 } do
         if item ~= "NULL_00000000-0000-0000-0000-000000000000" then
             local itemNum = "Item" .. i
-            params[itemNum .. "Guid"] = Helpers.Format:Guid(item)
+            params[itemNum .. "Guid"] = VCHelpers.Format:Guid(item)
             local itemObj = Ext.Entity.Get(item)
             if itemObj ~= nil then
                 params[itemNum] = itemObj
@@ -111,11 +111,11 @@ function Events.Osiris.Combined:CreateParams(item1, item2, item3, item4, item5, 
         end
     end
 
-    params.CharacterGuid = Helpers.Format:Guid(character)
+    params.CharacterGuid = VCHelpers.Format:Guid(character)
     params.Character = Ext.Entity.Get(character)
 
     if newItem ~= "NULL_00000000-0000-0000-0000-000000000000" then
-        params.NewItemGuid = Helpers.Format:Guid(newItem)
+        params.NewItemGuid = VCHelpers.Format:Guid(newItem)
         local itemObj = Ext.Entity.Get(newItem)
         if itemObj ~= nil then
             params.NewItem = itemObj

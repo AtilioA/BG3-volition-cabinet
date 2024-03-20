@@ -1,14 +1,14 @@
 ---@class HelperPassive: Helper
 ---@field CurrentPassives table<Guid, Guid>
-Helpers.Passive = _Class:Create("HelperPassive", Helper)
+VCHelpers.Passive = _Class:Create("HelperPassive", Helper)
 
 -- Passive.field_8 is the source, e.g. ItemEntity, CharacterEntity, ProgressionMeta
 -- Passive.field_10 is the target, e.g. ItemEntity or CharacterEntity
 ---@param object any
 ---@param passive string
 ---@return PassiveComponent|nil
-function Helpers.Passive:GetPassive(object, passive)
-    local entity = Helpers.Object:GetEntity(object)
+function VCHelpers.Passive:GetPassive(object, passive)
+    local entity = VCHelpers.Object:GetEntity(object)
     if entity ~= nil then
         local passivesContainer = entity.PassiveContainer
         if passivesContainer ~= nil then
@@ -24,8 +24,8 @@ end
 ---@param object any
 ---@param passive string
 ---@return boolean
-function Helpers.Passive:HasActivePassive(object, passive)
-    local entity = Helpers.Object:GetEntity(object)
+function VCHelpers.Passive:HasActivePassive(object, passive)
+    local entity = VCHelpers.Object:GetEntity(object)
     if entity ~= nil then
         if self:GetPassive(entity, passive) ~= nil then
             if entity.ServerToggledPassives ~= nil and entity.ServerToggledPassives.Passives[passive] ~= nil then

@@ -1,7 +1,7 @@
 ---@class HelperLog: Helper
-Helpers.Log = _Class:Create("HelperLog", Helper)
+VCHelpers.Log = _Class:Create("HelperLog", Helper)
 
-function Helpers.Log:LogGameStates()
+function VCHelpers.Log:LogGameStates()
     ---@param e EsvLuaGameStateChangedEvent|EclLuaGameStateChangedEvent
     Ext.Events.GameStateChanged:Subscribe(function(e)
         VCDebug(string.format("%s --> %s", e.FromState, e.ToState))

@@ -33,7 +33,7 @@ Events.Osiris.CastedSpell = VCOsirisEventBase:CreateEvent("VCEventCastedSpell",
 function Events.Osiris.CastedSpell:CreateParams(caster, spell, spellType, spellElement, storyActionID)
     local params = VCParams.CastedSpell:New {
         Caster = Ext.Entity.Get(caster),
-        CasterGuid = Helpers.Format:Guid(caster),
+        CasterGuid = VCHelpers.Format:Guid(caster),
         Spell = spell,
         SpellType = spellType,
         SpellElement = spellElement,

@@ -16,5 +16,5 @@ RequireFiles("Shared/", {
 })
 
 if Ext.Debug.IsDeveloperMode() then
-    Helpers.Log:LogGameStates()
+    VCHelpers.Log:LogGameStates()
 end

@@ -1,13 +1,13 @@
 ---@class HelperResource: Helper
 ---@field ActionResources table<string, Guid>
-Helpers.Resource = _Class:Create("HelperResource", Helper, {
+VCHelpers.Resource = _Class:Create("HelperResource", Helper, {
     ActionResources = {}
 })
 
 Ext.Events.SessionLoaded:Subscribe(function()
     for _, resourceGuid in pairs(Ext.StaticData.GetAll("ActionResource")) do
         local resource = Ext.StaticData.Get(resourceGuid, "ActionResource")
-        Helpers.Resource.ActionResources[resource.Name] = resourceGuid
+        VCHelpers.Resource.ActionResources[resource.Name] = resourceGuid
     end
 end)
 
@@ -17,8 +17,8 @@ end)
 ---@param amount "Max"|number
 ---@param subResourceId? integer Used for spell slot levels, etc.
 ---@param addTo? boolean Add to the current resource amount instead of overwriting
-function Helpers.Resource:SetActionResource(object, resource, amount, subResourceId, addTo)
-    local entity = Helpers.Object:GetEntity(object)
+function VCHelpers.Resource:SetActionResource(object, resource, amount, subResourceId, addTo)
+    local entity = VCHelpers.Object:GetEntity(object)
     if entity ~= nil then
         local res = self.ActionResources[resource] or resource
         local entityRes = entity.ActionResources.Resources[res]
@@ -45,8 +45,8 @@ end
 ---@param resource "ActionPoint"|"BonusActionPoint"|"ReactionActionPoint"|"FocusSoulSpellCharge"|Guid|string Will accept resource guids or names
 ---@param subResourceId? integer Used for spell slot levels, etc.
 ---@return integer
-function Helpers.Resource:GetActionResource(object, resource, subResourceId)
-    local entity = Helpers.Object:GetEntity(object)
+function VCHelpers.Resource:GetActionResource(object, resource, subResourceId)
+    local entity = VCHelpers.Object:GetEntity(object)
     if entity ~= nil then
         local res = self.ActionResources[resource] or resource
         local entityRes = entity.ActionResources.Resources[res]

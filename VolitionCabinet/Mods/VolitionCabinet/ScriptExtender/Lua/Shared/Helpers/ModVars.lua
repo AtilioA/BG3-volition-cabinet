@@ -1,6 +1,6 @@
 ---@class HelperModVars: Helper
-Helpers.ModVars = _Class:Create("HelperModVars", Helper)
-Helpers.ModVars.DefaultProperties = {
+VCHelpers.ModVars = _Class:Create("HelperModVars", Helper)
+VCHelpers.ModVars.DefaultProperties = {
     Server = true,
     Client = true,
     Persistent = true,
@@ -14,18 +14,18 @@ Helpers.ModVars.DefaultProperties = {
 }
 
 ---@param module? Guid
-function Helpers.ModVars:Get(module)
+function VCHelpers.ModVars:Get(module)
     return Ext.Vars.GetModVariables(module or ModuleUUID)
 end
 
 ---@param module? Guid
-function Helpers.ModVars:Sync(module)
+function VCHelpers.ModVars:Sync(module)
     Ext.Vars.SyncModVariables(module or ModuleUUID)
 end
 
 ---@param key any
 ---@param module? Guid
-function Helpers.ModVars:Dirty(key, module)
+function VCHelpers.ModVars:Dirty(key, module)
     Ext.Vars.DirtyModVariables(module or ModuleUUID, key)
 end
 
@@ -33,11 +33,11 @@ end
 ---@param module? Guid
 ---@param initial? any Value to initialize variable as
 ---@param properties? table
-function Helpers.ModVars:Register(key, module, initial, properties)
+function VCHelpers.ModVars:Register(key, module, initial, properties)
     local mod = module or ModuleUUID
     properties = properties or {}
 
-    for k,v in pairs(self.DefaultProperties) do
+    for k, v in pairs(self.DefaultProperties) do
         if properties[k] == nil then
             properties[k] = v
         end
@@ -54,7 +54,7 @@ function Helpers.ModVars:Register(key, module, initial, properties)
                         self:Dirty(key, mod)
                     end
                 end
-            end, {Priority = 1000})
+            end, { Priority = 1000 })
         end
     end
 end

@@ -1,17 +1,17 @@
 ---@class HelperAppearance: Helper
 ---@field CurrentAppearances table<Guid, Guid>
-Helpers.Appearance = _Class:Create("HelperAppearance", Helper, {
+VCHelpers.Appearance = _Class:Create("HelperAppearance", Helper, {
     CurrentAppearances = {}
 })
 
 ---@param item any
 ---@param appearance any
-function Helpers.Appearance:SetItemAppearance(item, appearance)
-    local entity = Helpers.Object:GetItem(item)
+function VCHelpers.Appearance:SetItemAppearance(item, appearance)
+    local entity = VCHelpers.Object:GetItem(item)
     if entity ~= nil then
         local appearanceUUID = Ext.Template.GetTemplate(appearance) ~= nil and appearance
         if not appearanceUUID then
-            local appearanceEntity = Helpers.Object:GetItem(appearance)
+            local appearanceEntity = VCHelpers.Object:GetItem(appearance)
             if appearanceEntity ~= nil then
                 appearanceUUID = appearanceEntity.GameObjectVisual.RootTemplateId
             end
@@ -26,19 +26,19 @@ function Helpers.Appearance:SetItemAppearance(item, appearance)
                 else
                     e:Unsubscribe()
                 end
-            end, {Entity = entity})
+            end, { Entity = entity })
         end
     end
 end
 
 ---@param characer any
 ---@param appearance any
-function Helpers.Appearance:SetCharacterAppearance(characer, appearance)
-    local entity = Helpers.Object:GetCharacter(characer)
+function VCHelpers.Appearance:SetCharacterAppearance(characer, appearance)
+    local entity = VCHelpers.Object:GetCharacter(characer)
     if entity ~= nil then
         local appearanceUUID = Ext.Template.GetTemplate(appearance) ~= nil and appearance
         if not appearanceUUID then
-            local appearanceEntity = Helpers.Object:GetCharacter(appearance)
+            local appearanceEntity = VCHelpers.Object:GetCharacter(appearance)
             if appearanceEntity ~= nil then
                 appearanceUUID = appearanceEntity.GameObjectVisual.RootTemplateId
             end
@@ -53,14 +53,14 @@ function Helpers.Appearance:SetCharacterAppearance(characer, appearance)
                 else
                     e:Unsubscribe()
                 end
-            end, {Entity = entity})
+            end, { Entity = entity })
         end
     end
 end
 
 ---@param object any
-function Helpers.Appearance:UnsetAppearance(object)
-    local entity = Helpers.Object:GetEntity(object)
+function VCHelpers.Appearance:UnsetAppearance(object)
+    local entity = VCHelpers.Object:GetEntity(object)
     if entity ~= nil and self.CurrentAppearances[entity.Uuid.EntityUuid] then
         self.CurrentAppearances[entity.Uuid.EntityUuid] = nil
         entity:Replicate("GameObjectVisual")
@@ -69,15 +69,15 @@ end
 
 ---@param object any
 ---@return string|nil
-function Helpers.Appearance:GetObjectColorPreset(object)
+function VCHelpers.Appearance:GetObjectColorPreset(object)
     local colorPreset
 
-    local entity = Helpers.Object:GetEntity(object)
+    local entity = VCHelpers.Object:GetEntity(object)
     if entity ~= nil then
         if entity.ItemDye ~= nil and entity.ItemDye.Color ~= nil then
             colorPreset = entity.ItemDye.Color
         else
-            local objectRT = Helpers.Object:GetRootTemplate(entity)
+            local objectRT = VCHelpers.Object:GetRootTemplate(entity)
             if objectRT ~= nil then
                 colorPreset = objectRT.ColorPreset
             end
@@ -88,8 +88,8 @@ function Helpers.Appearance:GetObjectColorPreset(object)
 end
 
 ---@param object any
-function Helpers.Appearance:RemoveMaterialOverrides(object)
-    local entity = Helpers.Object:GetEntity(object)
+function VCHelpers.Appearance:RemoveMaterialOverrides(object)
+    local entity = VCHelpers.Object:GetEntity(object)
     if entity ~= nil and entity.MaterialParameterOverride ~= nil then
         entity.MaterialParameterOverride.field_0 = {}
         entity:Replicate("MaterialParameterOverride")

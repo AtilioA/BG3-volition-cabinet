@@ -1,10 +1,10 @@
 ---@class HelperSpellCast: Helper
-Helpers.SpellCast = _Class:Create("HelperSpellCast", Helper)
+VCHelpers.SpellCast = _Class:Create("HelperSpellCast", Helper)
 
 -- Checks if the object is a spellcast entity
 ---@param object any
 ---@return boolean
-function Helpers.SpellCast:IsSpellCast(object)
+function VCHelpers.SpellCast:IsSpellCast(object)
     if type(object) == "userdata" then
         if getmetatable(object) == "EntityProxy" and object.SpellCastState ~= nil then
             return true
@@ -15,8 +15,8 @@ end
 
 ---@param object any
 ---@return EntityHandle|nil
-function Helpers.SpellCast:GetSpellCast(object)
-    local entity = Helpers.Object:GetEntity(object)
+function VCHelpers.SpellCast:GetSpellCast(object)
+    local entity = VCHelpers.Object:GetEntity(object)
     if entity ~= nil then
         if entity.SpellCastIsCasting ~= nil then
             return entity.SpellCastIsCasting.Cast
@@ -28,7 +28,7 @@ end
 
 ---@param object any
 ---@return EntityHandle|nil
-function Helpers.SpellCast:GetCaster(object)
+function VCHelpers.SpellCast:GetCaster(object)
     local cast = self:GetSpellCast(object)
     if cast ~= nil then
         -- get caster
@@ -37,7 +37,7 @@ end
 
 ---@param object any
 ---@return EntityHandle[]
-function Helpers.SpellCast:GetTargets(object)
+function VCHelpers.SpellCast:GetTargets(object)
     local targets = {}
 
     local cast = self:GetSpellCast(object)

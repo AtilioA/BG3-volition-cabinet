@@ -15,9 +15,9 @@ Events.Osiris.Unequipped = VCOsirisEventBase:CreateEvent("VCEventUnequipped",
 ---@return VCUnequippedParams
 function Events.Osiris.Unequipped:CreateParams(item, character)
     local params = VCParams.Unequipped:New {
-        ItemGuid = Helpers.Format:Guid(item),
+        ItemGuid = VCHelpers.Format:Guid(item),
         ItemEntity = Ext.Entity.Get(item),
-        CharacterGuid = Helpers.Format:Guid(character),
+        CharacterGuid = VCHelpers.Format:Guid(character),
         CharacterEntity = Ext.Entity.Get(character),
     }
     return params

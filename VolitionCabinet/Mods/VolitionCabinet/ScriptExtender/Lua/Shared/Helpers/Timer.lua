@@ -1,6 +1,6 @@
 ---@class HelperTimer: Helper
 ---@field RegisteredObjectTimers table<string, table<Guid, boolean>>
-Helpers.Timer = _Class:Create("HelperTimer", Helper, {
+VCHelpers.Timer = _Class:Create("HelperTimer", Helper, {
     RegisteredObjectTimers = {}
 })
 
@@ -10,8 +10,8 @@ Helpers.Timer = _Class:Create("HelperTimer", Helper, {
 ---@param timer string
 ---@param callback fun(object:Guid, esvObject:EsvCharacter|EsvItem, entity:EntityHandle)
 ---@param canRefreshTimer? boolean Whether the time should be refreshed if the timer is launched again before it finishes
-function Helpers.Timer:LaunchRealtimeObjectTimerOneShot(object, time, timer, callback, canRefreshTimer)
-    local objectEntity = Helpers.Object:GetCharacter(object) or Helpers.Object:GetItem(object)
+function VCHelpers.Timer:LaunchRealtimeObjectTimerOneShot(object, time, timer, callback, canRefreshTimer)
+    local objectEntity = VCHelpers.Object:GetCharacter(object) or VCHelpers.Object:GetItem(object)
     if objectEntity ~= nil then
         local objectGuid = objectEntity.Uuid.EntityUuid
 
@@ -27,7 +27,7 @@ function Helpers.Timer:LaunchRealtimeObjectTimerOneShot(object, time, timer, cal
 
             Events.Osiris.ObjectTimerFinished:Subscribe(function(e)
                 if e.Timer == timer and e.ObjectGuid == objectGuid then
-                    callback(objectGuid, Helpers.Object:GetObject(objectEntity), objectEntity)
+                    callback(objectGuid, VCHelpers.Object:GetObject(objectEntity), objectEntity)
                     self.RegisteredObjectTimers[timer][objectGuid] = nil
                     e:Unsubscribe()
                 end
@@ -40,8 +40,8 @@ end
 ---@param time integer milliseconds
 ---@param timer string
 ---@param canRefreshTimer? boolean Whether the time should be refreshed if the timer is launched again before it finishes
-function Helpers.Timer:LaunchRealtimeObjectTimer(object, time, timer, canRefreshTimer)
-    local objectEntity = Helpers.Object:GetCharacter(object) or Helpers.Object:GetItem(object)
+function VCHelpers.Timer:LaunchRealtimeObjectTimer(object, time, timer, canRefreshTimer)
+    local objectEntity = VCHelpers.Object:GetCharacter(object) or VCHelpers.Object:GetItem(object)
     if objectEntity ~= nil then
         local objectGuid = objectEntity.Uuid.EntityUuid
 
@@ -55,7 +55,7 @@ end
 
 ---@param timer string
 ---@param callback fun(object:Guid, entity:EntityHandle)
-function Helpers.Timer:RegisterRealtimeObjectTimerListener(timer, callback)
+function VCHelpers.Timer:RegisterRealtimeObjectTimerListener(timer, callback)
     Events.Osiris.ObjectTimerFinished:Subscribe(function(e)
         if e.Timer == timer then
             callback(e.ObjectGuid, e.Object)
@@ -66,7 +66,7 @@ end
 ---Ext.OnNextTick, but variable ticks
 ---@param ticks integer
 ---@param fn function
-function Helpers.Timer:OnTicks(ticks, fn)
+function VCHelpers.Timer:OnTicks(ticks, fn)
     local ticksPassed = 0
     local eventID
     eventID = Ext.Events.Tick:Subscribe(function()
@@ -84,7 +84,7 @@ end
 --- Tick 2: 66 ms --> callback is performed.
 ---@param time integer milliseconds
 ---@param fn function
-function Helpers.Timer:OnTime(time, fn)
+function VCHelpers.Timer:OnTime(time, fn)
     local startTime = Ext.Utils.MonotonicTime()
     local eventID
     eventID = Ext.Events.Tick:Subscribe(function()
@@ -103,7 +103,7 @@ end
 ---@param time integer milliseconds
 ---@param fn function
 ---@param ticksOrTime? boolean
-function Helpers.Timer:OnTicksAndTime(ticks, time, fn, ticksOrTime)
+function VCHelpers.Timer:OnTicksAndTime(ticks, time, fn, ticksOrTime)
     local startTime = Ext.Utils.MonotonicTime()
     local ticksPassed = 0
     local eventID

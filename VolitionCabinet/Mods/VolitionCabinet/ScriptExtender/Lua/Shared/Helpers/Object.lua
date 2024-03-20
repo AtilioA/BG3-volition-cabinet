@@ -1,13 +1,13 @@
 ---@class HelperObject: Helper
 ---@field DefaultNearbyRadius 5
 ---@field ActionResources table<string, Guid>
-Helpers.Object = _Class:Create("HelperObject", Helper, {
+VCHelpers.Object = _Class:Create("HelperObject", Helper, {
     DefaultNearbyRadius = 5,
 })
 
 ---@param object any
 ---@return boolean
-function Helpers.Object:IsCharacter(object)
+function VCHelpers.Object:IsCharacter(object)
     local objectType = type(object)
     if objectType == "userdata" then
         local mt = getmetatable(object)
@@ -29,7 +29,7 @@ end
 
 ---@param object any
 ---@return boolean
-function Helpers.Object:IsItem(object)
+function VCHelpers.Object:IsItem(object)
     local objectType = type(object)
     if objectType == "userdata" then
         local mt = getmetatable(object)
@@ -51,7 +51,7 @@ end
 
 ---@param object any
 ---@return EntityHandle|nil
-function Helpers.Object:GetCharacter(object)
+function VCHelpers.Object:GetCharacter(object)
     local objectType = type(object)
     if objectType == "userdata" then
         local mt = getmetatable(object)
@@ -73,7 +73,7 @@ end
 
 ---@param object any
 ---@return EsvCharacter|nil
-function Helpers.Object:GetCharacterObject(object)
+function VCHelpers.Object:GetCharacterObject(object)
     local entity = self:GetCharacter(object)
     if entity ~= nil and self.IsServer then
         return entity.ServerCharacter
@@ -82,7 +82,7 @@ end
 
 ---@param object any
 ---@return EntityHandle|nil
-function Helpers.Object:GetItem(object)
+function VCHelpers.Object:GetItem(object)
     local objectType = type(object)
     if objectType == "userdata" then
         local userdataType = Ext.Types.GetObjectType(object)
@@ -106,7 +106,7 @@ end
 
 ---@param object any
 ---@return EsvItem|nil
-function Helpers.Object:GetItemObject(object)
+function VCHelpers.Object:GetItemObject(object)
     local entity = self:GetItem(object)
     if entity ~= nil and self.IsServer then
         return entity.ServerItem
@@ -115,19 +115,19 @@ end
 
 ---@param object any
 ---@return EntityHandle|nil
-function Helpers.Object:GetEntity(object)
+function VCHelpers.Object:GetEntity(object)
     return self:GetCharacter(object) or self:GetItem(object)
 end
 
 ---@param object any
 ---@return EsvCharacter|EsvItem|nil
-function Helpers.Object:GetObject(object)
+function VCHelpers.Object:GetObject(object)
     return self:GetCharacterObject(object) or self:GetItemObject(object)
 end
 
 ---@param object any
 ---@return Guid|nil
-function Helpers.Object:GetGuid(object)
+function VCHelpers.Object:GetGuid(object)
     local entity = self:GetEntity(object)
     if entity ~= nil then
         return Ext.Entity.HandleToUuid(entity)
@@ -136,7 +136,7 @@ end
 
 ---@param object any
 ---@return Guid|nil
-function Helpers.Object:GetTemplate(object)
+function VCHelpers.Object:GetTemplate(object)
     local object = self:GetObject(object)
     if object ~= nil and object.Template ~= nil then
         return object.Template.Id
@@ -157,7 +157,7 @@ end
 
 ---@param object any
 ---@return LotsOfTags
-function Helpers.Object:GetTags(object)
+function VCHelpers.Object:GetTags(object)
     local tags = {}
     local esvObject = self:GetEntity(object)
     if esvObject ~= nil then
@@ -183,20 +183,20 @@ end
 ---@param radius? number
 ---@param ignoreHeight? boolean
 ---@return {Entity:EntityHandle, Guid:Guid, Distance:number, Name:string}[]
-function Helpers.Object:GetNearbyCharacters(source, radius, ignoreHeight)
+function VCHelpers.Object:GetNearbyCharacters(source, radius, ignoreHeight)
     local sourceEntity = self:GetEntity(source)
     local pos = sourceEntity ~= nil and sourceEntity.Transform.Transform.Translate or source
     radius = radius or self.DefaultNearbyRadius
 
     local nearbyEntities = {}
     for _, character in ipairs(Ext.Entity.GetAllEntitiesWithComponent("IsCharacter")) do
-        local distance = Helpers.Grid:GetDistance(pos, character.Transform.Transform.Translate, ignoreHeight)
+        local distance = VCHelpers.Grid:GetDistance(pos, character.Transform.Transform.Translate, ignoreHeight)
         if distance <= radius then
             table.insert(nearbyEntities, {
                 Entity = character,
                 Guid = character.Uuid.EntityUuid,
                 Distance = distance,
-                Name = Helpers.Loca:GetDisplayName(character)
+                Name = VCHelpers.Loca:GetDisplayName(character)
             })
         end
     end
@@ -211,7 +211,7 @@ end
 ---@param ignoreHeight? boolean
 ---@param includeInSourceInventory? boolean
 ---@return {Entity: EntityHandle, Guid: Guid, Distance:number, Name:string, Template:Guid}[]
-function Helpers.Object:GetNearbyItems(source, radius, ignoreHeight, includeInSourceInventory)
+function VCHelpers.Object:GetNearbyItems(source, radius, ignoreHeight, includeInSourceInventory)
     local sourceEntity = self:GetEntity(source)
     local pos = sourceEntity ~= nil and sourceEntity.Transform.Transform.Translate or source
     radius = radius or self.DefaultNearbyRadius
@@ -219,26 +219,26 @@ function Helpers.Object:GetNearbyItems(source, radius, ignoreHeight, includeInSo
     local nearbyEntities = {}
     if includeInSourceInventory or not sourceEntity then
         for _, item in ipairs(Ext.Entity.GetAllEntitiesWithComponent("IsItem")) do
-            local distance = Helpers.Grid:GetDistance(pos, item.Transform.Transform.Translate, ignoreHeight)
+            local distance = VCHelpers.Grid:GetDistance(pos, item.Transform.Transform.Translate, ignoreHeight)
             if distance <= radius then
                 table.insert(nearbyEntities, {
                     Entity = item,
                     Guid = item.Uuid.EntityUuid,
                     Distance = distance,
-                    Name = Helpers.Loca:GetDisplayName(item),
+                    Name = VCHelpers.Loca:GetDisplayName(item),
                     TemplateId = item.ServerItem.Template.Id
                 })
             end
         end
     else
         for _, item in ipairs(Ext.Entity.GetAllEntitiesWithComponent("IsItem")) do
-            local distance = Helpers.Grid:GetDistance(pos, item.Transform.Transform.Translate, ignoreHeight)
-            if distance <= radius and not Helpers.Inventory:ItemIsInInventory(item, sourceEntity) then
+            local distance = VCHelpers.Grid:GetDistance(pos, item.Transform.Transform.Translate, ignoreHeight)
+            if distance <= radius and not VCHelpers.Inventory:ItemIsInInventory(item, sourceEntity) then
                 table.insert(nearbyEntities, {
                     Entity = item,
                     Guid = item.Uuid.EntityUuid,
                     Distance = distance,
-                    Name = Helpers.Loca:GetDisplayName(item),
+                    Name = VCHelpers.Loca:GetDisplayName(item),
                     TemplateId = item.ServerItem.Template.Id
                 })
             end
@@ -251,7 +251,7 @@ end
 
 ---@param object any
 ---@return GameObjectTemplate|nil
-function Helpers.Object:GetRootTemplate(object)
+function VCHelpers.Object:GetRootTemplate(object)
     local entityObj = self:GetObject(object)
     if entityObj ~= nil then
         if entityObj.Template ~= nil then
@@ -261,12 +261,12 @@ function Helpers.Object:GetRootTemplate(object)
 end
 
 ---@param object EntityHandle
-function Helpers.Object:GetItemUUID(object)
-  return object.TemplateName .. '_' .. object.Guid
+function VCHelpers.Object:GetItemUUID(object)
+    return object.TemplateName .. '_' .. object.Guid
 end
 
 ---@return EntityHandle|nil
-function Helpers.Object:GetHostEntity()
+function VCHelpers.Object:GetHostEntity()
     if Ext.IsServer() then
         return Ext.Entity.Get(Osi.GetHostCharacter())
     else

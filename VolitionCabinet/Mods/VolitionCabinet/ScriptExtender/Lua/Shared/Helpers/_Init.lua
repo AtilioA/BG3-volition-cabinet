@@ -3,9 +3,9 @@ Helper = _Class:Create("Helper")
 Helper.IsServer = Ext.IsServer()
 Helper.IsClient = Ext.IsClient()
 
-Helpers = {
+VCHelpers = {
     IsServer = Ext.IsServer(),
-    IsClient = Ext.IsClient()
+    IsClient = Ext.IsClient(),
 }
 
 RequireFiles("Shared/Helpers/", {

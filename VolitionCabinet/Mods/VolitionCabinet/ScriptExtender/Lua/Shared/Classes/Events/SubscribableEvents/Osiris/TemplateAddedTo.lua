@@ -20,12 +20,12 @@ Events.Osiris.TemplateAddedTo = VCOsirisEventBase:CreateEvent("VCEventTemplateAd
 ---@return VCTemplateAddedToParams
 function Events.Osiris.TemplateAddedTo:CreateParams(template, object, holder, addType)
     local params = VCParams.TemplateAddedTo:New {
-        Template = Helpers.Format:Guid(template),
-        EntityGuid = Helpers.Format:Guid(object),
-        Entity = Helpers.Object:GetEntity(object),
-        RealHolder = Helpers.Inventory:GetHolder(object),
-        HolderGuid = Helpers.Format:Guid(holder),
-        Holder = Helpers.Object:GetEntity(holder),
+        Template = VCHelpers.Format:Guid(template),
+        EntityGuid = VCHelpers.Format:Guid(object),
+        Entity = VCHelpers.Object:GetEntity(object),
+        RealHolder = VCHelpers.Inventory:GetHolder(object),
+        HolderGuid = VCHelpers.Format:Guid(holder),
+        Holder = VCHelpers.Object:GetEntity(holder),
         AddType = addType,
     }
     return params

@@ -14,9 +14,9 @@ Events.Osiris.Equipped = VCOsirisEventBase:CreateEvent("VCEventEquipped", { Osir
 ---@return VCEquippedParams
 function Events.Osiris.Equipped:CreateParams(item, character)
     local params = VCParams.Equipped:New {
-        CharacterGuid = Helpers.Format:Guid(character),
+        CharacterGuid = VCHelpers.Format:Guid(character),
         Character = Ext.Entity.Get(character),
-        ItemGuid = Helpers.Format:Guid(item),
+        ItemGuid = VCHelpers.Format:Guid(item),
         Item = Ext.Entity.Get(item),
     }
     return params

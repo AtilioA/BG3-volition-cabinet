@@ -1,12 +1,12 @@
 ---@class HelperString: Helper
-Helpers.String = _Class:Create("HelperString", Helper)
+VCHelpers.String = _Class:Create("HelperString", Helper)
 
 ---Check if string contains a substring (Courtesy of Fararagi although fr I was just lazy)
 ---@param str string the string to check
 ---@param substr string the substring
 ---@param caseSensitive? boolean
 ---@return boolean
-function Helpers.String:StringContains(str, substr, caseSensitive)
+function VCHelpers.String:StringContains(str, substr, caseSensitive)
   caseSensitive = caseSensitive or false
   if caseSensitive then
     return string.find(str, substr, 1, true) ~= nil
@@ -17,8 +17,7 @@ function Helpers.String:StringContains(str, substr, caseSensitive)
   end
 end
 
-
-function Helpers.String:LevenshteinDistance(str1, str2, case_sensitive)
+function VCHelpers.String:LevenshteinDistance(str1, str2, case_sensitive)
   if not case_sensitive then
     str1 = string.lower(str1)
     str2 = string.lower(str2)
@@ -53,7 +52,7 @@ function Helpers.String:LevenshteinDistance(str1, str2, case_sensitive)
   return matrix[len1][len2]
 end
 
-function Helpers.String:FindClosestMatch(user_input, valid_options, case_sensitive)
+function VCHelpers.String:FindClosestMatch(user_input, valid_options, case_sensitive)
   local min_distance = math.huge -- Represents infinity, just to initialize the variable
   local closest_match = nil
   for _, option in ipairs(valid_options) do

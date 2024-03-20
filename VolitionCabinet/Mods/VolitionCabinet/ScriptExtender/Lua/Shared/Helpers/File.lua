@@ -1,10 +1,10 @@
 ---@class HelperFile: Helper
-Helpers.File = _Class:Create("HelperFile", Helper)
+VCHelpers.File = _Class:Create("HelperFile", Helper)
 
 ---@param modDirectoryName string
 ---@param files string[]
 ---@param debug? boolean
-function Helpers.File:LoadStats(modDirectoryName, files, debug)
+function VCHelpers.File:LoadStats(modDirectoryName, files, debug)
     for _, file in ipairs(files) do
         local fileName = string.format("Public/%s/Stats/Generated/Data/%s.txt", modDirectoryName, file)
         Ext.Stats.LoadStatsFile(fileName, debug)
@@ -17,7 +17,7 @@ end
 
 ---@param files string[]
 ---@param debug? boolean
-function Helpers.File:LoadLoca(files, debug)
+function VCHelpers.File:LoadLoca(files, debug)
     for _, file in ipairs(files) do
         local fileName = string.format("Localization/English/%s.xml", file)
         local contents = Ext.IO.LoadFile(fileName, "data")
@@ -41,9 +41,9 @@ end
 
 ---@param object any
 ---@param fileName? string Must define file extension
-function Helpers.File:DumpToFile(object, fileName)
+function VCHelpers.File:DumpToFile(object, fileName)
     local contents
-    local entity = Helpers.Object:GetEntity(object)
+    local entity = VCHelpers.Object:GetEntity(object)
     if entity ~= nil then
         contents = Ext.DumpExport(object:GetAllComponents())
     elseif type(object) == "userdata" then
@@ -63,7 +63,7 @@ function Helpers.File:DumpToFile(object, fileName)
     end
 end
 
-function Helpers.File:GenerateIDEHelpers()
+function VCHelpers.File:GenerateIDEHelpers()
     local fileName = string.format("IDEHelpersV%s.lua", Ext.Utils.Version())
     Ext.Types.GenerateIdeHelpers(fileName, {
         -- AddOsiris = false,

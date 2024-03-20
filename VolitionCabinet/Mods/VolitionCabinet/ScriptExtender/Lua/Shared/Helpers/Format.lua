@@ -1,11 +1,11 @@
 ---@class HelperFormat: Helper
-Helpers.Format = _Class:Create("HelperFormat", Helper)
-Helpers.Format.NullUuid = "00000000-0000-0000-0000-000000000000"
+VCHelpers.Format = _Class:Create("HelperFormat", Helper)
+VCHelpers.Format.NullUuid = "00000000-0000-0000-0000-000000000000"
 
 ---Numericize keys and values that are strings but should be numbers
 ---@param data any
 ---@return any
-function Helpers.Format:Destringify(data)
+function VCHelpers.Format:Destringify(data)
     if type(data) == 'table' then
         local newtable = {}
         for key, value in pairs(data) do
@@ -24,7 +24,7 @@ end
 ---Wrapper for json parse and destringify
 ---@param data any
 ---@return any
-function Helpers.Format:Parse(data)
+function VCHelpers.Format:Parse(data)
     local success, parsed = pcall(Ext.Json.Parse, data)
     if success then
         return self:Destringify(parsed)
@@ -35,14 +35,14 @@ end
 
 ---@param guid Guid
 ---@return string guid
-function Helpers.Format:Guid(guid)
+function VCHelpers.Format:Guid(guid)
     return string.sub(tostring(guid), -36)
 end
 
 --- func desc
 ---@param localtemplateUUID string
 ---@return string result
-function Helpers.Format:GetTemplateName(localtemplateUUID)
+function VCHelpers.Format:GetTemplateName(localtemplateUUID)
     if #localtemplateUUID <= 36 then
         return localtemplateUUID -- Return the original string if it's too short
     end
@@ -59,7 +59,7 @@ end
 ---@param orig any
 ---@param copies? table
 ---@return any
-function Helpers.Format:DeepCopy(orig, copies)
+function VCHelpers.Format:DeepCopy(orig, copies)
     copies = copies or {}
     local orig_type = type(orig)
     local copy
@@ -83,7 +83,7 @@ end
 --Takes a table and returns a new table with removed gaps in indexing due to nil values.
 ---@param t table
 ---@return table
-function Helpers.Format:GetNonNilsTable(t)
+function VCHelpers.Format:GetNonNilsTable(t)
     local new = {}
     local newIndex = 1
     for i, entry in pairs(t) do
@@ -99,7 +99,7 @@ end
 
 ---@param hex string
 ---@return vec3
-function Helpers.Format:HexToRGB(hex)
+function VCHelpers.Format:HexToRGB(hex)
     hex = hex:gsub('#', '')
     local r, g, b
 
@@ -122,7 +122,7 @@ end
 
 ---@param hex string
 ---@return vec3
-function Helpers.Format:HexToEffectRGB(hex)
+function VCHelpers.Format:HexToEffectRGB(hex)
     local rgb = self:HexToRGB(hex)
     rgb = Ext.Math.Div(rgb, 255)
     return rgb
@@ -130,25 +130,25 @@ end
 
 ---@param rgb vec3
 ---@return string
-function Helpers.Format:RGBToHex(rgb)
+function VCHelpers.Format:RGBToHex(rgb)
     return string.format('%.2x%.2x%.2x', rgb[1], rgb[2], rgb[3])
 end
 
 ---@param rgb vec3
 ---@return string
-function Helpers.Format:EffectRGBToHex(rgb)
+function VCHelpers.Format:EffectRGBToHex(rgb)
     return string.format('%.2x%.2x%.2x', Ext.Math.Round(rgb[1] * 255), Ext.Math.Round(rgb[2] * 255),
         Ext.Math.Round(rgb[3] * 255))
 end
 
 ---@return Guid
-function Helpers.Format:CreateUUID()
+function VCHelpers.Format:CreateUUID()
     return string.gsub("xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx", "[xy]", function(c)
         return string.format("%x", c == "x" and Ext.Math.Random(0, 0xf) or Ext.Math.Random(8, 0xb))
     end)
 end
 
-function Helpers.Format:CreateHandle()
+function VCHelpers.Format:CreateHandle()
     return "h" .. string.gsub("xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx", "[xy-]", function(c)
         if c == "x" then
             return string.format("%x", Ext.Math.Random(0, 0xf))
@@ -160,7 +160,7 @@ function Helpers.Format:CreateHandle()
     end)
 end
 
-function Helpers.Format:MonotonicTimeToString()
+function VCHelpers.Format:MonotonicTimeToString()
     local timeInMilliseconds = Ext.Utils.MonotonicTime()
     local seconds = math.floor(timeInMilliseconds / 1000)
     local minutes = math.floor(seconds / 60)

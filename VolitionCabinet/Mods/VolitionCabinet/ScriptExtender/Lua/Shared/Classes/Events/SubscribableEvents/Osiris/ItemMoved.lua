@@ -13,9 +13,9 @@ Events.Osiris.ItemMoved = VCOsirisEventBase:CreateEvent("VCEventItemMoved", { Os
 ---@return VCItemMovedParams
 function Events.Osiris.ItemMoved:CreateParams(item, character)
     local params = VCParams.ItemMoved:New {
-        Item = Helpers.Object:GetItem(item),
-        ItemGuid = Helpers.Format:Guid(item),
-        Template = Helpers.Object:GetTemplate(item)
+        Item = VCHelpers.Object:GetItem(item),
+        ItemGuid = VCHelpers.Format:Guid(item),
+        Template = VCHelpers.Object:GetTemplate(item)
     }
     return params
 end

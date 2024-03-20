@@ -15,7 +15,7 @@ Events.Osiris.ObjectTimerFinished = VCOsirisEventBase:CreateEvent("VCEventObject
 function Events.Osiris.ObjectTimerFinished:CreateParams(object, timer)
     local params = VCParams.ObjectTimerFinished:New {
         Object = Ext.Entity.Get(object),
-        ObjectGuid = Helpers.Format:Guid(object),
+        ObjectGuid = VCHelpers.Format:Guid(object),
         Timer = timer
     }
     return params

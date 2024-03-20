@@ -1,6 +1,6 @@
 ---@class HelperUserVars: Helper
-Helpers.UserVars = _Class:Create("HelperUserVars", Helper)
-Helpers.UserVars.DefaultProperties = {
+VCHelpers.UserVars = _Class:Create("HelperUserVars", Helper)
+VCHelpers.UserVars.DefaultProperties = {
     Server = true,
     Client = true,
     Persistent = true,
@@ -16,8 +16,8 @@ Helpers.UserVars.DefaultProperties = {
 ---@param entity any
 ---@param key string
 ---@return any|nil
-function Helpers.UserVars:Get(entity, key)
-    local entityObj = Helpers.Object:GetEntity(entity)
+function VCHelpers.UserVars:Get(entity, key)
+    local entityObj = VCHelpers.Object:GetEntity(entity)
     if entityObj ~= nil then
         if key ~= nil then
             return entityObj.Vars[key]
@@ -28,8 +28,8 @@ end
 ---@param entity any
 ---@param key string
 ---@param value table|string|number|nil
-function Helpers.UserVars:Set(entity, key, value)
-    local entityObj = Helpers.Object:GetEntity(entity)
+function VCHelpers.UserVars:Set(entity, key, value)
+    local entityObj = VCHelpers.Object:GetEntity(entity)
     if entityObj ~= nil then
         if key ~= nil then
             if type(value) == "userdata" then
@@ -44,14 +44,14 @@ function Helpers.UserVars:Set(entity, key, value)
     end
 end
 
-function Helpers.UserVars:Sync()
+function VCHelpers.UserVars:Sync()
     Ext.Vars.SyncUserVariables()
 end
 
 ---@param entity? any
 ---@param key? any
-function Helpers.UserVars:Dirty(entity, key)
-    local entityObj = Helpers.Object:GetEntity(entity)
+function VCHelpers.UserVars:Dirty(entity, key)
+    local entityObj = VCHelpers.Object:GetEntity(entity)
     if entityObj then
         Ext.Vars.DirtyUserVariables(entity.Uuid.EntityUuid, key)
     end
@@ -59,10 +59,10 @@ end
 
 ---@param key string
 ---@param properties? table
-function Helpers.UserVars:Register(key, properties)
+function VCHelpers.UserVars:Register(key, properties)
     properties = properties or {}
 
-    for k,v in pairs(self.DefaultProperties) do
+    for k, v in pairs(self.DefaultProperties) do
         if properties[k] == nil then
             properties[k] = v
         end

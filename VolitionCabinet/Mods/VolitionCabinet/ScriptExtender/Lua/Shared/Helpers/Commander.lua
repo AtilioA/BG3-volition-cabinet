@@ -1,5 +1,5 @@
 ---@class HelperCommander: Helper
-Helpers.Commander = _Class:Create("HelperCommander", Helper)
+VCHelpers.Commander = _Class:Create("HelperCommander", Helper)
 
 
 --- Command is not case sensitive.
@@ -7,7 +7,7 @@ Helpers.Commander = _Class:Create("HelperCommander", Helper)
 ---@param command string
 ---@param fn function
 ---@vararg any
-function Helpers.Commander:Register(command, fn)
+function VCHelpers.Commander:Register(command, fn)
     Events.Extender.DoConsoleCommand:Subscribe(function(e)
         local cmdArgs = {}
         for arg in e.Command:gmatch("(%S+)") do
@@ -19,32 +19,32 @@ function Helpers.Commander:Register(command, fn)
     end)
 end
 
-if Helpers.Commander.IsServer then
+if VCHelpers.Commander.IsServer then
     Ext.Events.SessionLoaded:Subscribe(function()
         local function restore()
-            Helpers.Resource:SetActionResource(_C(), "ActionPoint", "Max")
-            Helpers.Resource:SetActionResource(_C(), "BonusActionPoint", "Max")
-            Helpers.Resource:SetActionResource(_C(), "ReactionActionPoint", "Max")
-            Helpers.Timer:LaunchRealtimeObjectTimerOneShot(_C(), 200, "VolitionCabinetRestore", function()
+            VCHelpers.Resource:SetActionResource(_C(), "ActionPoint", "Max")
+            VCHelpers.Resource:SetActionResource(_C(), "BonusActionPoint", "Max")
+            VCHelpers.Resource:SetActionResource(_C(), "ReactionActionPoint", "Max")
+            VCHelpers.Timer:LaunchRealtimeObjectTimerOneShot(_C(), 200, "VolitionCabinetRestore", function()
                 --Apply statuses here
             end)
         end
         Ext.Events.ResetCompleted:Subscribe(restore)
-        Helpers.Commander:Register("Restore", function()
+        VCHelpers.Commander:Register("Restore", function()
             restore()
             Osi.RestoreParty(Osi.GetHostCharacter())
         end)
-        Helpers.Commander:Register("RestoreResources", restore)
-        Helpers.Commander:Register("ApplyStatus",
+        VCHelpers.Commander:Register("RestoreResources", restore)
+        VCHelpers.Commander:Register("ApplyStatus",
             function(status) Osi.ApplyStatus(Osi.GetHostCharacter(), status, -1, 1, Osi.GetHostCharacter()) end)
-        Helpers.Commander:Register("GenTT", function(tt) Helpers.Inventory:GenerateTreasureTable(tt) end)
+        VCHelpers.Commander:Register("GenTT", function(tt) VCHelpers.Inventory:GenerateTreasureTable(tt) end)
     end)
 end
 
 Ext.Events.SessionLoaded:Subscribe(function()
-    Helpers.Commander:Register("DumpFile",
+    VCHelpers.Commander:Register("DumpFile",
         function(guid)
-            guid = guid or Helpers.Object:GetHostEntity().Uuid.EntityUuid; Ext.IO.SaveFile("Dump.json",
+            guid = guid or VCHelpers.Object:GetHostEntity().Uuid.EntityUuid; Ext.IO.SaveFile("Dump.json",
                 Ext.DumpExport(Ext.Entity.Get(guid):GetAllComponents()))
         end)
 end)

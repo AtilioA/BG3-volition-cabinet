@@ -11,7 +11,7 @@ Events.Osiris.ShortRested = VCOsirisEventBase:CreateEvent("VCEventShortRested",
 ---@return VCShortRestedParams
 function Events.Osiris.ShortRested:CreateParams(character)
   local params = VCParams.ShortRested:New {
-    CharacterGuid = Helpers.Format:Guid(character),
+    CharacterGuid = VCHelpers.Format:Guid(character),
     Character = Ext.Entity.Get(character),
   }
   return params

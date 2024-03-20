@@ -99,7 +99,7 @@ function Events.Osiris.RequestCanCombine:CreateParams(character, item1, item2, i
     for i, item in ipairs { item1, item2, item3, item4, item5 } do
         if item ~= "NULL_00000000-0000-0000-0000-000000000000" then
             local itemNum = "Item" .. i
-            params[itemNum .. "Guid"] = Helpers.Format:Guid(item)
+            params[itemNum .. "Guid"] = VCHelpers.Format:Guid(item)
             local itemObj = Ext.Entity.Get(item)
             if itemObj ~= nil then
                 params[itemNum] = itemObj
@@ -109,7 +109,7 @@ function Events.Osiris.RequestCanCombine:CreateParams(character, item1, item2, i
         end
     end
 
-    params.CharacterGuid = Helpers.Format:Guid(character)
+    params.CharacterGuid = VCHelpers.Format:Guid(character)
     params.Character = Ext.Entity.Get(character)
 
     return params

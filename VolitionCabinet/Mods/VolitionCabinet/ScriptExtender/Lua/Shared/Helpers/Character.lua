@@ -1,10 +1,10 @@
 ---@class HelperCharacter: Helper
-Helpers.Character = _Class:Create("HelperCharacter", Helper)
+VCHelpers.Character = _Class:Create("HelperCharacter", Helper)
 
 -- Detect if a character is sneaking
 ---@param character Guid The character to check
 ---@return boolean isSneaking true if the character is sneaking
-function Helpers.Character:IsSneaking(character)
+function VCHelpers.Character:IsSneaking(character)
   local characterEntity = Ext.Entity.Get(character)
   -- REVIEW: There's probably a better way to detect sneaking
   return characterEntity.SpellModificationContainer and characterEntity.SpellModificationContainer.Modifications and
@@ -14,11 +14,11 @@ end
 -- Function to return all other party members
 ---@param characterGuid Guid
 ---@return Guid[] otherPartyMembers A table of guids of other party members
-function Helpers.Character:GetOtherPartyMembers(characterGuid)
+function VCHelpers.Character:GetOtherPartyMembers(characterGuid)
   local otherPartyMembers = {}
   local companions = Osi.DB_Players:Get(nil)
   for i, companion in ipairs(companions) do
-    local companionGuid = Helpers.Format:Guid(tostring(companion[1]))
+    local companionGuid = VCHelpers.Format:Guid(tostring(companion[1]))
     if companionGuid ~= characterGuid then
       table.insert(otherPartyMembers, companionGuid)
     end
@@ -27,7 +27,7 @@ function Helpers.Character:GetOtherPartyMembers(characterGuid)
   return otherPartyMembers
 end
 
-function Helpers.Character:GetDisjointedLinkedCharacterSets()
+function VCHelpers.Character:GetDisjointedLinkedCharacterSets()
   local disjointSets = {}
 
   -- Get the Party entity of the host character
@@ -57,7 +57,7 @@ end
 -- Function to get other party members present in the same PartyView.Views other than the character passed as argument
 ---@param characterGuid Guid
 ---@return Guid[] otherPartyMembers A table of guids of other party members
-function Helpers.Character:GetCharactersLinkedWith(characterGuid)
+function VCHelpers.Character:GetCharactersLinkedWith(characterGuid)
   local otherPartyMembers = {}
   local partyEntity = _C().PartyMember.Party
   if not partyEntity or not partyEntity.PartyView or not partyEntity.PartyView.Views then

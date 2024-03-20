@@ -1,6 +1,6 @@
 ---@class HelperHit: Helper
-Helpers.Hit = _Class:Create("HelperHit", Helper)
+VCHelpers.Hit = _Class:Create("HelperHit", Helper)
 
 ---@param hit Hit
-function Helpers.Hit:GetAllDamage(hit)
+function VCHelpers.Hit:GetAllDamage(hit)
 end

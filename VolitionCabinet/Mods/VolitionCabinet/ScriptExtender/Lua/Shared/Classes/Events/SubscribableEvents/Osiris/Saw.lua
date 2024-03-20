@@ -17,10 +17,10 @@ Events.Osiris.Saw = VCOsirisEventBase:CreateEvent("VCEventSaw", { OsirisEvent = 
 ---@return VCSawParams
 function Events.Osiris.Saw:CreateParams(seer, spotted, wasSneaking)
     local params = VCParams.Saw:New {
-        SeerGuid = Helpers.Format:Guid(seer),
+        SeerGuid = VCHelpers.Format:Guid(seer),
         SeerName = Osi.ResolveTranslatedString(Osi.GetDisplayName(seer)),
         SeerEntity = Ext.Entity.Get(seer),
-        SpottedGuid = Helpers.Format:Guid(spotted),
+        SpottedGuid = VCHelpers.Format:Guid(spotted),
         SpottedName = Osi.ResolveTranslatedString(Osi.GetDisplayName(spotted)),
         SpottedEntity = Ext.Entity.Get(spotted),
         SpottedWasSneaking = wasSneaking == 1

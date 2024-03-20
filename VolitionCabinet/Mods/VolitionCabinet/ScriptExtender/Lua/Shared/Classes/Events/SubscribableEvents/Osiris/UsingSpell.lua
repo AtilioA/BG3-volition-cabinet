@@ -21,9 +21,9 @@ Events.Osiris.UsingSpell = VCOsirisEventBase:CreateEvent("VCEventUsingSpell",
 ---@return VCUsingSpellParams
 function Events.Osiris.UsingSpell:CreateParams(attacker, spell, spellType, spellElement, storyActionID)
     local params = VCParams.UsingSpell:New {
-        AttackerEntity = Helpers.Object:GetEntity(attacker),
-        AttackerObject = Helpers.Object:GetObject(attacker),
-        AttackerGuid = Helpers.Format:Guid(attacker),
+        AttackerEntity = VCHelpers.Object:GetEntity(attacker),
+        AttackerObject = VCHelpers.Object:GetObject(attacker),
+        AttackerGuid = VCHelpers.Format:Guid(attacker),
         Spell = spell,
         SpelType = spellType,
         SpellElement = spellElement,
