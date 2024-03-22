@@ -1,5 +1,5 @@
 --[[
-    This Helper file is for functions that are related to the camp, such as the camp chest and sending items to it.
+    This Helper file is for functions that are related to the camp, such as camp chest functionality.
 -- ]]
 
 ---@class HelperCamp: Helper

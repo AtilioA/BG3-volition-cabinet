@@ -1,3 +1,7 @@
+--[[
+  This file contains a set of helper functions for working with strings, such as checking if a string contains a substring, calculating the Levenshtein distance between two strings, and finding the closest match from a list of valid options to an input string, which can be used to validate user config files.
+]]
+
 ---@class HelperString: Helper
 VCHelpers.String = _Class:Create("HelperString", Helper)
 
@@ -17,6 +21,8 @@ function VCHelpers.String:StringContains(str, substr, caseSensitive)
   end
 end
 
+--- Calculate the Levenshtein distance between two strings.
+--- Useful for fuzzy string matching to find the closest match, when for example a user has to input a string and you want to find the closest match from a list of valid options (e.g. config values).
 function VCHelpers.String:LevenshteinDistance(str1, str2, case_sensitive)
   if not case_sensitive then
     str1 = string.lower(str1)
@@ -52,11 +58,17 @@ function VCHelpers.String:LevenshteinDistance(str1, str2, case_sensitive)
   return matrix[len1][len2]
 end
 
-function VCHelpers.String:FindClosestMatch(user_input, valid_options, case_sensitive)
+--- Find the closest match and distance given a list of valid options to an input string, using the Levenshtein distance.
+---@param input string The user input string
+---@param valid_options string[] A table of valid options to compare against
+---@param case_sensitive? boolean Whether to consider case sensitivity when comparing strings
+--- @return string|nil closest_match The closest matching string from the valid options.
+--- @return number min_distance The Levenshtein distance between the user input and the closest match.
+function VCHelpers.String:FindClosestMatch(input, valid_options, case_sensitive)
   local min_distance = math.huge -- Represents infinity, just to initialize the variable
   local closest_match = nil
   for _, option in ipairs(valid_options) do
-    local distance = self:LevenshteinDistance(user_input, option, case_sensitive)
+    local distance = self:LevenshteinDistance(input, option, case_sensitive)
     if distance < min_distance then
       min_distance = distance
       closest_match = option

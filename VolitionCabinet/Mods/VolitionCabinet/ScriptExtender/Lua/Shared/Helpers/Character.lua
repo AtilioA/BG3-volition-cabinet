@@ -64,7 +64,7 @@ function VCHelpers.Character:GetCharactersLinkedWith(characterGuid)
     return otherPartyMembers -- Return empty if no party info is found
   end
 
-  -- Find the View that includes the characterGuid
+  -- Find the View (link group) that includes the characterGuid
   local targetView = nil
   for _, view in ipairs(partyEntity.PartyView.Views) do
     for _, characterEntity in ipairs(view.Characters) do
@@ -77,7 +77,7 @@ function VCHelpers.Character:GetCharactersLinkedWith(characterGuid)
     if targetView then break end
   end
 
-  -- If a target View is found, iterate over its Characters to find other party members, and add them to the otherPartyMembers table
+  -- If a target View is found, iterate over its Characters to find other party members, and add them to the otherPartyMembers table. These are the characters linked with the characterGuid
   if targetView then
     for _, characterEntity in ipairs(targetView.Characters) do
       local companionGuid = characterEntity.Uuid.EntityUuid
