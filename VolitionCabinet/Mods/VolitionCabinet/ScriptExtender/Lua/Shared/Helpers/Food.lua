@@ -5,14 +5,20 @@
 ---@class HelperFood: Helper
 VCHelpers.Food = _Class:Create("HelperFood", Helper)
 
+--- Check if an object is a food item.
+---@param object GUIDSTRING
+---@return boolean
 function VCHelpers.Food:IsFood(object)
   if VCHelpers.Object:IsItem(object) then
     return Osi.ItemGetSupplyValue(object) > 0
   end
 end
 
+--- Check if an object is a beverage item.
+---@param object GUIDSTRING
+---@return boolean
 function VCHelpers.Food:IsBeverage(object)
-  return self.IsFood(object) and Osi.IsConsumable(object) == 1
+  return self:IsFood(object) and Osi.IsConsumable(object) == 1
 end
 
 --- Gets all food items in a character's inventory.

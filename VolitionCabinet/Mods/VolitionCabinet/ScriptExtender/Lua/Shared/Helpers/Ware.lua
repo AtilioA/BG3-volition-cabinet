@@ -6,6 +6,9 @@
 ---@class HelperWare: Helper
 VCHelpers.Ware = _Class:Create("HelperWare", Helper)
 
+--- Check if an object is a ware.
+---@param object string|userdata
+---@return boolean
 function VCHelpers.Ware:IsWare(object)
   if type(object) == "string" then
     local objectEntity = Ext.Entity.Get(object)
@@ -19,6 +22,8 @@ function VCHelpers.Ware:IsWare(object)
   return false
 end
 
+--- Mark an item as a ware.
+---@param item string|userdata
 function VCHelpers.Ware:MarkAsWare(item)
   if not VCHelpers.Inventory:IsProbablyQuestItem(item) then
     if type(item) == "string" then
