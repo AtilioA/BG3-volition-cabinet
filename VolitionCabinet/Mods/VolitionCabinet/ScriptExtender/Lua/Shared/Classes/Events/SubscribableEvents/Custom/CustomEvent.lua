@@ -12,10 +12,10 @@ end
 ---@param e LuaEventBase
 ---@return VCEventParams
 function VCCustomEventBase:CreateParams(e)
-    VCDebug("Empty Param creation function for %s", _Class:GetClassName(self))
+    VCDebug(1, "Empty Param creation function for %s", _Class:GetClassName(self))
 end
 
 ---@private
 function VCCustomEventBase:RegisterEvent()
-    VCDebug("Empty event registration function for %s", _Class:GetClassName(self))
+    VCDebug(1, "Empty event registration function for %s", _Class:GetClassName(self))
 end

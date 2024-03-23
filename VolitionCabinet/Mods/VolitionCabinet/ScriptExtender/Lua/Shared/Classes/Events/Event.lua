@@ -40,7 +40,7 @@ function VCEvent:GetNewHandlerID()
 end
 
 function VCEvent:RegisterEvent()
-    VCWarn("Unset event registration function!")
+    VCWarn(0, "Unset event registration function!")
 end
 
 ---@param fn fun(e:VCEventParams)

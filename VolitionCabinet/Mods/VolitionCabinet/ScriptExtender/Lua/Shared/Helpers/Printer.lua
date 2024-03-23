@@ -61,7 +61,7 @@ end
 
 ---@vararg any
 function VolitionCabinetPrinter:Print(debugLevel, ...)
-    if self.DebugLevel >= tonumber(debugLevel) then
+    if self.DebugLevel >= (debugLevel and tonumber(debugLevel) or 0) then
         local s
         if self.DebugLevel > 0 then
             s = string.format("[%s][D%s]: ", self.Prefix, self.DebugLevel)
@@ -85,7 +85,7 @@ function VolitionCabinetPrinter:Print(debugLevel, ...)
 end
 
 function VolitionCabinetPrinter:PrintTest(debugLevel, ...)
-    if self.DebugLevel >= tonumber(debugLevel) then
+    if self.DebugLevel >= (debugLevel and tonumber(debugLevel) or 0) then
         local s
         if self.DebugLevel > 1 then
             s = string.format("[%s][%s%s][%s]: ", self.Prefix, "TEST-", debugLevel,
@@ -111,7 +111,7 @@ function VolitionCabinetPrinter:PrintTest(debugLevel, ...)
 end
 
 function VolitionCabinetPrinter:PrintWarning(debugLevel, ...)
-    if self.DebugLevel >= tonumber(debugLevel) then
+    if self.DebugLevel >= (debugLevel and tonumber(debugLevel) or 0) then
         local s
         if self.DebugLevel > 1 then
             s = string.format("[%s][%s]: ", self.Prefix, "WARN")
@@ -135,7 +135,7 @@ function VolitionCabinetPrinter:PrintWarning(debugLevel, ...)
 end
 
 function VolitionCabinetPrinter:PrintDebug(debugLevel, ...)
-    if self.DebugLevel >= tonumber(debugLevel) then
+    if self.DebugLevel >= (debugLevel and tonumber(debugLevel) or 0) then
         local s
         if self.DebugLevel > 1 then
             s = string.format("[%s][%s%s][%s]: ", self.Prefix, "DEBUG-", debugLevel,
@@ -191,7 +191,6 @@ function VolitionCabinetPrinter:Dump(info, useOptions, includeTime)
     end
 end
 
----@param debugLevel integer
 ---@param array FlashArray
 ---@param arrayName? string
 function VolitionCabinetPrinter:DumpArray(array, arrayName)

@@ -16,7 +16,7 @@ end
 ---@param flags integer
 ---@return VCEventParams
 function VCEntityEventBase:CreateParams(entity, entityComponent, flags)
-    VCDebug("Empty Param creation function for %s", _Class:GetClassName(self))
+    VCDebug(1, "Empty Param creation function for %s", _Class:GetClassName(self))
 end
 
 ---@param e VCEventParams

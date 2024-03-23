@@ -11,7 +11,7 @@ function VCHelpers.File:LoadStats(modDirectoryName, files, debug)
     end
 
     if debug then
-        VCDebug("Finished loading stat files.")
+        VCDebug(1, "Finished loading stat files.")
     end
 end
 
@@ -35,7 +35,7 @@ function VCHelpers.File:LoadLoca(files, debug)
     end
 
     if debug then
-        VCDebug("Finished loading loca files.")
+        VCDebug(0, "Finished loading loca files.")
     end
 end
 
@@ -57,9 +57,9 @@ function VCHelpers.File:DumpToFile(object, fileName)
     if contents ~= nil then
         fileName = fileName or "DumpObject.json"
         Ext.IO.SaveFile(fileName, contents)
-        VCDebug("Created file %s", fileName)
+        VCDebug(0, "Created file %s", fileName)
     else
-        VCDebug("Could not contruct contents %s to save to file %s", object, fileName)
+        VCDebug(0, "Could not contruct contents %s to save to file %s", object, fileName)
     end
 end
 

@@ -22,6 +22,6 @@ function VCHelpers.Teleporting:TeleportLinkedPartyMembersToCharacter(character)
       VCHelpers.Teleporting:TeleportToPosition(partyMember, x, y, z)
     end
   else
-    VCWarn("VCHelpers.Teleporting:TeleportPartyMembersToCharacter() - Character position not found.")
+    VCWarn(0, "VCHelpers.Teleporting:TeleportPartyMembersToCharacter() - Character position not found.")
   end
 end

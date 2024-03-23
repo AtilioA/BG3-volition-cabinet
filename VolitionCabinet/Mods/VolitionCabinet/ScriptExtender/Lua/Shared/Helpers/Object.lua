@@ -174,7 +174,9 @@ function VCHelpers.Object:GetTags(object)
             end
         end
     end
-    VCDump(tags)
+
+    VCDump(2, tags)
+
     return tags
 end
 

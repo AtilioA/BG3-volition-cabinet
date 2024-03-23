@@ -15,7 +15,7 @@ end
 ---@vararg string|integer
 ---@return VCEventParams
 function VCOsirisEventBase:CreateParams(...)
-    VCDebug("Empty Param creation function for %s", _Class:GetClassName(self))
+    VCDebug(1, "Empty Param creation function for %s", _Class:GetClassName(self))
 end
 
 ---@private
