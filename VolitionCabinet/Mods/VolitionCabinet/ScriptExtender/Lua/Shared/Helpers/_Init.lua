@@ -28,6 +28,7 @@ RequireFiles("Shared/Helpers/", {
     "Loca",
     "Log",
     "Object",
+    "Party",
     "Passive",
     "Resource",
     "SpellBook",
