@@ -192,14 +192,16 @@ function VCHelpers.Object:GetNearbyCharacters(source, radius, ignoreHeight)
 
     local nearbyEntities = {}
     for _, character in ipairs(Ext.Entity.GetAllEntitiesWithComponent("IsCharacter")) do
-        local distance = VCHelpers.Grid:GetDistance(pos, character.Transform.Transform.Translate, ignoreHeight)
-        if distance <= radius then
-            table.insert(nearbyEntities, {
-                Entity = character,
-                Guid = character.Uuid.EntityUuid,
-                Distance = distance,
-                Name = VCHelpers.Loca:GetDisplayName(character)
-            })
+        if character.Transform and character.Transform.Transform then
+            local distance = VCHelpers.Grid:GetDistance(pos, character.Transform.Transform.Translate, ignoreHeight)
+            if distance <= radius then
+                table.insert(nearbyEntities, {
+                    Entity = character,
+                    Guid = character.Uuid.EntityUuid,
+                    Distance = distance,
+                    Name = VCHelpers.Loca:GetDisplayName(character)
+                })
+            end
         end
     end
 
@@ -249,6 +251,72 @@ function VCHelpers.Object:GetNearbyItems(source, radius, ignoreHeight, includeIn
 
     table.sort(nearbyEntities, function(a, b) return a.Distance < b.Distance end)
     return nearbyEntities
+end
+
+--Returns a distance-sorted array of items nearby a position or object
+---@param source EntityHandle|Guid|vec3
+---@param radius? number
+---@param ignoreHeight? boolean
+---@param includeInSourceInventory? boolean
+---@return {Entity: EntityHandle, Guid: Guid, Distance:number, Name:string, Template:Guid}[]
+function VCHelpers.Object:GetNearbyContainers(source, radius, ignoreHeight, includeInSourceInventory)
+    local sourceEntity = VCHelpers.Object:GetEntity(source)
+    local pos = sourceEntity ~= nil and sourceEntity.Transform.Transform.Translate or source
+    radius = radius or self.DefaultNearbyRadius
+
+    local nearbyEntities = {}
+    if includeInSourceInventory or not sourceEntity then
+        for _, item in ipairs(Ext.Entity.GetAllEntitiesWithComponent("IsItem")) do
+            if item.Transform and item.Transform.Transform then
+                local distance = VCHelpers.Grid:GetDistance(pos, item.Transform.Transform.Translate, ignoreHeight)
+                if distance <= radius then
+                    table.insert(nearbyEntities, {
+                        Entity = item,
+                        Guid = item.Uuid.EntityUuid,
+                        Distance = distance,
+                        Name = VCHelpers.Loca:GetDisplayName(item),
+                        TemplateId = item.ServerItem.Template.Id
+                    })
+                end
+            end
+        end
+    else
+        for _, item in ipairs(Ext.Entity.GetAllEntitiesWithComponent("IsItem")) do
+            local distance = VCHelpers.Grid:GetDistance(pos, item.Transform.Transform.Translate, ignoreHeight)
+            if distance <= radius and not VCHelpers.Inventory:ItemIsInInventory(item, sourceEntity) then
+                table.insert(nearbyEntities, {
+                    Entity = item,
+                    Guid = item.Uuid.EntityUuid,
+                    Distance = distance,
+                    Name = VCHelpers.Loca:GetDisplayName(item),
+                    TemplateId = item.ServerItem.Template.Id
+                })
+            end
+        end
+    end
+
+    table.sort(nearbyEntities, function(a, b) return a.Distance < b.Distance end)
+    return nearbyEntities
+end
+
+-- Main function to get both nearby characters and items
+function VCHelpers.Object:GetNearbyCharactersAndItems(source, radius, ignoreHeight, includeInSourceInventory)
+    local characters = self:GetNearbyCharacters(source, radius, ignoreHeight)
+    local items = self:GetNearbyContainers(source, radius, ignoreHeight, includeInSourceInventory)
+
+    -- Combine characters and items into a single table
+    local allNearbyEntities = {}
+    for _, entity in ipairs(characters) do
+        table.insert(allNearbyEntities, entity)
+    end
+    for _, entity in ipairs(items) do
+        table.insert(allNearbyEntities, entity)
+    end
+
+    -- Sort the combined list by distance
+    table.sort(allNearbyEntities, function(a, b) return a.Distance < b.Distance end)
+
+    return allNearbyEntities
 end
 
 ---@param object any
