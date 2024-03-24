@@ -76,3 +76,15 @@ function VCHelpers.String:FindClosestMatch(input, valid_options, case_sensitive)
   end
   return closest_match, min_distance
 end
+
+--- Capitalize the first letter of a string
+---@param str string The string to capitalize
+function VCHelpers.String:Capitalize(str)
+  return str:gsub("^%l", string.upper)
+end
+
+--- Lowercase the first letter of a string
+---@param str string The string to lowercase
+function VCHelpers.String:Lowercase(str)
+  return str:gsub("^%u", string.lower)
+end
