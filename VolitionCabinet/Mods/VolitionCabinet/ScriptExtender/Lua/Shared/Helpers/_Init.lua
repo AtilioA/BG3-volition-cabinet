@@ -27,6 +27,7 @@ RequireFiles("Shared/Helpers/", {
     "Inventory",
     "Loca",
     "Log",
+    "Lootable",
     "Object",
     "Party",
     "Passive",
