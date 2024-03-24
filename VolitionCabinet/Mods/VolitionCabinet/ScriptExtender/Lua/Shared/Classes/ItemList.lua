@@ -100,3 +100,19 @@ end
 function ItemList:GetListType()
     return self.listType
 end
+
+--- Filters out items from an inventory.
+---@param inventory table An array of tables representing items, with Entity, Guid, Name, TemplateId, and TemplateName as keys.
+---@return table An array of tables representing items, with Entity, Guid, Name, TemplateId, and TemplateName as keys, excluding items in the items list.
+function ItemList:FilterOutIgnoredItems(inventory)
+    local filteredItems = {}
+    for _, item in ipairs(inventory) do
+        -- REVIEW: change behavior according to the list type
+        if item.TemplateName and not self.items[item.TemplateName] then
+            -- If the item's template name is not in the ignored items list
+            table.insert(filteredItems, item)
+        end
+    end
+
+    return filteredItems
+end
