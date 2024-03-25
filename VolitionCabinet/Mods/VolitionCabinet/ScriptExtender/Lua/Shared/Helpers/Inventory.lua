@@ -275,11 +275,18 @@ function VCHelpers.Inventory:GetCampChestInventory(shallow)
     local chestGUID = VCHelpers.Camp:GetChestTemplateUUID()
     if chestGUID then
         return VCHelpers.Inventory:GetInventory(chestGUID, true, shallow)
+    else
+        return {}
     end
 end
 
----@param item EntityHandle|Guid
+---@param item Guid
 ---@return boolean
 function VCHelpers.Inventory:IsItemInCampChest(item)
-    return VCHelpers.Inventory:GetItemTemplateInInventory(item, VCHelpers.Camp:GetChestTemplateUUID()) ~= nil
+    local chestGUID = VCHelpers.Camp:GetChestTemplateUUID()
+    if chestGUID then
+        return VCHelpers.Inventory:GetItemTemplateInInventory(item, chestGUID) ~= nil
+    else
+        return false
+    end
 end
