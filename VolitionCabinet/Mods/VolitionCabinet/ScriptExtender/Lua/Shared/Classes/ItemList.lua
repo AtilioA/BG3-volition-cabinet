@@ -108,7 +108,8 @@ function ItemList:FilterOutIgnoredItems(inventory)
     local filteredItems = {}
     for _, item in ipairs(inventory) do
         -- REVIEW: change behavior according to the list type
-        if item.TemplateName and not self.items[item.TemplateName] then
+        -- if item.TemplateName and self.items[item.TemplateName] ~= true then
+        if item.TemplateName self.items[item.TemplateName] then
             -- If the item's template name is not in the ignored items list
             table.insert(filteredItems, item)
         end

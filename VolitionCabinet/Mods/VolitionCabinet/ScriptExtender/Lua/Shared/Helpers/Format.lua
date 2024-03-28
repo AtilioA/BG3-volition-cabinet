@@ -39,7 +39,7 @@ function VCHelpers.Format:Guid(guid)
     return string.sub(tostring(guid), -36)
 end
 
---- func desc
+--- Get the template name from a local template UUID
 ---@param localtemplateUUID string
 ---@return string result
 function VCHelpers.Format:GetTemplateName(localtemplateUUID)
