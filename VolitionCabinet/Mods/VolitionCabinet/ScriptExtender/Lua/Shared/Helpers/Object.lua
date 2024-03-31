@@ -352,7 +352,12 @@ end
 function VCHelpers.Object:DumpObjectEntity(object, fileName)
     local objectEntity = Ext.Entity.Get(object)
     local fullFileName = 'object-entity-' ..
-    VCHelpers.Loca:GetDisplayName(object) .. '-' .. fileName .. '-' .. Ext.Utils.MonotonicTime() .. '.json'
+        VCHelpers.Loca:GetDisplayName(object) .. '-' .. fileName .. '-' .. Ext.Utils.MonotonicTime() .. '.json'
     Ext.IO.SaveFile(fullFileName, Ext.DumpExport(objectEntity:GetAllComponents()))
     VCDebug(0, "Dumped object entity (" .. VCHelpers.Loca:GetDisplayName(object) .. ") to " .. fullFileName)
+end
+
+---@param object Guid
+function VCHelpers.Object:IsObjectInWorld(object)
+    return Osi.IsInInventory(object) == 0
 end
