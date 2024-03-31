@@ -111,6 +111,23 @@ function ItemList:GetListType()
     return self.listType
 end
 
+--- Gets a random item from the list.
+--- @return string|nil The name of a random item in the list, or nil if the list is empty.
+function ItemList:GetRandomItem()
+    local randomItems = {}
+    for itemName, isIncluded in pairs(self.items) do
+        if isIncluded then
+            table.insert(randomItems, itemName)
+        end
+    end
+
+    if #randomItems > 0 then
+        return randomItems[math.random(#randomItems)]
+    else
+        return nil
+    end
+end
+
 --- Filters out items from an inventory.
 ---@param inventory table An array of tables representing items, with Entity, Guid, Name, TemplateId, and TemplateName as keys.
 ---@return table An array of tables representing items, with Entity, Guid, Name, TemplateId, and TemplateName as keys, excluding items in the items list.
