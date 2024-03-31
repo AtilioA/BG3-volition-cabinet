@@ -88,6 +88,16 @@ function ItemList:Load()
     end
 end
 
+--- Gets the number of items in the item list table.
+--- @return number The number of items in the item list table.
+function ItemList:GetItemCount()
+    local count = 0
+    for _ in pairs(self.items) do
+        count = count + 1
+    end
+    return count
+end
+
 --- Checks if an item is in the list.
 --- @param itemName string The name of the item to check.
 --- @return boolean Returns true if the item is in the list, false otherwise.
