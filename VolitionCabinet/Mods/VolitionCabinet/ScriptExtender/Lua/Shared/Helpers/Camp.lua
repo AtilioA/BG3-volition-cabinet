@@ -5,31 +5,31 @@
 ---@class HelperCamp: Helper
 VCHelpers.Camp = _Class:Create("HelperCamp", Helper)
 
-VCHelpers.Camp.CampChestsToPlayerIDMapping = {
-  ["CONT_PlayerCampChest_A"] = 65537, -- Player 1
-  ["CONT_PlayerCampChest_B"] = 65538, -- Player 2
-  ["CONT_PlayerCampChest_C"] = 65539, -- Player 3
-  ["CONT_PlayerCampChest_D"] = 65540, -- Player 4
+VCHelpers.Camp.CampChestsToIndexMapping = {
+  ["CONT_PlayerCampChest_A"] = 1, -- 'Player 1' (not really, but by using indices you don't need to worry)
+  ["CONT_PlayerCampChest_B"] = 2, -- 'Player 2' (not really, but by using indices you don't need to worry)
+  ["CONT_PlayerCampChest_C"] = 3, -- 'Player 3' (not really, but by using indices you don't need to worry)
+  ["CONT_PlayerCampChest_D"] = 4, -- 'Player 4' (not really, but by using indices you don't need to worry)
 }
 
 --- Gets the player ID of the camp chest.
 ---@param chestName string The UUID of the camp chest.
 ---@return integer|nil
-function VCHelpers.Camp:GetPlayerIDFromCampChestName(chestName)
-  return VCHelpers.Camp.CampChestsToPlayerIDMapping[chestName]
+function VCHelpers.Camp:GetIndexFromCampChestName(chestName)
+  return VCHelpers.Camp.CampChestsToIndexMapping[chestName]
 end
 
---- Gets the camp chest UUID from the player ID.
---- Iterates over the mapping, but it is and will always be a small table, so there's no need to optimize it.
----@param playerID integer The player ID.
----@return string|nil
-function VCHelpers.Camp:GetCampChestNameFromPlayerID(playerID)
-  for chestName, id in pairs(VCHelpers.Camp.CampChestsToPlayerIDMapping) do
-    if id == playerID then
-      return chestName
-    end
-  end
-end
+-- --- Gets the camp chest UUID from the player ID.
+-- --- Iterates over the mapping, but it is and will always be a small table, so there's no need to optimize it.
+-- ---@param playerID integer The player ID.
+-- ---@return string|nil
+-- function VCHelpers.Camp:GetCampChestNameFromPlayerID(playerID)
+--   for chestName, id in pairs(VCHelpers.Camp.CampChestsToIndexMapping) do
+--     if id == playerID then
+--       return chestName
+--     end
+--   end
+-- end
 
 --- Gets the local UUID of the camp chest template for Player 1.
 ---@return Guid|nil
