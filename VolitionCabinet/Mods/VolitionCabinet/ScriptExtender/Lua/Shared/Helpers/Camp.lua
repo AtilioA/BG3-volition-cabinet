@@ -45,7 +45,7 @@ function VCHelpers.Camp:GetChestTemplateUUID()
   end
 end
 
-function VCHelpers.Camp:GetAllCampChestsUUIDs()
+function VCHelpers.Camp:GetAllActiveCampChestsUUIDs()
   local campChestUUIDs = {}
 
   local campChests = Osi.DB_Camp_UserCampChest:Get(nil, nil)
@@ -60,5 +60,19 @@ function VCHelpers.Camp:GetAllCampChestsUUIDs()
     end
   end
 
+  return campChestUUIDs
+end
+
+function VCHelpers.Camp:GetAllCampChestEntities()
+  return Ext.Entity.GetAllEntitiesWithComponent("CampChest")
+end
+
+function VCHelpers.Camp:GetAllCampChestUUIDs()
+  local campChestUUIDs = {}
+  
+  local campChestEntities = VCHelpers.Camp:GetAllCampChestEntities()
+  for _, entity in pairs(campChestEntities) do
+    table.insert(campChestUUIDs, entity.Uuid.EntityUuid)
+  end
   return campChestUUIDs
 end
