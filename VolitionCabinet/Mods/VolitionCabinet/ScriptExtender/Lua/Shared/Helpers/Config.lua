@@ -3,7 +3,7 @@
 
     Dependencies: Requires Ext.IO for file operations and Ext.Json for JSON parsing and stringification. Cannot use Printer since that one relies on this module.
 
-    Usage: This module defines a Config object that is used to manage mod configurations. It supports loading from a JSON file, saving updates back to the file, and dynamically updating configuration settings based on in-game commands.
+    Usage: This module defines a Config helper class that is used to manage mod configurations. It supports loading from a JSON file, saving updates back to the file, and dynamically updating configuration settings based on in-game commands.
 ]]
 
 ---@class HelperConfig: Helper
@@ -19,50 +19,51 @@ VCHelpers.Config = _Class:Create("HelperConfig", Helper)
 --- @param configFilePath string The path to the configuration file relative to the folder.
 --- @param defaultConfig table The default configuration values.
 function VCHelpers.Config:SetConfig(folderName, configFilePath, defaultConfig)
-  self.folderName = folderName or self.folderName
-  self.configFilePath = configFilePath or self.configFilePath
-  self.defaultConfig = defaultConfig or self.defaultConfig
+    self.folderName = folderName or self.folderName
+    self.configFilePath = configFilePath or self.configFilePath
+    self.defaultConfig = defaultConfig or self.defaultConfig
 end
 
 --- Generates the full path to a configuration file, starting from the Script Extender folder.
 --- @param filePath string The file name or relative path within the folderName.
 --- @return string The full path to the config file.
 function VCHelpers.Config:GetModFolderPath(filePath)
-  return self.folderName .. '/' .. filePath
+    return self.folderName .. '/' .. filePath
 end
 
 --- Loads a configuration from a file.
 --- @param filePath string The file path to load the configuration from.
 --- @return table|nil The loaded configuration table, or nil if loading failed.
 function VCHelpers.Config:LoadConfig(filePath)
-  local configFileContent = Ext.IO.LoadFile(self:GetModFolderPath(filePath))
-  if configFileContent and configFileContent ~= "" then
+    local configFileContent = Ext.IO.LoadFile(self:GetModFolderPath(filePath))
+    if not configFileContent or configFileContent == "" then
+        VCPrint(0, "File not found: " .. filePath)
+        return nil
+    end
+
     -- VCPrint(1, "Loaded config file: " .. filePath)
     local success, parsed = pcall(Ext.Json.Parse, configFileContent)
-    if success then
-      return parsed
-    else
-      VCPrint(0, "Failed to parse config file: " .. filePath .. " - Regenerating default config.")
-      self:SaveConfig(self.configFilePath, self.defaultConfig)
-      return self.currentConfig
+    if not success then
+        VCPrint(0, "Failed to parse config file: " .. filePath .. " - Regenerating default config.")
+        self:SaveConfig(self.configFilePath, self.defaultConfig)
+        return self.currentConfig
     end
-  else
-    VCPrint(0, "File not found: " .. filePath)
-    return nil
-  end
+
+    return parsed
 end
 
 --- Saves the given configuration to a file.
 --- @param filePath string The file path to save the configuration to.
 --- @param config table The configuration table to save.
 function VCHelpers.Config:SaveConfig(filePath, config)
-  local configFileContent = Ext.Json.Stringify(config, { Beautify = true })
-  Ext.IO.SaveFile(self:GetModFolderPath(filePath), configFileContent)
+    local configFileContent = Ext.Json.Stringify(config, { Beautify = true })
+    Ext.IO.SaveFile(self:GetModFolderPath(filePath), configFileContent)
 end
 
 --- Saves the current configuration to its file, using the object's values.
 function VCHelpers.Config:SaveCurrentConfig()
-  Ext.IO.SaveFile(self:GetModFolderPath(self.configFilePath), Ext.Json.Stringify(self.currentConfig, { Beautify = true }))
+    Ext.IO.SaveFile(self:GetModFolderPath(self.configFilePath),
+        Ext.Json.Stringify(self.currentConfig, { Beautify = true }))
 end
 
 --- Updates an existing configuration with values from the default configuration.
@@ -71,120 +72,145 @@ end
 --- @param defaultConfig table The default configuration to update or check from.
 --- @return boolean updated true if the configuration was updated, false otherwise.
 function VCHelpers.Config:UpdateConfig(existingConfig, defaultConfig)
-  local updated = false
+    local updated = false
 
-  for key, newValue in pairs(defaultConfig) do
-    local oldValue = existingConfig[key]
+    if self:AddMissingKeys(existingConfig, defaultConfig) then updated = true end
+    if self:UpdateTypesAndValues(existingConfig, defaultConfig) then updated = true end
+    if self:RecursiveUpdateForNestedTables(existingConfig, defaultConfig) then updated = true end
+    if self:RemoveDeprecatedKeys(existingConfig, defaultConfig) then updated = true end
 
-    if oldValue == nil then
-      -- Add missing keys from the default config
-      existingConfig[key] = newValue
-      updated = true
-      VCPrint(0, "Added new config option: " .. tostring(key) .. " to " .. self.configFilePath)
-    elseif type(oldValue) ~= type(newValue) then
-      -- If the type has changed...
-      if type(newValue) == "table" then
-        -- ...and the new type is a table, place the old value in the 'enabled' key
-        existingConfig[key] = { enabled = oldValue }
-        for subKey, subValue in pairs(newValue) do
-          if existingConfig[key][subKey] == nil then
-            existingConfig[key][subKey] = subValue
-          end
+    return updated
+end
+
+function VCHelpers.Config:RecursiveUpdateForNestedTables(existingConfig, defaultConfig)
+    local updated = false
+    for key, newValue in pairs(defaultConfig) do
+        local oldValue = existingConfig[key]
+
+        -- Check if both the existing and new values are tables for recursive update
+        if type(oldValue) == "table" and type(newValue) == "table" then
+            -- Recursive call to handle nested tables
+            if self:UpdateConfig(oldValue, newValue) then
+                updated = true -- Mark as updated if any nested update was made
+            end
         end
-        updated = true
-        VCPrint(0, "Updated config structure for: " .. tostring(key) .. " (" .. self.configFilePath .. ")")
-      else
-        -- ...otherwise, just replace with the new value
-        existingConfig[key] = newValue
-        updated = true
-        VCPrint(0, "Updated config value for: " .. tostring(key) .. " (" .. self.configFilePath .. ")")
-      end
-    elseif type(newValue) == "table" then
-      -- Recursively update for nested tables
-      if self:UpdateConfig(oldValue, newValue) then
-        updated = true
-      end
     end
-  end
+    return updated
+end
 
-  -- Remove deprecated keys
-  for key, _ in pairs(existingConfig) do
-    if defaultConfig[key] == nil then
-      -- Remove keys that are not in the default config
-      existingConfig[key] = nil
-      updated = true
-      VCPrint(0, "Removed deprecated config option: " .. tostring(key) .. " (" .. self.configFilePath .. ")")
+function VCHelpers.Config:AddMissingKeys(existingConfig, defaultConfig)
+    for key, newValue in pairs(defaultConfig) do
+        if existingConfig[key] == nil then
+            existingConfig[key] = newValue
+            VCPrint(0, "Added new config option: " .. tostring(key) .. " to " .. self.configFilePath)
+            return true -- Early return indicating that an update was made
+        end
     end
-  end
+    return false -- No update was made
+end
 
-  return updated
+function VCHelpers.Config:UpdateTypesAndValues(existingConfig, defaultConfig)
+    local updated = false
+    for key, newValue in pairs(defaultConfig) do
+        local oldValue = existingConfig[key]
+        if type(oldValue) ~= type(newValue) then
+            updated = true
+            if type(newValue) == "table" then
+                existingConfig[key] = { enabled = oldValue }
+                for subKey, subValue in pairs(newValue) do
+                    if existingConfig[key][subKey] == nil then
+                        existingConfig[key][subKey] = subValue
+                    end
+                end
+                VCPrint(0, "Updated config structure for: " .. tostring(key) .. " (" .. self.configFilePath .. ")")
+            else
+                existingConfig[key] = newValue
+                VCPrint(0, "Updated config value for: " .. tostring(key) .. " (" .. self.configFilePath .. ")")
+            end
+        end
+    end
+    return updated
+end
+
+function VCHelpers.Config:RemoveDeprecatedKeys(existingConfig, defaultConfig)
+    local updated = false
+    for key, _ in pairs(existingConfig) do
+        if defaultConfig[key] == nil then
+            existingConfig[key] = nil
+            updated = true
+            VCPrint(0, "Removed deprecated config option: " .. tostring(key) .. " (" .. self.configFilePath .. ")")
+        end
+    end
+    return updated
 end
 
 --- Loads the configuration from the JSON file, updates it from the defaultConfig if necessary,
 --- and saves back if changes are detected or if the file was not present.
 --- @return table jsonConfig The loaded (and potentially updated) configuration.
 function VCHelpers.Config:LoadJSONConfig()
-  local jsonConfig = self:LoadConfig(self.configFilePath)
-  if not jsonConfig then
-    jsonConfig = self.defaultConfig
-    self:SaveConfig(self.configFilePath, jsonConfig)
-    VCPrint(0, "Created config file with default options." .. " (" .. self.configFilePath .. ")")
-  else
-    if self:UpdateConfig(jsonConfig, self.defaultConfig) then
-      self:SaveConfig(self.configFilePath, jsonConfig)
-      VCPrint(0, "Config file updated with new options." .. " (" .. self.configFilePath .. ")")
-    else
-      -- Commented out because it's too verbose and we don't have access to a proper Printer object here
-      -- VCPrint(1, "Config file loaded.")
+    local jsonConfig = self:LoadConfig(self.configFilePath)
+    if not jsonConfig then
+        jsonConfig = self.defaultConfig
+        self:SaveConfig(self.configFilePath, jsonConfig)
+        VCPrint(0, "Created config file with default options." .. " (" .. self.configFilePath .. ")")
+        return jsonConfig
     end
-  end
 
-  return jsonConfig
+    local updated = self:UpdateConfig(jsonConfig, self.defaultConfig)
+    if updated then
+        self:SaveConfig(self.configFilePath, jsonConfig)
+        VCPrint(0, "Config file updated with new options." .. " (" .. self.configFilePath .. ")")
+    else
+        -- Commented out because it's too verbose and we don't have access to a proper Printer object here
+        -- VCPrint(1, "Config file loaded.")
+    end
+
+    return jsonConfig
 end
 
 --- Updates the currentConfig property with the configuration loaded from the file.
 function VCHelpers.Config:UpdateCurrentConfig()
-  self.currentConfig = self:LoadJSONConfig()
+    self.currentConfig = self:LoadJSONConfig()
 end
 
 --- Accessor for the current configuration.
 --- @return table The current configuration.
 function VCHelpers.Config:getCfg()
-  return self.currentConfig
+    return self.currentConfig
 end
 
 --- Retrieves the current debug level from the configuration.
 --- @return number The current debug level, with a default of 0 if not set.
 function VCHelpers.Config:GetCurrentDebugLevel()
-  if self.currentConfig then
+    if not self.currentConfig then
+        return 0
+    end
+
     return tonumber(self.currentConfig.DEBUG.level) or 0
-  else
-    return 0
-  end
 end
 
 function VCHelpers.Config:AddConfigReloadedCallback(callback)
-  if self.onConfigReloaded == nil then
-    self.onConfigReloaded = {}
-  end
+    if self.onConfigReloaded == nil then
+        self.onConfigReloaded = {}
+    end
 
-  table.insert(self.onConfigReloaded, callback)
+    table.insert(self.onConfigReloaded, callback)
 end
 
 function VCHelpers.Config:NotifyConfigReloaded()
-  if self.onConfigReloaded == nil then
-    return
-  end
+    if self.onConfigReloaded == nil then
+        return
+    end
 
-  for _, callback in ipairs(self.onConfigReloaded) do
-    callback(self)
-  end
+    for _, callback in ipairs(self.onConfigReloaded) do
+        callback(self)
+    end
 end
 
 function VCHelpers.Config:RegisterReloadConfigCommand(prefix)
-  local commandName = prefix:lower() .. "_reload"
-  Ext.RegisterConsoleCommand(commandName, function()
-    self:UpdateCurrentConfig()
-    self:NotifyConfigReloaded() -- Notify all subscribers that config has been reloaded.
-  end)
+    local commandName = prefix:lower() .. "_reload"
+    Ext.RegisterConsoleCommand(commandName, function()
+        self:UpdateCurrentConfig()
+        self:NotifyConfigReloaded() -- Notify all subscribers that config has been reloaded.
+    end)
 end
