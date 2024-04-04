@@ -37,6 +37,7 @@ RequireFiles("Shared/Helpers/", {
     "Status",
     "String",
     "Teleporting",
+    "Template",
     "Timer",
     "Ware",
 })
