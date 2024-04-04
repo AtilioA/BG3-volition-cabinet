@@ -47,4 +47,10 @@ Ext.Events.SessionLoaded:Subscribe(function()
             guid = guid or VCHelpers.Object:GetHostEntity().Uuid.EntityUuid; Ext.IO.SaveFile("Dump.json",
                 Ext.DumpExport(Ext.Entity.Get(guid):GetAllComponents()))
         end)
+
+    -- VCHelpers.Commander:Register("pe", function(guid)
+    --     Osi.PlayEffect(Osi.GetHostCharacter(), tostring(guid))
+    --     Osi.PlaySound(Osi.GetHostCharacter(), tostring(guid))
+    --     Osi.PlaySoundResource(Osi.GetHostCharacter(), tostring(guid))
+    -- end)
 end)
