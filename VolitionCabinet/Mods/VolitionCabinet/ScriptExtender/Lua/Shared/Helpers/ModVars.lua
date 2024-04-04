@@ -20,7 +20,15 @@ end
 
 ---@param module? Guid
 function VCHelpers.ModVars:Sync(module)
-    Ext.Vars.SyncModVariables(module or ModuleUUID)
+    local ModVars = Ext.Vars.GetModVariables(module or ModuleUUID)
+    -- Redundant but worky :catyep:
+    if ModVars then
+        for varName, data in pairs(ModVars) do
+            ModVars[varName] = ModVars[varName]
+        end
+        Ext.Vars.DirtyModVariables(module or ModuleUUID)
+        Ext.Vars.SyncModVariables(module or ModuleUUID)
+    end
 end
 
 ---@param key any
