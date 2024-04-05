@@ -62,14 +62,41 @@ function VCHelpers.Camp:GetAllCampChestEntities()
     return Ext.Entity.GetAllEntitiesWithComponent("CampChest")
 end
 
---- Gets all camp chest UUIDs.
----@return table campChestUUIDs A table with all camp chest UUIDs.
+-- --- Gets all camp chest template names.
+-- ---@return table templateNames A table with all camp chest template names.
+-- function VCHelpers.Camp:GetAllCampChestTemplateNames()
+--     local campChestEntities = self:GetAllCampChestEntities()
+
+--     local templateNames = {}
+--     local sortedTemplateNames = {}
+--     for _, entity in ipairs(campChestEntities) do
+--         table.insert(sortedTemplateNames, entity.ServerItem.Template.Name)
+--     end
+--     table.sort(sortedTemplateNames)
+
+--     for _, templateName in ipairs(sortedTemplateNames) do
+--         table.insert(templateNames, templateName)
+--     end
+
+--     return templateNames
+-- end
+
+--- Gets all camp chest UUIDs (sorted by template name).
+---@return table campChestUUIDs A table with all camp chest UUIDs, sorted by template name.
 function VCHelpers.Camp:GetAllCampChestUUIDs()
     ---@type table<string>
     local campChestUUIDs = {}
 
-    local campChestEntities = VCHelpers.Camp:GetAllCampChestEntities()
+    -- Get camp chests, sort them by template name, return table of UUIDs
+    local campChestEntities = self:GetAllCampChestEntities()
+    local sortedCampChestEntities = {}
     for _, entity in pairs(campChestEntities) do
+        table.insert(sortedCampChestEntities, entity)
+    end
+    table.sort(sortedCampChestEntities, function(a, b)
+        return a.ServerItem.Template.Name < b.ServerItem.Template.Name
+    end)
+    for _, entity in ipairs(sortedCampChestEntities) do
         table.insert(campChestUUIDs, entity.Uuid.EntityUuid)
     end
     return campChestUUIDs
