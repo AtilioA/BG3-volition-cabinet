@@ -28,6 +28,7 @@ RequireFiles("Shared/Helpers/", {
     "Loca",
     "Log",
     "Lootable",
+    "MessageBox",
     "Object",
     "Party",
     "Passive",
