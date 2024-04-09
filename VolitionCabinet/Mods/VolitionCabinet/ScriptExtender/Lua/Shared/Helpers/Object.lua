@@ -361,3 +361,13 @@ end
 function VCHelpers.Object:IsObjectInWorld(object)
     return Osi.IsInInventory(object) == 0
 end
+
+--- Ping an object and play an effect on it
+---@param object GUIDSTRING The UUID of the object
+---@return nil
+function VCHelpers.Object:PingObject(object)
+    local objectPositionX, objectPositionY, objectPositionZ = Osi.GetPosition(object)
+    if objectPositionX and objectPositionY and objectPositionZ then
+        Osi.RequestPing(objectPositionX, objectPositionY, objectPositionZ, object, Osi.GetHostCharacter())
+    end
+end
