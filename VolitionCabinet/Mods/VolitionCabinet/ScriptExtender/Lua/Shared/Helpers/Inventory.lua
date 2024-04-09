@@ -168,6 +168,40 @@ function VCHelpers.Inventory:ItemTemplateIsInInventory(template, holder)
     return false
 end
 
+--- Refill a inventory with a certain quantity of an specific item.
+---@param templateUUID string The UUID of the item
+---@param quantity integer The quantity of copies of the item to add
+---@param inventoryUUID string The UUID of the inventory
+---@return nil
+function VCHelpers.Inventory:RefillInventoryWithItem(templateUUID, quantity, inventoryUUID)
+    -- Get all items of the same template in the inventory
+    local inventoryItems = VCHelpers.Inventory:GetAllItemsWithTemplateInInventory(
+        templateUUID,
+        inventoryUUID, true, false)
+
+    -- Get the total number of items in the inventory, including different stacks
+    local totalItemCount = 0
+    for _, itemInfo in ipairs(inventoryItems) do
+        local exact, total = Osi.GetStackAmount(itemInfo.Guid)
+        totalItemCount = totalItemCount + total
+    end
+
+    -- Compute the difference between the number of items in the inventory and the desired quantity
+    local itemsToAdd = quantity - totalItemCount
+
+    -- Add the difference to the inventory, if any
+    if itemsToAdd > 0 then
+        local itemName = VCHelpers.Loca:GetTranslatedStringFromTemplateUUID(templateUUID) or templateUUID
+        VCDebug(2,
+            "Adding " ..
+            itemsToAdd ..
+            " copies of item '" ..
+            itemName ..
+            "' to inventory " .. inventoryUUID)
+        Osi.TemplateAddTo(templateUUID, inventoryUUID, itemsToAdd, 0)
+    end
+end
+
 ---@param item any
 ---@return boolean
 function VCHelpers.Inventory:IsMainStackEntity(item)
