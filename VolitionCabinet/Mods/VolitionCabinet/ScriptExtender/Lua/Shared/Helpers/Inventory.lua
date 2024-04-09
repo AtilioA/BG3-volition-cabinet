@@ -46,10 +46,16 @@ function VCHelpers.Inventory:GetInventory(object, primaryOnly, shallow)
     return items
 end
 
----@param object any
+---@param object GUIDSTRING|EntityHandle
 ---@return EntityHandle|nil
 function VCHelpers.Inventory:GetHolder(object)
-    local entity = VCHelpers.Object:GetEntity(object)
+    local entity = nil
+    if type(object) == "string" then
+        entity = VCHelpers.Object:GetEntity(object)
+    else
+        entity = object
+    end
+
     if entity ~= nil and entity.InventoryMember ~= nil then
         return entity.InventoryMember.Inventory.InventoryIsOwned.Owner
     end
