@@ -40,5 +40,6 @@ RequireFiles("Shared/Helpers/", {
     "Teleporting",
     "Template",
     "Timer",
+    "TreasureTable",
     "Ware",
 })
