@@ -6,7 +6,6 @@
 VCHelpers.Party = _Class:Create("HelperParty", Helper)
 
 -- Return the party members currently following the player
--- TODO: rename to GetPartyMembersFollowingPlayer?
 function VCHelpers.Party:GetPartyMembers()
   local teamMembers = {}
 
@@ -32,8 +31,6 @@ function VCHelpers.Party.GetAllPartyMembers()
       teamMembers[#teamMembers + 1] = VCHelpers.Format:Guid(player[1])
     end
   end
-
-  _D(teamMembers)
 
   return teamMembers
 end
