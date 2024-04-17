@@ -15,7 +15,12 @@ end
 ---@return string|nil
 function VCHelpers.Loca:GetDisplayName(object)
     local name
-    local entity = VCHelpers.Object:GetEntity(object)
+
+    local entity = object
+    if type(object) == 'string' then
+        entity = VCHelpers.Object:GetEntity(object)
+    end
+
     if entity ~= nil then
         if entity.DisplayName ~= nil then
             name = Ext.Loca.GetTranslatedString(entity.DisplayName.NameKey.Handle.Handle)
