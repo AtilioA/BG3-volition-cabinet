@@ -184,7 +184,7 @@ function VCHelpers.TreasureTable:RecursivelyGetTT(treasureTable)
 end
 
 ---@param treasureTable StatTreasureTable The treasure table to extract TreasureCategory objects from
----@return StatTreasureCategory[] An array of all the TreasureCategory objects in the treasure table
+---@return Category[] An array of all the TreasureCategory objects in the treasure table
 function VCHelpers.TreasureTable:ExtractTreasureCategories(treasureTable)
     local categories = {}
 
@@ -196,7 +196,8 @@ function VCHelpers.TreasureTable:ExtractTreasureCategories(treasureTable)
                 if subTable.Categories then
                     for _, category in ipairs(subTable.Categories) do
                         if category.TreasureCategory then
-                            table.insert(categories, category.TreasureCategory)
+                            table.insert(categories,
+                                VCHelpers.TreasureTable:GetTC(tostring(category.TreasureCategory)))
                         end
                     end
                 end
@@ -206,6 +207,67 @@ function VCHelpers.TreasureTable:ExtractTreasureCategories(treasureTable)
 
     extractCategories(treasureTable)
     return categories
+end
+
+--- Retrieves the items contained in the treasure categories contained in the specified treasure table.
+---@param treasureTableName string The treasure table to retrieve the items from.
+---@return string[] items The items contained in the treasure categories contained in the specified treasure table.
+function VCHelpers.TreasureTable:GetTableOfItemsUUIDsFromTreasureTable(treasureTableName)
+    local treasureTable = self:ProcessSingleTreasureTable(treasureTableName)
+    if not treasureTable then
+        VCDebug(1, "Treasure table not found.")
+        return {}
+    end
+
+    local treasureCategories = self:ExtractTreasureCategories(treasureTable)
+    if not treasureCategories then
+        VCDebug(1, "Treasure categories not found.")
+        return {}
+    end
+
+    return self:GetItemsFromTreasureCategories(treasureCategories)
+end
+
+--- Retrieves the items contained in the specified treasure categories.
+---@param treasureCategories Category[] The treasure categories to retrieve the items from.
+---@return string[] items The items contained in the specified treasure categories.
+function VCHelpers.TreasureTable:GetItemsFromTreasureCategories(treasureCategories)
+    local items = {}
+    local rootTemplates = Ext.Template.GetAllRootTemplates()
+
+    for _, category in pairs(treasureCategories) do
+        self:GetItemsFromCategory(category, rootTemplates, items)
+    end
+
+    return items
+end
+
+--- Retrieves the items contained in the specified treasure category.
+---@param category Category The treasure category to retrieve the items from.
+---@param rootTemplates GameObjectTemplate[] The root templates to check against.
+---@return string[] items The items contained in the specified treasure category.
+function VCHelpers.TreasureTable:GetItemsFromCategory(category, rootTemplates, items)
+    for _, item in pairs(category.Items) do
+        items = self:GetItemFromRootTemplates(item, rootTemplates, items)[1]
+    end
+end
+
+--- Retrieves the item from the root templates if the item name matches.
+--- This is more of a TemplateHelper method, but it's so coupled that whatever.
+---@param item table The item to check.
+---@param rootTemplates GameObjectTemplate[] The root templates to check against.
+---@param items string[] The items to add to.
+---@return string[] items The items with the new item added.
+function VCHelpers.TreasureTable:GetItemFromRootTemplates(item, rootTemplates, items)
+    for _, rootTemplate in pairs(rootTemplates) do
+        -- Needed cause .Stats might not exist (and will explode even if you do a nil check)
+        pcall(function()
+            if item.Name == rootTemplate.Name or item.Name == rootTemplate.Stats then
+                table.insert(items, rootTemplate.Id)
+            end
+        end)
+    end
+    return items
 end
 
 --- Retrieves the treasure tables associated with the specified template.
