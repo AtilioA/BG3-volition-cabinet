@@ -63,7 +63,12 @@ function VCHelpers.Template:GetTemplateNameToUUIDTable()
     local templates = Ext.Template.GetAllRootTemplates()
     local templateNameToUUID = {}
     for templateId, templateData in pairs(templates) do
-        templateNameToUUID[templateData.Name] = templateId
+        local success, templateName = pcall(function() return templateData.Stats end)
+        if success then
+            templateNameToUUID[templateName] = templateId
+        else
+            templateNameToUUID[templateData.Name] = templateId
+        end
     end
     return templateNameToUUID
 end
