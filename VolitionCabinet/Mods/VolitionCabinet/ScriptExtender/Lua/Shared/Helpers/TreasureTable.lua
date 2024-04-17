@@ -230,7 +230,7 @@ end
 
 --- Retrieves the items contained in the specified treasure categories.
 ---@param treasureCategories Category[] The treasure categories to retrieve the items from.
----@return string[] items The items contained in the specified treasure categories.
+---@return table items The items contained in the specified treasure categories.
 function VCHelpers.TreasureTable:GetItemsFromTreasureCategories(treasureCategories)
     local items = {}
     local rootTemplates = Ext.Template.GetAllRootTemplates()
@@ -245,10 +245,11 @@ end
 --- Retrieves the items contained in the specified treasure category.
 ---@param category Category The treasure category to retrieve the items from.
 ---@param rootTemplates GameObjectTemplate[] The root templates to check against.
----@return string[] items The items contained in the specified treasure category.
+---@param items table The items table to add to.
+---@return void
 function VCHelpers.TreasureTable:GetItemsFromCategory(category, rootTemplates, items)
     for _, item in pairs(category.Items) do
-        items = self:GetItemFromRootTemplates(item, rootTemplates, items)[1]
+        self:GetItemFromRootTemplates(item, rootTemplates, items)
     end
 end
 
@@ -256,18 +257,17 @@ end
 --- This is more of a TemplateHelper method, but it's so coupled that whatever.
 ---@param item table The item to check.
 ---@param rootTemplates GameObjectTemplate[] The root templates to check against.
----@param items string[] The items to add to.
----@return string[] items The items with the new item added.
+---@param items table The items table to add to.
+---@return void
 function VCHelpers.TreasureTable:GetItemFromRootTemplates(item, rootTemplates, items)
     for _, rootTemplate in pairs(rootTemplates) do
         -- Needed cause .Stats might not exist (and will explode even if you do a nil check)
         pcall(function()
             if item.Name == rootTemplate.Name or item.Name == rootTemplate.Stats then
-                table.insert(items, rootTemplate.Id)
+                table.insert(items, {Name = rootTemplate.Name, Quantity = item.MinAmount})
             end
         end)
     end
-    return items
 end
 
 --- Retrieves the treasure tables associated with the specified template.
