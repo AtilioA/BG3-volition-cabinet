@@ -8,6 +8,8 @@ function VCHelpers.Template:HasTemplate(str)
     return Ext.Template.GetTemplate(str) ~= nil
 end
 
+-- VCHelpers.Template.TemplateNameToUUID = VCHelpers.Template:GetTemplateNameToUUIDTable()
+
 --- Delete ALL entities whose templateID match the given template UUID.
 ---@param templateUUID string The UUID of the template to delete.
 ---@return void
@@ -53,4 +55,15 @@ function VCHelpers.Template:GetAllVanillaTemplates()
         end
     end
     return vanillaTemplates
+end
+
+--- Generate a table of template Name keys to UUID/template Id values.
+---@return table<string, string>
+function VCHelpers.Template:GetTemplateNameToUUIDTable()
+    local templates = Ext.Template.GetAllRootTemplates()
+    local templateNameToUUID = {}
+    for templateId, templateData in pairs(templates) do
+        templateNameToUUID[templateData.Name] = templateId
+    end
+    return templateNameToUUID
 end

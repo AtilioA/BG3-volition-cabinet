@@ -89,13 +89,21 @@ function VCHelpers.TreasureTable:GenerateTreasureTableFile(filename)
     Ext.IO.SaveFile(filename, Ext.DumpExport(result))
 end
 
+TemplatesNames = {}
+
+-- Postpone the generation of the template-name-to-UUID table until the game has started, as an optimization.
+if Ext.IsServer() then
+    Ext.Osiris.RegisterListener("LevelGameplayStarted", 2, "after", function(levelName, isEditorMode)
+        TemplatesNames = VCHelpers.Template:GetTemplateNameToUUIDTable()
+    end)
+end
+
 ---@param template GameObjectTemplate
 ---@param filename string
 function VCHelpers.TreasureTable:GenerateTreasureTableFromTemplate(template)
     local result = {}
     local unpackedTT = {}
 
-    _D(template)
     if template.TemplateType == "character" then
         if #template.TradeTreasures == 0 then
             TT = {}
@@ -212,7 +220,7 @@ end
 --- Retrieves the items contained in the treasure categories contained in the specified treasure table.
 ---@param treasureTableName string The treasure table to retrieve the items from.
 ---@return string[] items The items contained in the treasure categories contained in the specified treasure table.
-function VCHelpers.TreasureTable:GetTableOfItemsUUIDsFromTreasureTable(treasureTableName)
+function VCHelpers.TreasureTable:GetTableOfItemsFromTreasureTable(treasureTableName)
     local treasureTable = self:ProcessSingleTreasureTable(treasureTableName)
     if not treasureTable then
         VCDebug(1, "Treasure table not found.")
@@ -225,7 +233,23 @@ function VCHelpers.TreasureTable:GetTableOfItemsUUIDsFromTreasureTable(treasureT
         return {}
     end
 
-    return self:GetItemsFromTreasureCategories(treasureCategories)
+    local items = self:GetItemsFromTreasureCategories(treasureCategories)
+    local result = {}
+
+    -- Recursively get items from the InventoryList of each item
+    for _, item in ipairs(items) do
+        table.insert(result, item)
+        if item.InventoryList then
+            for _, treasureTableName in ipairs(item.InventoryList) do
+                local nestedItems = self:GetTableOfItemsFromTreasureTable(treasureTableName)
+                for _, nestedItem in ipairs(nestedItems) do
+                    table.insert(result, nestedItem)
+                end
+            end
+        end
+    end
+
+    return result
 end
 
 --- Retrieves the items contained in the specified treasure categories.
@@ -249,24 +273,16 @@ end
 ---@return void
 function VCHelpers.TreasureTable:GetItemsFromCategory(category, rootTemplates, items)
     for _, item in pairs(category.Items) do
-        self:GetItemFromRootTemplates(item, rootTemplates, items)
-    end
-end
-
---- Retrieves the item from the root templates if the item name matches.
---- This is more of a TemplateHelper method, but it's so coupled that whatever.
----@param item table The item to check.
----@param rootTemplates GameObjectTemplate[] The root templates to check against.
----@param items table The items table to add to.
----@return void
-function VCHelpers.TreasureTable:GetItemFromRootTemplates(item, rootTemplates, items)
-    for _, rootTemplate in pairs(rootTemplates) do
-        -- Needed cause .Stats might not exist (and will explode even if you do a nil check)
-        pcall(function()
-            if item.Name == rootTemplate.Name or item.Name == rootTemplate.Stats then
-                table.insert(items, {Name = rootTemplate.Name, Quantity = item.MinAmount})
-            end
-        end)
+        local templateUUID = TemplatesNames[item.Name]
+        if templateUUID then
+            table.insert(items,
+                {
+                    InventoryList = rootTemplates[templateUUID].InventoryList,
+                    Name = rootTemplates[templateUUID].Name,
+                    Id = rootTemplates[templateUUID].Id,
+                    Quantity = item.MinAmount
+                })
+        end
     end
 end
 
