@@ -238,14 +238,21 @@ function VCHelpers.TreasureTable:GetTableOfItemsFromTreasureTable(treasureTableN
 
     -- Recursively get items from the InventoryList of each item
     for _, item in ipairs(items) do
-        table.insert(result, item)
+        local nestedItems = {}
+        table.insert(result, {
+            Name = item.Name,
+            Id = item.Id,
+            Quantity = item.Quantity,
+            nestedItems = {}
+        })
         if item.InventoryList then
             for _, treasureTableName in ipairs(item.InventoryList) do
-                local nestedItems = self:GetTableOfItemsFromTreasureTable(treasureTableName)
-                for _, nestedItem in ipairs(nestedItems) do
-                    table.insert(result, nestedItem)
+                local nestedItemsFromTable = self:GetTableOfItemsFromTreasureTable(treasureTableName)
+                for _, nestedItem in ipairs(nestedItemsFromTable) do
+                    table.insert(nestedItems, nestedItem)
                 end
             end
+            result[#result].nestedItems = nestedItems
         end
     end
 
