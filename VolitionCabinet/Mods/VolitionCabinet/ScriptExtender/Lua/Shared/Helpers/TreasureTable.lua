@@ -91,12 +91,13 @@ end
 
 -- VCHelpers.TreasureTable.TemplatesNames = VCHelpers.Template:GetTemplateNameToTemplateData()
 
+-- TODO: Only usable when SE v16 is released
 -- Postpone the generation of the template-name-to-UUID table until the game has started, as an optimization.
-if Ext.IsServer() then
-    Ext.Osiris.RegisterListener("LevelGameplayStarted", 2, "after", function(levelName, isEditorMode)
-        VCHelpers.TreasureTable.TemplatesNames = VCHelpers.Template:GetTemplateNameToTemplateData()
-    end)
-end
+-- if Ext.IsServer() then
+--     Ext.Osiris.RegisterListener("LevelGameplayStarted", 2, "after", function(levelName, isEditorMode)
+--         VCHelpers.TreasureTable.TemplatesNames = VCHelpers.Template:GetTemplateNameToTemplateData()
+--     end)
+-- end
 
 ---@param template GameObjectTemplate
 ---@param filename string
