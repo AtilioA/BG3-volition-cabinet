@@ -25,7 +25,7 @@ end
 ---@param character GUIDSTRING character to check.
 ---@param shallow boolean If true, recursively checks inside bags and containers.
 ---@return table | nil - table of food items in the character's inventory, or nil if none found.
-function GetFoodInInventory(character, shallow)
+function VCHelpers.Food:GetFoodInInventory(character, shallow)
   local inventory = VCHelpers.Inventory:GetInventory(character, false, shallow)
   local matchedItems = {}
 
