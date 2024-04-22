@@ -32,6 +32,7 @@ RequireFiles("Shared/Helpers/", {
     "Object",
     "Party",
     "Passive",
+    "Rarity",
     "Resource",
     "SpellBook",
     "SpellCast",
