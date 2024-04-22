@@ -8,7 +8,7 @@ function VCHelpers.Template:HasTemplate(str)
     return Ext.Template.GetTemplate(str) ~= nil
 end
 
--- VCHelpers.Template.TemplateNameToUUID = VCHelpers.Template:GetTemplateNameToUUIDTable()
+-- VCHelpers.Template.TemplateNameToUUID = VCHelpers.Template:GetTemplateNameToTemplateData()
 
 --- Delete ALL entities whose templateID match the given template UUID.
 ---@param templateUUID string The UUID of the template to delete.
@@ -57,18 +57,28 @@ function VCHelpers.Template:GetAllVanillaTemplates()
     return vanillaTemplates
 end
 
+---@class TemplateData
+---@field Id string
+---@field Stats any
+---@field Name string
+
 --- Generate a table of template Name keys to UUID/template Id values.
----@return table<string, string>
-function VCHelpers.Template:GetTemplateNameToUUIDTable()
+---@return table<string, TemplateData>
+function VCHelpers.Template:GetTemplateNameToTemplateData()
     local templates = Ext.Template.GetAllRootTemplates()
     local templateNameToUUID = {}
     for templateId, templateData in pairs(templates) do
-        local success, templateName = pcall(function() return templateData.Stats end)
-        if success then
-            templateNameToUUID[templateName] = templateId
-        else
-            templateNameToUUID[templateData.Name] = templateId
+        if templateData.TemplateType == 'item' then
+            templateNameToUUID[templateData.Name] = {
+                Id = templateId,
+                Stats = templateData.Stats,
+                Name = Ext.Loca.GetTranslatedString(templateData.DisplayName.Handle.Handle)
+            }
         end
     end
+    -- local fullFileName = 'template-name-to-uuid-' .. Ext.Utils.MonotonicTime() .. '.json'
+    -- Ext.IO.SaveFile(fullFileName, Ext.DumpExport(templateNameToUUID))
+    -- VCDebug(0, "Dumped template name to UUID table to " .. fullFileName)
+
     return templateNameToUUID
 end

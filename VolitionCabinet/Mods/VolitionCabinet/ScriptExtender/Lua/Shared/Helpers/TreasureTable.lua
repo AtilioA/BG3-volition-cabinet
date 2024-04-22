@@ -89,12 +89,12 @@ function VCHelpers.TreasureTable:GenerateTreasureTableFile(filename)
     Ext.IO.SaveFile(filename, Ext.DumpExport(result))
 end
 
-VCHelpers.TreasureTable.TemplatesNames = VCHelpers.Template:GetTemplateNameToUUIDTable()
+-- VCHelpers.TreasureTable.TemplatesNames = VCHelpers.Template:GetTemplateNameToTemplateData()
 
 -- Postpone the generation of the template-name-to-UUID table until the game has started, as an optimization.
 if Ext.IsServer() then
     Ext.Osiris.RegisterListener("LevelGameplayStarted", 2, "after", function(levelName, isEditorMode)
-        VCHelpers.TreasureTable.TemplatesNames = VCHelpers.Template:GetTemplateNameToUUIDTable()
+        VCHelpers.TreasureTable.TemplatesNames = VCHelpers.Template:GetTemplateNameToTemplateData()
     end)
 end
 
@@ -267,7 +267,7 @@ function VCHelpers.TreasureTable:GetItemsFromTreasureCategories(treasureCategori
     local rootTemplates = Ext.Template.GetAllRootTemplates()
 
     for _, category in pairs(treasureCategories) do
-        -- _D(category)
+        _D(category)
         self:GetItemsFromCategory(category, rootTemplates, items)
     end
 
@@ -281,10 +281,10 @@ end
 ---@return void
 function VCHelpers.TreasureTable:GetItemsFromCategory(category, rootTemplates, items)
     for _, item in pairs(category.Items) do
-        -- _D(item.Name)
+        _D(item.Name)
         local templateUUID = VCHelpers.TreasureTable.TemplatesNames[item.Name]
         if templateUUID then
-            -- _D(rootTemplates[templateUUID].InventoryList)
+            _D(rootTemplates[templateUUID].InventoryList)
             table.insert(items,
                 {
                     InventoryList = rootTemplates[templateUUID].InventoryList,
