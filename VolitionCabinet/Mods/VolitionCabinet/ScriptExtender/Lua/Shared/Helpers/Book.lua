@@ -21,7 +21,7 @@ function VCHelpers.Book:GetBooksInInventory(character, shallow)
   local matchedItems = {}
 
   for _, item in ipairs(inventory) do
-    local itemObject = VCHelpers.Object:GetItemUUID(item)
+    local itemObject = VCHelpers.Format:LocalTemplate(item)
     if self:IsBook(itemObject) then
       table.insert(matchedItems, itemObject)
     end
