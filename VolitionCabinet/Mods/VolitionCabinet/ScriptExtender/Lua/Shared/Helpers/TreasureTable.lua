@@ -268,7 +268,7 @@ function VCHelpers.TreasureTable:GetItemsFromTreasureCategories(treasureCategori
     local rootTemplates = Ext.Template.GetAllRootTemplates()
 
     for _, category in pairs(treasureCategories) do
-        _D(category)
+        -- _D(category)
         self:GetItemsFromCategory(category, rootTemplates, items)
     end
 
@@ -282,10 +282,10 @@ end
 ---@return void
 function VCHelpers.TreasureTable:GetItemsFromCategory(category, rootTemplates, items)
     for _, item in pairs(category.Items) do
-        _D(item.Name)
+        -- _D(item.Name)
         local templateUUID = VCHelpers.TreasureTable.TemplatesNames[item.Name]
         if templateUUID then
-            _D(rootTemplates[templateUUID].InventoryList)
+            -- _D(rootTemplates[templateUUID].InventoryList)
             table.insert(items,
                 {
                     InventoryList = rootTemplates[templateUUID].InventoryList,

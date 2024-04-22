@@ -66,7 +66,7 @@ end
 function VCHelpers.File:GenerateIDEHelpers()
     local fileName = string.format("IDEHelpersV%s.lua", Ext.Utils.Version())
     Ext.Types.GenerateIdeHelpers(fileName, {
-        -- AddOsiris = false,
+        AddOsiris = false,
         -- AddDeprecated = false,
         AddAliasEnums = true,
         UseBaseExtraData = false,
