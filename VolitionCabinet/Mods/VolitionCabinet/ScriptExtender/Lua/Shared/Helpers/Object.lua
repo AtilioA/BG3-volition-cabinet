@@ -330,6 +330,8 @@ function VCHelpers.Object:GetRootTemplate(object)
     end
 end
 
+--- DEPRECATED: Move this to format
+---@deprecated Use VCHelpers.Format:LocalTemplate instead
 ---@param object EntityHandle
 function VCHelpers.Object:GetItemUUID(object)
     return object.TemplateName .. '_' .. object.Guid

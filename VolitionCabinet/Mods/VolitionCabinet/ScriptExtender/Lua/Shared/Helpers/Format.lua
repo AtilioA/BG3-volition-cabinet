@@ -39,6 +39,11 @@ function VCHelpers.Format:Guid(guid)
     return string.sub(tostring(guid), -36)
 end
 
+---@param object EntityHandle
+function VCHelpers.Format:LocalTemplate(object)
+    return object.TemplateName .. '_' .. object.Guid
+end
+
 --- Get the template name from a local template UUID
 ---@param localtemplateUUID string
 ---@return string result
