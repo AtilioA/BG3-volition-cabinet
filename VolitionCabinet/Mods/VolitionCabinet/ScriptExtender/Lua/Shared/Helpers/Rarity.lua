@@ -41,7 +41,7 @@ function VCHelpers.Rarity:IsItemRarityEqualOrLower(object, rarity)
     local rarityKey = self.RarityToEnumKey[rarity]
 
     if not itemRarityKey or not rarityKey then
-        error("Rarity comparison failed: invalid rarity data (item: " .. itemRarity .. ", rarity: " .. rarity .. ")")
+        error("Rarity comparison failed: invalid rarity data")
     end
 
     return itemRarityKey <= rarityKey
