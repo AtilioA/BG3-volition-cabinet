@@ -7,7 +7,7 @@ KBSECTION
 IF
 NRD_Recompile(_)
 THEN
-NRD_DoRecompile(_)
+NRD_DoRecompile(_);
 
 EXITSECTION
 ENDEXITSECTION
