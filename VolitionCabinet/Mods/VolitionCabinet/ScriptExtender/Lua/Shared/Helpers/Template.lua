@@ -50,11 +50,42 @@ function VCHelpers.Template:GetAllVanillaTemplates()
             table.insert(vanillaTemplates, templateId)
         else
             local template = Ext.Template.GetTemplate(templateId)
-            _D(VCHelpers.Loca:GetTranslatedStringFromTemplateUUID(templateId))
             VCWarn(1, "Skipping template: " .. templateId .. " (probably not vanilla)")
         end
     end
     return vanillaTemplates
+end
+
+function VCHelpers.Template:GetAllModdedTemplates()
+    local function isVanillaFilename(filename)
+        local hasPublicGustav = string.find(filename, "Public/Gustav")
+        local hasPublicGustavDev = string.find(filename, "Public/GustavDev")
+        local hasPublicShared = string.find(filename, "Public/Shared")
+        local hasPublicSharedDev = string.find(filename, "Public/SharedDev")
+
+        local hasModsGustav = string.find(filename, "Mods/Gustav")
+        local hasModsGustavDev = string.find(filename, "Mods/GustavDev")
+        local hasModsShared = string.find(filename, "Mods/Shared")
+        local hasModsSharedDev = string.find(filename, "Mods/SharedDev")
+        local hasPublicHonour = string.find(filename, "Public/Honour")
+        local hasModsHonour = string.find(filename, "Mods/Honour")
+
+        return hasPublicGustav or hasPublicGustavDev or hasPublicShared or hasPublicSharedDev or hasModsGustav or
+            hasModsGustavDev or hasModsShared or hasModsSharedDev or hasModsHonour or hasPublicHonour
+    end
+
+    local templates = Ext.Template.GetAllRootTemplates()
+
+    local moddedTemplates = {}
+    for templateId, templateData in pairs(templates) do
+        if not isVanillaFilename(templateData.FileName) then
+            table.insert(moddedTemplates, templateId)
+        else
+            local template = Ext.Template.GetTemplate(templateId)
+            VCWarn(1, "Skipping template: " .. templateId .. " (probably vanilla)")
+        end
+    end
+    return moddedTemplates
 end
 
 ---@class TemplateData
