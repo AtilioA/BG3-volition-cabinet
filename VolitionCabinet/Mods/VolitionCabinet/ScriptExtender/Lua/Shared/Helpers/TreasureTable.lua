@@ -89,7 +89,7 @@ function VCHelpers.TreasureTable:GenerateTreasureTableFile(filename)
     Ext.IO.SaveFile(filename, Ext.DumpExport(result))
 end
 
--- VCHelpers.TreasureTable.TemplatesNames = VCHelpers.Template:GetTemplateNameToTemplateData()
+VCHelpers.TreasureTable.TemplatesNames = VCHelpers.Template:GetTemplateNameToTemplateData()
 
 -- TODO: Only usable when SE v16 is released
 -- Postpone the generation of the template-name-to-UUID table until the game has started, as an optimization.
@@ -281,16 +281,15 @@ end
 ---@param items table The items table to add to.
 ---@return void
 function VCHelpers.TreasureTable:GetItemsFromCategory(category, rootTemplates, items)
+    local templatesNames = VCHelpers.TreasureTable.TemplatesNames
     for _, item in pairs(category.Items) do
-        -- _D(item.Name)
-        local templateUUID = VCHelpers.TreasureTable.TemplatesNames[item.Name]
-        if templateUUID then
-            -- _D(rootTemplates[templateUUID].InventoryList)
+        local rtInfo = templatesNames[item.Name]
+        if rtInfo and rootTemplates[rtInfo.Id] then
             table.insert(items,
                 {
-                    InventoryList = rootTemplates[templateUUID].InventoryList,
-                    Name = rootTemplates[templateUUID].Name,
-                    Id = rootTemplates[templateUUID].Id,
+                    InventoryList = rootTemplates[rtInfo.Id].InventoryList,
+                    Name = rootTemplates[rtInfo.Id].Name,
+                    Id = rootTemplates[rtInfo.Id].Id,
                     Quantity = item.MinAmount
                 })
         end
