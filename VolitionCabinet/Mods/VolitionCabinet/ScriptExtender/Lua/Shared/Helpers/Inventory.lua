@@ -95,8 +95,11 @@ end
 
 ---@param template Guid
 ---@param holder EntityHandle|Guid
+---@param recursive? boolean
 ---@return EntityHandle|nil
-function VCHelpers.Inventory:GetItemTemplateInInventory(template, holder)
+function VCHelpers.Inventory:GetItemTemplateInInventory(template, holder, recursive)
+    recursive = recursive ~= false
+
     local templateID = VCHelpers.Format:GetTemplateName(template)
     local holderEntity = VCHelpers.Object:GetEntity(holder)
     if holderEntity ~= nil then
@@ -111,8 +114,8 @@ function VCHelpers.Inventory:GetItemTemplateInInventory(template, holder)
                             or itemTemplate.TemplateName == templateID
                             or itemTemplate.Id == templateID then
                             return itemObj.Item
-                        else
-                            local containedItem = self:GetItemTemplateInInventory(template, itemObj.Item.Uuid.EntityUuid)
+                        elseif recursive then
+                            local containedItem = self:GetItemTemplateInInventory(template, itemObj.Item.Uuid.EntityUuid, recursive)
                             if containedItem ~= nil then
                                 return containedItem
                             end
@@ -172,12 +175,12 @@ end
 ---@param templateUUID string The UUID of the item
 ---@param quantity integer The quantity of copies of the item to add
 ---@param inventoryUUID string The UUID of the inventory
----@return nil
+---@return boolean - True if the item was added to the inventory, false otherwise
 function VCHelpers.Inventory:RefillInventoryWithItem(templateUUID, quantity, inventoryUUID)
     -- Get all items of the same template in the inventory
     local inventoryItems = VCHelpers.Inventory:GetAllItemsWithTemplateInInventory(
         templateUUID,
-        inventoryUUID, true, false)
+        inventoryUUID, true, true)
 
     -- Get the total number of items in the inventory, including different stacks
     local totalItemCount = 0
@@ -199,7 +202,10 @@ function VCHelpers.Inventory:RefillInventoryWithItem(templateUUID, quantity, inv
             itemName ..
             "' to inventory " .. inventoryUUID)
         Osi.TemplateAddTo(templateUUID, inventoryUUID, itemsToAdd, 0)
+        return true
     end
+
+    return false
 end
 
 ---@param item any
