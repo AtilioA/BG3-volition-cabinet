@@ -70,3 +70,25 @@ end
 function table.isEmpty(tbl)
     return next(tbl) == nil
 end
+
+--- Lazily load a table value using a loader function.
+---@param t table The table to modify.
+---@param key any The key to lazily load.
+---@param loader function The function to load the value.
+function table.lazyLoad(t, key, loader)
+    local cache = {}
+    setmetatable(t, {
+        __index = function(_, k)
+            if k ~= key then
+                return nil
+            end
+
+            if not cache[key] or table.isEmpty(cache[key]) then
+                _D("Lazy loading key: " .. key)
+                cache[key] = loader()
+            end
+
+            return cache[key]
+        end
+    })
+end

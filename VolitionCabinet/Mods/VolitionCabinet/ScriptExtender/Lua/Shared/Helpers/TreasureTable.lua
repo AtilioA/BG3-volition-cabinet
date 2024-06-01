@@ -89,16 +89,6 @@ function VCHelpers.TreasureTable:GenerateTreasureTableFile(filename)
     Ext.IO.SaveFile(filename, Ext.DumpExport(result))
 end
 
-VCHelpers.TreasureTable.TemplatesNames = VCHelpers.Template:GetTemplateNameToTemplateData()
-
--- TODO: Only usable when SE v16 is released
--- Postpone the generation of the template-name-to-UUID table until the game has started, as an optimization.
--- if Ext.IsServer() then
---     Ext.Osiris.RegisterListener("LevelGameplayStarted", 2, "after", function(levelName, isEditorMode)
---         VCHelpers.TreasureTable.TemplatesNames = VCHelpers.Template:GetTemplateNameToTemplateData()
---     end)
--- end
-
 ---@param template GameObjectTemplate
 ---@param filename string
 function VCHelpers.TreasureTable:GenerateTreasureTableFromTemplate(template)
@@ -264,12 +254,14 @@ end
 ---@param treasureCategories Category[] The treasure categories to retrieve the items from.
 ---@return table items The items contained in the specified treasure categories.
 function VCHelpers.TreasureTable:GetItemsFromTreasureCategories(treasureCategories)
-    local items = {}
     local rootTemplates = Ext.Template.GetAllRootTemplates()
+    local items = {}
 
     for _, category in pairs(treasureCategories) do
-        -- _D(category)
-        self:GetItemsFromCategory(category, rootTemplates, items)
+        local categoryItems = self:GetItemsFromCategory(category, rootTemplates)
+        for _, item in ipairs(categoryItems) do
+            table.insert(items, item)
+        end
     end
 
     return items
@@ -278,15 +270,15 @@ end
 --- Retrieves the items contained in the specified treasure category.
 ---@param category Category The treasure category to retrieve the items from.
 ---@param rootTemplates GameObjectTemplate[] The root templates to check against.
----@param items table The items table to add to.
----@return void
-function VCHelpers.TreasureTable:GetItemsFromCategory(category, rootTemplates, items)
-    local templatesNames = VCHelpers.TreasureTable.TemplatesNames
+---@return table items The items contained in the specified treasure category.
+function VCHelpers.TreasureTable:GetItemsFromCategory(category, rootTemplates)
+    local templatesNames = VCHelpers.Template.TemplateNameToUUID
+    local items = {}
+
     for _, item in pairs(category.Items) do
         local rtInfo = templatesNames[item.Name]
         if rtInfo and rootTemplates[rtInfo.Id] then
-            table.insert(items,
-                {
+            table.insert(items, {
                     InventoryList = rootTemplates[rtInfo.Id].InventoryList,
                     Name = rootTemplates[rtInfo.Id].Name,
                     Id = rootTemplates[rtInfo.Id].Id,
@@ -294,6 +286,8 @@ function VCHelpers.TreasureTable:GetItemsFromCategory(category, rootTemplates, i
                 })
         end
     end
+
+    return items
 end
 
 --- Retrieves the treasure tables associated with the specified template.

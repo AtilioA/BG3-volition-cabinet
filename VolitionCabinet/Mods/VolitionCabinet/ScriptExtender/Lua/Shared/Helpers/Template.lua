@@ -1,6 +1,8 @@
 ---@class HelperTemplate: Helper
 VCHelpers.Template = _Class:Create("HelperTemplate", Helper)
 
+VCHelpers.Template.TemplateNameToUUID = nil
+
 --- Check if a string/potential UUID has a template.
 ---@param str string The string to check.
 ---@return boolean
@@ -95,7 +97,7 @@ end
 
 --- Generate a table of template Name keys to UUID/template Id values.
 ---@return table<string, TemplateData>
-function VCHelpers.Template:GetTemplateNameToTemplateData()
+function VCHelpers.Template:CreateTemplateNameToTemplateIDTable()
     local templates = Ext.Template.GetAllRootTemplates()
     local templateNameToUUID = {}
     for templateId, templateData in pairs(templates) do
@@ -113,3 +115,8 @@ function VCHelpers.Template:GetTemplateNameToTemplateData()
 
     return templateNameToUUID
 end
+
+table.lazyLoad(VCHelpers.Template, "TemplateNameToUUID", function()
+    _D("Lazy loading template name to UUID table")
+    return VCHelpers.Template:CreateTemplateNameToTemplateIDTable()
+end)
