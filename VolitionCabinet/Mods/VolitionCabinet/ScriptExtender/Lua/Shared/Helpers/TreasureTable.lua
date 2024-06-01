@@ -22,35 +22,11 @@ VCHelpers.TreasureTable = _Class:Create("HelperTreasureTable", Helper)
 --- @field Uncommon integer
 --- @field Unique integer
 
---- @class Category
---- @field Category string
---- @field Items TreasureCategoryItem[]
-
---- @class TreasureCategoryItem
---- @field ActPart integer
---- @field MaxAmount integer
---- @field MaxLevel integer
---- @field MinAmount integer
---- @field MinLevel integer
+--- @class TreasureTableItem
 --- @field Name string
---- @field Priority integer
---- @field Unique integer
-
---- @class TreasureSubTable
---- @field Categories StatTreasureCategory[]
---- @field DropCounts DropCount[]
---- @field EndLevel integer
---- @field StartLevel integer
---- @field TotalCount integer
-
---- @class StatTreasureTable
---- @field CanMerge boolean
---- @field IgnoreLevelDiff boolean
---- @field MaxLevel integer
---- @field MinLevel integer
---- @field Name string
---- @field SubTables TreasureSubTable[]
---- @field UseTreasureGroupContainers boolean
+--- @field Id string
+--- @field Quantity integer
+--- @field NestedItems TreasureTableItem[]
 
 --- Generates a JSON file containing all the treasure tables in the game.
 function VCHelpers.TreasureTable:GenerateTreasureTableFile(filename)
@@ -115,7 +91,7 @@ end
 
 --Retrieves the treasure table associated with the specified name.
 ---@param treasureTableName string The name of the treasure table to retrieve.
----@return StatTreasureTable? TreasureTable treasure table associated with the specified name, or nil if not found.
+---@return StatsTreasureTable? TreasureTable treasure table associated with the specified name, or nil if not found.
 function VCHelpers.TreasureTable:GetTT(treasureTableName)
     return Ext.Stats.TreasureTable.GetLegacy(treasureTableName)
 end
@@ -129,7 +105,7 @@ end
 
 --- Processes the treasure table given the specified treasure table name.
 ---@param treasureTableName string The name of the treasure table to process.
----@return StatTreasureTable? The processed treasure table, or nil if not found.
+---@return StatsTreasureTable? The processed treasure table, or nil if not found.
 function VCHelpers.TreasureTable:ProcessSingleTreasureTable(treasureTableName)
     local treasureTable = self:GetTT(treasureTableName)
     if treasureTable and treasureTable["TreasureTable"] ~= "Empty" then
@@ -140,7 +116,7 @@ end
 
 --- Processes the treasure tables contained in the specified treasure tables.
 ---@param treasureTables string[] The treasure tables to process.
----@return StatTreasureTable[] The processed treasure tables.
+---@return StatsTreasureTable[] The processed treasure tables.
 function VCHelpers.TreasureTable:ProcessTreasureTables(treasureTables)
     local processedTables = {}
     for k, v in pairs(treasureTables) do
@@ -156,10 +132,10 @@ function VCHelpers.TreasureTable:ProcessTreasureTables(treasureTables)
 end
 
 --- Recursively retrieves the treasure tables and treasure categories contained in the specified treasure table.
----@param treasureTable StatTreasureTable The treasure table to retrieve.
+---@param treasureTable StatsTreasureTable The treasure table to retrieve.
 function VCHelpers.TreasureTable:RecursivelyGetTT(treasureTable)
     if treasureTable and treasureTable["TreasureTable"] ~= "Empty" then
-        local subTables = treasureTable["SubTables"]
+        local subTables = treasureTable.SubTables
         if subTables then
             for i, subTable in ipairs(subTables) do
                 local categories = subTable["Categories"]
@@ -167,7 +143,7 @@ function VCHelpers.TreasureTable:RecursivelyGetTT(treasureTable)
                     for j, category in ipairs(categories) do
                         if category then
                             -- FIXME: borked probably but I don't know enough about treasure tables to fix it
-                            local tt = VCHelpers.TreasureTable:GetTT(category["TreasureTable"])
+                            local tt = VCHelpers.TreasureTable:GetTT(category.TreasureTable)
                             if tt then
                                 category["TreasureTable"] = self:RecursivelyGetTT(tt)
                             end
@@ -182,35 +158,45 @@ function VCHelpers.TreasureTable:RecursivelyGetTT(treasureTable)
     return treasureTable
 end
 
----@param treasureTable StatTreasureTable The treasure table to extract TreasureCategory objects from
----@return Category[] An array of all the TreasureCategory objects in the treasure table
-function VCHelpers.TreasureTable:ExtractTreasureCategories(treasureTable)
-    local categories = {}
-
-    --- Extracts all the TreasureCategory objects from a table
-    --- @param treasureTable StatTreasureTable The table to extract the TreasureCategory objects from
-    local function extractCategories(treasureTable)
-        if treasureTable.SubTables then
-            for _, subTable in ipairs(treasureTable.SubTables) do
-                if subTable.Categories then
-                    for _, category in ipairs(subTable.Categories) do
-                        if category.TreasureCategory then
-                            table.insert(categories,
-                                VCHelpers.TreasureTable:GetTC(tostring(category.TreasureCategory)))
-                        end
-                    end
-                end
-            end
-        end
+--- Extracts the TreasureCategory objects from a sub-table
+--- @param subTable StatsTreasureTable The sub-table to extract the categories from
+--- @param categories StatsTreasureCategory[] The array to store the extracted categories
+local function extractSubTableCategories(subTable, categories)
+    if not subTable or not subTable.Categories then
+        return
     end
 
-    extractCategories(treasureTable)
+    for _, category in ipairs(subTable.Categories) do
+        if category.TreasureCategory then
+            table.insert(categories, VCHelpers.TreasureTable:GetTC(tostring(category.TreasureCategory)))
+        end
+    end
+end
+
+--- Extracts all the TreasureCategory objects from a table
+--- @param treasureTable StatsTreasureTable The table to extract the TreasureCategory objects from
+--- @param categories StatsTreasureCategory[] The array to store the extracted categories
+local function extractTreasureCategories(treasureTable, categories)
+    if not treasureTable or not treasureTable.SubTables then
+        return
+    end
+
+    for _, subTable in ipairs(treasureTable.SubTables) do
+        extractSubTableCategories(subTable, categories)
+    end
+end
+
+---@param treasureTable StatsTreasureTable The treasure table to extract TreasureCategory objects from
+---@return StatsTreasureCategory[] An array of all the TreasureCategory objects in the treasure table
+function VCHelpers.TreasureTable:ExtractTreasureCategories(treasureTable)
+    local categories = {}
+    extractTreasureCategories(treasureTable, categories)
     return categories
 end
 
 --- Retrieves the items contained in the treasure categories contained in the specified treasure table.
 ---@param treasureTableName string The treasure table to retrieve the items from.
----@return string[] items The items contained in the treasure categories contained in the specified treasure table.
+---@return TreasureTableItem[] items The items contained in the treasure categories contained in the specified treasure table.
 function VCHelpers.TreasureTable:GetTableOfItemsFromTreasureTable(treasureTableName)
     local treasureTable = self:ProcessSingleTreasureTable(treasureTableName)
     if not treasureTable then
@@ -234,7 +220,7 @@ function VCHelpers.TreasureTable:GetTableOfItemsFromTreasureTable(treasureTableN
             Name = item.Name,
             Id = item.Id,
             Quantity = item.Quantity,
-            nestedItems = {}
+            NestedItems = {}
         })
         if item.InventoryList then
             for _, treasureTableName in ipairs(item.InventoryList) do
@@ -243,7 +229,7 @@ function VCHelpers.TreasureTable:GetTableOfItemsFromTreasureTable(treasureTableN
                     table.insert(nestedItems, nestedItem)
                 end
             end
-            result[#result].nestedItems = nestedItems
+            result[#result].NestedItems = nestedItems
         end
     end
 
@@ -295,4 +281,24 @@ end
 ---@return string[] treasureTableNames The treasure tables names associated with the specified template.
 function VCHelpers.TreasureTable:GetTreasureTableFromTemplate(template)
     return template.InventoryList
+end
+
+
+--- Refills the container with items from the treasure table, recursively handling nested items.
+---@param containerID string The ID of the container to refill.
+---@param ttItems TreasureTableItem[] The items to refill the container with, as returned by VCHelpers.TreasureTable:GetTableOfItemsFromTreasureTable.
+function VCHelpers.TreasureTable:RefillContainerWithTTItems(containerID, ttItems)
+    for _, item in ipairs(ttItems) do
+        local hasRefillCreatedItem = VCHelpers.Inventory:RefillInventoryWithItem(item.Id, item.Quantity, containerID)
+
+        -- Item already exists in the container, refill nested items if any
+        if not hasRefillCreatedItem and item.NestedItems and #item.NestedItems > 0 then
+            -- Get the local template of item, then refill it with its nested items
+            local existingItem = VCHelpers.Inventory:GetItemTemplateInInventory(item.Id, containerID)
+            if existingItem then
+                -- Recursively refill the container with nested items; this will handle nested items of nested items as well
+                self:RefillContainerWithTTItems(existingItem.Uuid.EntityUuid, item.NestedItems)
+            end
+        end
+    end
 end
