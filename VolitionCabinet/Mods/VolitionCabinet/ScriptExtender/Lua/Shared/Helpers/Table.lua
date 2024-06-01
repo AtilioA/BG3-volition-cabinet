@@ -84,7 +84,6 @@ function table.lazyLoad(t, key, loader)
             end
 
             if not cache[key] or table.isEmpty(cache[key]) then
-                _D("Lazy loading key: " .. key)
                 cache[key] = loader()
             end
 

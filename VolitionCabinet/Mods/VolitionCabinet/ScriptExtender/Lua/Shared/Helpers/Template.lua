@@ -1,6 +1,7 @@
 ---@class HelperTemplate: Helper
 VCHelpers.Template = _Class:Create("HelperTemplate", Helper)
 
+-- Gets lazy loaded with table of template Name keys to UUID/template Id values.
 VCHelpers.Template.TemplateNameToUUID = nil
 
 --- Check if a string/potential UUID has a template.
@@ -117,6 +118,5 @@ function VCHelpers.Template:CreateTemplateNameToTemplateIDTable()
 end
 
 table.lazyLoad(VCHelpers.Template, "TemplateNameToUUID", function()
-    _D("Lazy loading template name to UUID table")
     return VCHelpers.Template:CreateTemplateNameToTemplateIDTable()
 end)
