@@ -43,3 +43,4 @@ ignore/
 output/
 *.pak
 *.code-workspace
+.vscode/settings.json
