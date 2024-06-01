@@ -74,7 +74,7 @@ end
 --- Lazily load a table value using a loader function.
 ---@param t table The table to modify.
 ---@param key any The key to lazily load.
----@param loader function The function to load the value.
+---@param loader function The function to load the value if it doesn't exist yet
 function table.lazyLoad(t, key, loader)
     local cache = {}
     setmetatable(t, {

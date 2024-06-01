@@ -1,7 +1,7 @@
 ---@class HelperTemplate: Helper
 VCHelpers.Template = _Class:Create("HelperTemplate", Helper)
 
--- Gets lazy loaded with table of template Name keys to UUID/template Id values.
+-- This table will get lazy loaded with table of template Name keys to UUID/template Id values.
 VCHelpers.Template.TemplateNameToUUID = nil
 
 --- Check if a string/potential UUID has a template.
@@ -10,8 +10,6 @@ VCHelpers.Template.TemplateNameToUUID = nil
 function VCHelpers.Template:HasTemplate(str)
     return Ext.Template.GetTemplate(str) ~= nil
 end
-
--- VCHelpers.Template.TemplateNameToUUID = VCHelpers.Template:GetTemplateNameToTemplateData()
 
 --- Delete ALL entities whose templateID match the given template UUID.
 ---@param templateUUID string The UUID of the template to delete.
