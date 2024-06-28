@@ -88,3 +88,8 @@ end
 function VCHelpers.String:Lowercase(str)
   return str:gsub("^%u", string.lower)
 end
+
+--- Replace <br> tags with newlines in a string
+function VCHelpers.ReplaceBrWithNewlines(description)
+    return string.gsub(description, "<br>", "\n")
+end
