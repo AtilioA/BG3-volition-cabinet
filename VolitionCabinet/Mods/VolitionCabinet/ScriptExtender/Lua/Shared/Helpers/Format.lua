@@ -33,14 +33,18 @@ function VCHelpers.Format:Parse(data)
     end
 end
 
----@param guid Guid
----@return string guid
+---@param guid string
+---@return Guid guid
 function VCHelpers.Format:Guid(guid)
     return string.sub(tostring(guid), -36)
 end
 
 ---@param object EntityHandle
 function VCHelpers.Format:LocalTemplate(object)
+    if object == nil or object.TemplateName == nil or object.Guid == nil then
+        return nil
+    end
+
     return object.TemplateName .. '_' .. object.Guid
 end
 
@@ -100,43 +104,6 @@ function VCHelpers.Format:GetNonNilsTable(t)
         end
     end
     return new
-end
-
----@param hex string
----@return vec3
-function VCHelpers.Format:HexToRGB(hex)
-    hex = hex:gsub('#', '')
-    local r, g, b
-
-    if hex:len() == 3 then
-        r = tonumber('0x' .. hex:sub(1, 1)) * 17
-        g = tonumber('0x' .. hex:sub(2, 2)) * 17
-        b = tonumber('0x' .. hex:sub(3, 3)) * 17
-    elseif hex:len() == 6 then
-        r = tonumber('0x' .. hex:sub(1, 2))
-        g = tonumber('0x' .. hex:sub(3, 4))
-        b = tonumber('0x' .. hex:sub(5, 6))
-    end
-
-    r = r or 0
-    g = g or 0
-    b = b or 0
-
-    return { r, g, b }
-end
-
----@param hex string
----@return vec3
-function VCHelpers.Format:HexToEffectRGB(hex)
-    local rgb = self:HexToRGB(hex)
-    rgb = Ext.Math.Div(rgb, 255)
-    return rgb
-end
-
----@param rgb vec3
----@return string
-function VCHelpers.Format:RGBToHex(rgb)
-    return string.format('%.2x%.2x%.2x', rgb[1], rgb[2], rgb[3])
 end
 
 ---@param rgb vec3
