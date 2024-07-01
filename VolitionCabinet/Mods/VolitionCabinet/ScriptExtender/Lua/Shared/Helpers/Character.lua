@@ -97,3 +97,27 @@ function VCHelpers.Character:IsCharacterInCamp(characterGuid)
   local characterEntity = Ext.Entity.Get(characterGuid)
   return characterEntity.CampPresence ~= nil
 end
+
+--- Function to get the ability score of a character
+---@param characterGuid Guid The character to check
+---@param ability string The ability to check
+function VCHelpers.Character:GetAbilityScore(characterGuid, ability)
+  local characterEntity = Ext.Entity.Get(characterGuid)
+  if not characterEntity or not characterEntity.Stats or not characterEntity.Stats.Abilities then return nil end
+
+  local abilityIndex = nil
+  for index, value in pairs(Ext.Enums.AbilityId) do
+    if type(index) == "number" and value == ability then
+      abilityIndex = index + 1
+      break
+    end
+  end
+
+  if not abilityIndex then return nil end
+
+  local abilityScore = characterEntity.Stats.Abilities[abilityIndex]
+
+  if not abilityScore then return nil end
+
+  return abilityScore
+end
