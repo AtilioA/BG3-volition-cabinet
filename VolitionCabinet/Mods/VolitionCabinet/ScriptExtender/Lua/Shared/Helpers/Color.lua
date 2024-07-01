@@ -23,6 +23,12 @@ function VCHelpers.Color:NormalizedRGBA(r, g, b, a)
     return { r / 255, g / 255, b / 255, a }
 end
 
+
+--- Deprecated: Use VCHelpers.Color:HexToRGBA instead
+function VCHelpers.Color:hex_to_rgba(hex)
+    return self:HexToRGBA(hex)
+end
+
 --- Create a table for the RGBA values from a hex color string
 ---@param hex string The hex color string
 ---@return vec4
@@ -31,19 +37,19 @@ function VCHelpers.Color:HexToRGBA(hex)
     local r, g, b, a
 
     if hex:len() == 3 then
-        r = tonumber('0x' .. hex:sub(1, 1)) * 17
-        g = tonumber('0x' .. hex:sub(2, 2)) * 17
-        b = tonumber('0x' .. hex:sub(3, 3)) * 17
+        r = tonumber('0x' .. hex:sub(1, 1)) * 17 / 255
+        g = tonumber('0x' .. hex:sub(2, 2)) * 17 / 255
+        b = tonumber('0x' .. hex:sub(3, 3)) * 17 / 255
     elseif hex:len() == 6 then
-        r = tonumber('0x' .. hex:sub(1, 2))
-        g = tonumber('0x' .. hex:sub(3, 4))
-        b = tonumber('0x' .. hex:sub(5, 6))
+        r = tonumber('0x' .. hex:sub(1, 2)) / 255
+        g = tonumber('0x' .. hex:sub(3, 4)) / 255
+        b = tonumber('0x' .. hex:sub(5, 6)) / 255
     end
 
     r = r or 0
     g = g or 0
     b = b or 0
-    a = a or 1
+    a = 1
 
     return { r, g, b, a }
 end
