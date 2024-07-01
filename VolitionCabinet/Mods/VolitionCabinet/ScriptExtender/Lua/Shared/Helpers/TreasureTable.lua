@@ -197,7 +197,14 @@ end
 --- Retrieves the items contained in the treasure categories contained in the specified treasure table.
 ---@param treasureTableName string The treasure table to retrieve the items from.
 ---@return TreasureTableItem[] items The items contained in the treasure categories contained in the specified treasure table.
-function VCHelpers.TreasureTable:GetTableOfItemsFromTreasureTable(treasureTableName)
+function VCHelpers.TreasureTable:GetTableOfItemsFromTreasureTable(treasureTableName, visited)
+    visited = visited or {}
+    if visited[treasureTableName] then
+        VCWarn(1, "Cycle detected in treasure tables, stopping recursion.")
+        return {}
+    end
+    visited[treasureTableName] = true
+
     local treasureTable = self:ProcessSingleTreasureTable(treasureTableName)
     if not treasureTable then
         VCDebug(1, "Treasure table not found.")
@@ -223,8 +230,8 @@ function VCHelpers.TreasureTable:GetTableOfItemsFromTreasureTable(treasureTableN
             NestedItems = {}
         })
         if item.InventoryList then
-            for _, treasureTableName in ipairs(item.InventoryList) do
-                local nestedItemsFromTable = self:GetTableOfItemsFromTreasureTable(treasureTableName)
+            for _, nestedTreasureTableName in ipairs(item.InventoryList) do
+                local nestedItemsFromTable = self:GetTableOfItemsFromTreasureTable(nestedTreasureTableName, visited)
                 for _, nestedItem in ipairs(nestedItemsFromTable) do
                     table.insert(nestedItems, nestedItem)
                 end
@@ -233,6 +240,8 @@ function VCHelpers.TreasureTable:GetTableOfItemsFromTreasureTable(treasureTableN
         end
     end
 
+    visited[treasureTableName] = nil
+    
     return result
 end
 
