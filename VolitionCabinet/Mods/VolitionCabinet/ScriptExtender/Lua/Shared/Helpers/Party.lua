@@ -34,3 +34,20 @@ function VCHelpers.Party.GetAllPartyMembers()
 
   return teamMembers
 end
+
+
+-- Function to return all other party members
+---@param characterGuid Guid
+---@return Guid[] otherPartyMembers A table of guids of other party members
+function VCHelpers.Party:GetOtherPartyMembers(characterGuid)
+    local otherPartyMembers = {}
+    local companions = Osi.DB_Players:Get(nil)
+    for i, companion in ipairs(companions) do
+      local companionGuid = VCHelpers.Format:Guid(tostring(companion[1]))
+      if companionGuid ~= characterGuid then
+        table.insert(otherPartyMembers, companionGuid)
+      end
+    end
+
+    return otherPartyMembers
+  end
