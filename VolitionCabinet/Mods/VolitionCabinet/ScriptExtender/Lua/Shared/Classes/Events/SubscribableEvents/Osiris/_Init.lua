@@ -7,7 +7,6 @@ RequireFiles("Shared/Classes/Events/SubscribableEvents/Osiris/", {
     "ObjectTimerFinished",
     "RequestCanCombine",
     "Saw",
-    "ShortRested",
     "StartedPreviewingSpell",
     "StatusApplied",
     "StatusRemoved",
