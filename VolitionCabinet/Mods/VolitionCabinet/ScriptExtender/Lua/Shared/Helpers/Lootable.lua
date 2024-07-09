@@ -5,11 +5,13 @@
 ---@class HelperLootable: Helper
 VCHelpers.Lootable = _Class:Create("HelperLootable", Helper)
 
----Checks if the given object is a corpse.
----@param object integer
----@return boolean
+--- Checks if the given object is a corpse.
+--- @param object integer
+--- @return boolean
 function VCHelpers.Lootable:IsCorpse(object)
-  return VCHelpers.Inventory:GetInventory(object, true, true) ~= nil and Osi.IsDead(object) == 1
+    local inventory = VCHelpers.Inventory:GetInventory(object, true, true)
+    local isDead = Osi.IsDead(object) == 1
+    return inventory ~= nil and isDead
 end
 
 ---Checks if the given object is knocked out.
@@ -36,6 +38,10 @@ end
 ---@param object integer
 ---@return boolean
 function VCHelpers.Lootable:IsLootable(object)
-  return ((Osi.IsContainer(object) == 1) or VCHelpers.Lootable:IsCorpse(object) or VCHelpers.Lootable:IsKnockedOut(object)) and
-      not VCHelpers.Lootable:IsBuriedChest(object)
+    local isContainer = Osi.IsContainer(object) == 1
+    local isCorpse = VCHelpers.Lootable:IsCorpse(object)
+    local isKnockedOut = VCHelpers.Lootable:IsKnockedOut(object)
+    local isBuriedChest = VCHelpers.Lootable:IsBuriedChest(object)
+
+    return (isContainer or isCorpse or isKnockedOut) and not isBuriedChest
 end
