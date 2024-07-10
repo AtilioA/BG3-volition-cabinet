@@ -9,35 +9,52 @@ VCHelpers.Inventory = _Class:Create("HelperInventory", Helper)
 function VCHelpers.Inventory:GetInventory(object, primaryOnly, shallow)
     local items = {}
     local entity = VCHelpers.Object:GetEntity(object)
-    if entity ~= nil then
-        local inventory = entity.InventoryOwner
-        if inventory ~= nil then
-            local inventories = primaryOnly and 1 or #inventory.Inventories
-            for i = 1, inventories do
-                for _, itemObj in pairs(inventory.Inventories[i].InventoryContainer.Items) do
-                    local item = itemObj.Item
-                    local info = {
-                        Entity = item,
-                        Guid = item.Uuid.EntityUuid,
-                        Name = Ext.Loca.GetTranslatedString(item.DisplayName.NameKey.Handle.Handle),
-                        TemplateId = "",
-                        TemplateName = ""
-                    }
+    if entity == nil then
+        return items
+    end
 
-                    local esvObject = VCHelpers.Object:GetObject(item)
-                    if esvObject ~= nil then
-                        info.TemplateId = esvObject.Template.Id
-                        info.TemplateName = esvObject.Template.Name
-                    end
+    local inventory = entity.InventoryOwner
+    if inventory == nil then
+        return items
+    end
 
-                    table.insert(items, info)
+    local function processItem(item)
+        if item == nil then
+            return nil
+        end
 
-                    if not shallow and item.InventoryOwner ~= nil then
-                        for _, itemInfo in ipairs(self:GetInventory(item)) do
-                            table.insert(items, itemInfo)
-                        end
-                    end
-                end
+        if item.Uuid == nil then
+            return nil
+        end
+
+        local info = {
+            Entity = item,
+            Guid = item.Uuid and item.Uuid.EntityUuid or "",
+            Name = VCHelpers.Loca:GetDisplayName(item),
+            TemplateId = "",
+            TemplateName = ""
+        }
+
+        local esvObject = VCHelpers.Object:GetObject(item)
+        if esvObject ~= nil then
+            info.TemplateId = esvObject.Template.Id
+            info.TemplateName = esvObject.Template.Name
+        end
+
+        table.insert(items, info)
+
+        if not shallow and item.InventoryOwner ~= nil then
+            for _, itemInfo in ipairs(self:GetInventory(item)) do
+                table.insert(items, itemInfo)
+            end
+        end
+    end
+
+    local inventoryCount = primaryOnly and 1 or #inventory.Inventories
+    for i = 1, inventoryCount do
+        if inventory.Inventories[i] and inventory.Inventories[i].InventoryContainer then
+            for _, itemObj in pairs(inventory.Inventories[i].InventoryContainer.Items) do
+                processItem(itemObj.Item)
             end
         end
     end
@@ -115,7 +132,8 @@ function VCHelpers.Inventory:GetItemTemplateInInventory(template, holder, recurs
                             or itemTemplate.Id == templateID then
                             return itemObj.Item
                         elseif recursive then
-                            local containedItem = self:GetItemTemplateInInventory(template, itemObj.Item.Uuid.EntityUuid, recursive)
+                            local containedItem = self:GetItemTemplateInInventory(template, itemObj.Item.Uuid.EntityUuid,
+                                recursive)
                             if containedItem ~= nil then
                                 return containedItem
                             end
