@@ -42,7 +42,6 @@ function KeybindingManager:IsKeybindingPressed(e, keybinding)
         return false
     end
 
-
     return self:IsModifierPressed(e, modifier)
 end
 

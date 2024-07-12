@@ -30,6 +30,7 @@ RequireFiles("Shared/Helpers/", {
     "Log",
     "Lootable",
     "MessageBox",
+    "Net",
     "Object",
     "Party",
     "Passive",
