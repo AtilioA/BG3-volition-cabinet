@@ -8,7 +8,7 @@ function VCHelpers.Net:PeerToUserID(u)
 end
 
 -- Returns the character that the user is controlling
-function EHandlers.GetUserCharacterUUID(userId)
+function VCHelpers.Net:GetUserCharacterUUID(userId)
     for _, entity in pairs(Ext.Entity.GetAllEntitiesWithComponent("ClientControl")) do
         if entity.UserReservedFor.UserID == userId then
             return entity.Uuid.EntityUuid
