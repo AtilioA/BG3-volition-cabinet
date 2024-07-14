@@ -21,6 +21,12 @@ end
 
 if VCHelpers.Commander.IsServer then
     Ext.Events.SessionLoaded:Subscribe(function()
+        local function playEffect(guid)
+            Osi.PlayEffect(Osi.GetHostCharacter(), guid)
+            Osi.PlaySound(Osi.GetHostCharacter(), guid)
+            Osi.PlaySoundResource(Osi.GetHostCharacter(), guid)
+        end
+
         local function restore()
             VCHelpers.Resource:SetActionResource(_C(), "ActionPoint", "Max")
             VCHelpers.Resource:SetActionResource(_C(), "BonusActionPoint", "Max")
@@ -29,6 +35,8 @@ if VCHelpers.Commander.IsServer then
                 --Apply statuses here
             end)
         end
+
+        VCHelpers.Commander:Register("pe", playEffect)
         Ext.Events.ResetCompleted:Subscribe(restore)
         VCHelpers.Commander:Register("Restore", function()
             restore()
@@ -47,10 +55,4 @@ Ext.Events.SessionLoaded:Subscribe(function()
             guid = guid or VCHelpers.Object:GetHostEntity().Uuid.EntityUuid; Ext.IO.SaveFile("Dump.json",
                 Ext.DumpExport(Ext.Entity.Get(guid):GetAllComponents()))
         end)
-
-    -- VCHelpers.Commander:Register("pe", function(guid)
-    --     Osi.PlayEffect(Osi.GetHostCharacter(), tostring(guid))
-    --     Osi.PlaySound(Osi.GetHostCharacter(), tostring(guid))
-    --     Osi.PlaySoundResource(Osi.GetHostCharacter(), tostring(guid))
-    -- end)
 end)

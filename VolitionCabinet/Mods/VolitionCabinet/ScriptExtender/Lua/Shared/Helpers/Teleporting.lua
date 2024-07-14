@@ -16,6 +16,7 @@ function VCHelpers.Teleporting:TeleportToPosition(character, x, y, z, vfx)
 
     if vfx then
         Osi.PlayEffect(character, vfx)
+        Osi.ApplyStatus(character, vfx, 1, 0, character)
     end
 
     Osi.TeleportToPosition(character, x, y, z, "VCTeleportToPosition_" .. character, 0, 0, 1, 0, 1)
