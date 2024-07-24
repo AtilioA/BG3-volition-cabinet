@@ -209,6 +209,32 @@ function VCHelpers.Object:GetNearbyCharacters(source, radius, ignoreHeight)
     return nearbyEntities
 end
 
+--- Returns a sorted table of NPCs by distance from the host character, including detailed info.
+---@param npcs EntityHandle[] A table of NPC handles.
+---@return table NPCsInfo A table with details of involved NPCs: Entity, Guid, Distance, and Name, sorted by Distance.
+function VCHelpers.Object:GetNPCsByDistance(npcs)
+    local hostCharacter = Osi.GetHostCharacter()
+    local NPCsInfo = {}
+
+    for _, npcHandle in ipairs(npcs) do
+        local npcEntity = Ext.Entity.Get(npcHandle)
+        if npcEntity ~= nil then
+            local distance = Osi.GetDistanceTo(npcHandle, hostCharacter)
+            table.insert(NPCsInfo, {
+                Entity = npcEntity,
+                Guid = npcEntity.Uuid.EntityUuid,
+                Distance = distance,
+                Name = Ext.Loca.GetTranslatedString(npcEntity.DisplayName.NameKey.Handle.Handle)
+            })
+        end
+    end
+
+    -- Sort the NPCs by distance in descending order
+    table.sort(NPCsInfo, function(a, b) return a.Distance > b.Distance end)
+
+    return NPCsInfo
+end
+
 --Returns a distance-sorted array of items nearby a position or object
 ---@param source EntityHandle|Guid|vec3
 ---@param radius? number

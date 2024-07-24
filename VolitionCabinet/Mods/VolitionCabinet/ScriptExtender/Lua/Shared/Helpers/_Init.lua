@@ -20,6 +20,7 @@ RequireFiles("Shared/Helpers/", {
     "Character",
     "Color",
     "Commander",
+    "Dialog",
     "Dice",
     "File",
     "Food",
