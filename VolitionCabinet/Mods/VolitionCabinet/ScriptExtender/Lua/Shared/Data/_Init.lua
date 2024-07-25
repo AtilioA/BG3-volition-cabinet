@@ -1,4 +1,5 @@
 Data = {}
 RequireFiles("Shared/Data/", {
-    "Origins"
+    "Origins",
+    "DepsGUID"
 })
