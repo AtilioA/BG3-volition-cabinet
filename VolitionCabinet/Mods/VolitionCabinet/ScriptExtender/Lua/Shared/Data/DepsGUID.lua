@@ -1,4 +1,4 @@
-Deps = { --Todo add table of dependencies
+Data.Deps = { --Todo add table of dependencies
     GustavDev_GUID           = "28ac9ce2-2aba-8cda-b3b5-6e922f71b6b8", --GustavDev modGuid
     VolitionCabinet_GUID     = "f97b43be-7398-4ea5-8fe2-be7eb3d4b5ca", -- VolitionCabinet
     Framework_FM_GUID        = "ff9844a0-a097-4149-bbca-ee0da5b937d7", -- FM Framework
