@@ -13,7 +13,7 @@ VCHelpers.CF = _Class:Create("HelperCF", Helper)
 ---@param strings table Strings abilities
 ---@return table payload
 function VCHelpers.CF:addStringPayload(modGuid, target, type, strings)
-    modGuid = modGuid or deps.GustavDev_GUID
+    modGuid = modGuid or Deps.GustavDev_GUID
     return {
         {
             modGuid = modGuid,
@@ -32,7 +32,7 @@ end
 ---@param strings table Strings abilities
 ---@return table payload
 function VCHelpers.CF:removeStringPayload(modGuid, target, type, strings)
-    modGuid = modGuid or deps.GustavDev_GUID
+    modGuid = modGuid or Deps.GustavDev_GUID
     return {
         {
             modGuid = modGuid,
@@ -51,9 +51,9 @@ end
 ---@param sabUUID string ListUUID
 ---@return table payload
 function VCHelpers.CF:removeSelectorsPayload(modGuid, target, type, sabUUID)
-    modGuid = modGuid or deps.GustavDev_GUID
+    modGuid = modGuid or Deps.GustavDev_GUID
     type = type or "SelectAbilityBonus"
-    sabUUID = sabUUID or deps.AbilityList_UUID
+    sabUUID = sabUUID or Deps.AbilityList_UUID
     return {
         {
             modGuid = modGuid,
@@ -75,12 +75,12 @@ end
 ---@param BonusType string BonusType UUID
 ---@return table payload
 function VCHelpers.CF:InsertSelectorsPayload(modGuid, target, type, sabUUID, sabAmount, sabAmounts, BonusType)
-    modGuid = modGuid or deps.GustavDev_GUID
+    modGuid = modGuid or Deps.GustavDev_GUID
     type = type or "SelectAbilityBonus"
     if type == "SelectAbilityBonus" then
         BonusType = "AbilityBonus"
     end
-    sabUUID = sabUUID or deps.AbilityList_UUID
+    sabUUID = sabUUID or Deps.AbilityList_UUID
     return {
         {
             modGuid = modGuid,
@@ -107,7 +107,7 @@ end
 ---@param BonusType string BonusType UUID
 ---@return table payload
 function VCHelpers.CF:addSelectAbilityBonusPayload(modGuid, target, type, sabUUID, sabAmounts, BonusType)
-    modGuid = modGuid or deps.GustavDev_GUID
+    modGuid = modGuid or Deps.GustavDev_GUID
     type = type or "SelectAbilityBonus"
     if type == "SelectAbilityBonus" then
         BonusType = "AbilityBonus"
@@ -136,7 +136,7 @@ end
 ---@param payload table payload
 ---@return table payload
 function VCHelpers.CF:addSelectSpellsPayload(modGuid, target, ssUUID, ssAmount, payload)
-    modGuid = modGuid or deps.GustavDev_GUID
+    modGuid = modGuid or Deps.GustavDev_GUID
     return {
         {
             modGuid = modGuid,
@@ -165,7 +165,7 @@ end
 ---@param payload table payload
 ---@return table payload
 function VCHelpers.CF:addAddSpellsPayload(modGuid, target, ssUUID, payload)
-    modGuid = modGuid or deps.GustavDev_GUID
+    modGuid = modGuid or Deps.GustavDev_GUID
     return {
         {
             modGuid = modGuid,
@@ -193,7 +193,7 @@ end
 ---@param selector string addSelectSpells selector
 ---@return table payload
 function VCHelpers.CF:addSelectPassivesPayload(modGuid, target, spUUID, spAmount, selector)
-    modGuid = modGuid or deps.GustavDev_GUID
+    modGuid = modGuid or Deps.GustavDev_GUID
     return {
         {
             modGuid = modGuid,
