@@ -71,11 +71,11 @@ end
 ---@param modId? Guid
 ---@return boolean
 function VCHelpers.ModVars:IsModLoaded(modId)
-    return Ext.Mod.isModLoaded(modId)
+    return Ext.Mod.IsModLoaded(modId)
 end
 
 ---@param modId? Guid modId
 ---@return boolean
 function VCHelpers.ModVars:IsModExist(modId, depsModId)
-    return Ext.Mod.isModLoaded(depsModId) and Ext.Mod.isModLoaded(modId) --Deps.Framework_GUID
+    return Ext.Mod.IsModLoaded(depsModId) and Ext.Mod.IsModLoaded(modId) --Deps.Framework_GUID
 end
