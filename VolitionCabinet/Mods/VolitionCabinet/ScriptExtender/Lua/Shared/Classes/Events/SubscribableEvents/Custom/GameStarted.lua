@@ -19,7 +19,7 @@ function Events.Custom.GameStarted:CreateParams()
 
     local CCLevels = {}
     for _, modGuid in pairs(Ext.Mod.GetLoadOrder()) do
-        if Ext.Mod.IsModLoaded(modGuid) then
+        if Ext.Mod.isModLoaded(modGuid) then
             CCLevels[Ext.Mod.GetMod(modGuid).Info.CharacterCreationLevelName] = true
         end
     end

@@ -51,7 +51,7 @@ function VCHelpers.ModVars:Register(key, module, initial, properties)
         end
     end
 
-    if Ext.Mod.IsModLoaded(mod) then
+    if VCHelpers.ModVars:IsModLoaded(mod) then
         Ext.Vars.RegisterModVariable(mod, key, properties)
         if initial ~= nil then
             Events.Custom.VarsLoaded:Subscribe(function()
@@ -68,14 +68,14 @@ function VCHelpers.ModVars:Register(key, module, initial, properties)
 end
 
 
----@param modId string
+---@param modId? Guid
 ---@return boolean
 function VCHelpers.ModVars:IsModLoaded(modId)
-    return Ext.Mod.IsModLoaded(modId)
+    return Ext.Mod.isModLoaded(modId)
 end
 
----@param modId string modId
+---@param modId? Guid modId
 ---@return boolean
 function VCHelpers.ModVars:IsModExist(modId, depsModId)
-    return Ext.Mod.IsModLoaded(depsModId) and Ext.Mod.IsModLoaded(modId) --Deps.Framework_GUID
+    return Ext.Mod.isModLoaded(depsModId) and Ext.Mod.isModLoaded(modId) --Deps.Framework_GUID
 end
