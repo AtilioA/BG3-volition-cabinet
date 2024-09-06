@@ -236,11 +236,13 @@ end
 ---@param item any
 function VCHelpers.Inventory:DestroyEntireStack(item)
     local entity = VCHelpers.Object:GetItem(item)
-    if entity ~= nil and entity.InventoryStackMember ~= nil then
-        local mainEntity = entity.InventoryStackMember.Stack
-        for _, stackEntity in pairs(mainEntity.InventoryStack.Arr_u64) do
-            Osi.RequestDelete(stackEntity.Uuid.EntityUuid)
-        end
+    if entity == nil or entity.InventoryStackMember == nil then
+        return
+    end
+
+    local mainEntity = entity.InventoryStackMember.Stack
+    for _, stackEntity in pairs(mainEntity.InventoryStack.Arr_u64) do
+        Osi.RequestDelete(stackEntity.Uuid.EntityUuid)
     end
 end
 

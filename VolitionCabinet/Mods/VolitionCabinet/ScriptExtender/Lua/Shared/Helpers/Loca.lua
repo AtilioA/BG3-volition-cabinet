@@ -96,6 +96,7 @@ function VCHelpers.Loca:UpdateLocalizedMessage(handle, dynamicContent)
     -- Replace the placeholder [1] with the dynamic content. The g flag is for global replacement.
     local updatedMessage = string.gsub(currentMessage, "%[1%]", dynamicContent)
 
+    -- NOTE: it's best to call this on client, as it will update the message for all clients. This is shared code however, so it depends on where it's being called.
     -- Update the translated string with the new content, altering it during runtime. Any GetTranslatedString calls will now return this updated message.
     Ext.Loca.UpdateTranslatedString(handle, updatedMessage)
 end
