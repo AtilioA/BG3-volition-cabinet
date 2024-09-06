@@ -125,3 +125,77 @@ function VCHelpers.Timer:OnTicksAndTime(ticks, time, fn, ticksOrTime)
         end)
     end
 end
+
+--- Debounce a function call to prevent it from being called multiple times in a given time frame.
+---@param time integer milliseconds
+---@param func function The function to debounce.
+function VCHelpers.Timer:Debounce(time, func)
+    local timer = nil
+
+    return function(...)
+        local args = { ... }
+
+        if timer then
+            Ext.Timer.Cancel(timer)
+        end
+
+        timer = Ext.Timer.WaitFor(time, function()
+            func(table.unpack(args))
+            timer = nil
+        end)
+    end
+end
+
+--- Calls the callback with an interval and stops calling the callback when the totalTime is reached.
+--- @param callback function The callback to call.
+--- @param interval integer The interval to wait before calling the callback again.
+--- @param totalTime integer The total time to call the callback.
+function VCHelpers.Timer:CallWithInterval(callback, interval, totalTime)
+    if totalTime <= 0 then
+        return
+    end
+
+    local elapsedTime = 0
+
+    local function invokeCallback()
+        if elapsedTime >= totalTime then
+            return
+        end
+
+        local stop = callback()
+        if stop ~= nil or stop ~= false then
+            return
+        end
+
+        elapsedTime = elapsedTime + interval
+        if elapsedTime < totalTime then
+            Ext.Timer.WaitFor(interval, invokeCallback)
+        end
+    end
+
+    if interval > totalTime then
+        interval = totalTime
+    end
+
+    invokeCallback()
+end
+
+--- Repeatedly calls the main callback at specified intervals until the condition callback returns true.
+--- @param mainCallback function The primary function to execute.
+--- @param intervalMs integer The time interval in milliseconds between each call of the main callback.
+--- @param conditionCallback function A function that returns true to stop further execution of the main callback.
+function VCHelpers.Timer:ExecuteWithIntervalUntilCondition(mainCallback, intervalMs, conditionCallback)
+    local function attemptCallbackExecution()
+        if conditionCallback() then
+            return
+        end
+
+        if mainCallback() then
+            return
+        end
+
+        Ext.Timer.WaitFor(intervalMs, attemptCallbackExecution)
+    end
+
+    attemptCallbackExecution()
+end
