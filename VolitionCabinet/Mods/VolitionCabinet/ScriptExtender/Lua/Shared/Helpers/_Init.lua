@@ -22,6 +22,7 @@ RequireFiles("Shared/Helpers/", {
     "Commander",
     "Dialog",
     "Dice",
+    "Feedback",
     "File",
     "Food",
     "Grid",
