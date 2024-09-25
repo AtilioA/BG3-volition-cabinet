@@ -24,69 +24,61 @@ function VCHelpers.Template:DeleteAllMatchingTemplates(templateUUID)
     end
 end
 
---- Get all vanilla templates by checking if the filename contains "Public/Gustav" or "Mods/Gustav". This may not be accurate, but seems to work.
-function VCHelpers.Template:GetAllVanillaTemplates()
+--- Get all vanilla or modded templates based on the filename.
+---@param isVanilla boolean If true, get vanilla templates; otherwise, get modded templates.
+---@return table A list of template IDs.
+function VCHelpers.Template:GetTemplatesByType(isVanilla)
+    local function generateVanillaPatterns()
+        local folderNames = { "Public", "Mods", "Shared", "SharedDev" }
+        local modNames = { "Gustav", "GustavDev", "Shared", "SharedDev", "Honour", "MainUI", "ModBrowser" }
+        local vanillaPatterns = {}
+
+        for _, folder in ipairs(folderNames) do
+            for _, mod in ipairs(modNames) do
+                table.insert(vanillaPatterns, folder .. "/" .. mod)
+            end
+        end
+
+        return vanillaPatterns
+    end
+
     local function isVanillaFilename(filename)
-        local hasPublicGustav = string.find(filename, "Public/Gustav")
-        local hasPublicGustavDev = string.find(filename, "Public/GustavDev")
-        local hasPublicShared = string.find(filename, "Public/Shared")
-        local hasPublicSharedDev = string.find(filename, "Public/SharedDev")
+        local vanillaPatterns = generateVanillaPatterns()
 
-        local hasModsGustav = string.find(filename, "Mods/Gustav")
-        local hasModsGustavDev = string.find(filename, "Mods/GustavDev")
-        local hasModsShared = string.find(filename, "Mods/Shared")
-        local hasModsSharedDev = string.find(filename, "Mods/SharedDev")
-        local hasPublicHonour = string.find(filename, "Public/Honour")
-        local hasModsHonour = string.find(filename, "Mods/Honour")
-
-        return hasPublicGustav or hasPublicGustavDev or hasPublicShared or hasPublicSharedDev or hasModsGustav or
-            hasModsGustavDev or hasModsShared or hasModsSharedDev or hasModsHonour or hasPublicHonour
+        for _, pattern in ipairs(vanillaPatterns) do
+            if string.find(filename, pattern) then
+                return true
+            end
+        end
+        return false
     end
 
     local templates = Ext.Template.GetAllRootTemplates()
+    local filteredTemplates = {}
 
-    local vanillaTemplates = {}
     for templateId, templateData in pairs(templates) do
-        if isVanillaFilename(templateData.FileName) then
-            table.insert(vanillaTemplates, templateId)
+        local isVanillaFile = isVanillaFilename(templateData.FileName)
+        if (isVanilla and isVanillaFile) or (not isVanilla and not isVanillaFile) then
+            table.insert(filteredTemplates, templateId)
         else
             local template = Ext.Template.GetTemplate(templateId)
-            VCWarn(1, "Skipping template: " .. templateId .. " (probably not vanilla)")
+            VCWarn(1,
+                "Skipping template: " .. templateId .. " (probably " .. (isVanilla and "not vanilla" or "vanilla") .. ")")
         end
     end
-    return vanillaTemplates
+    return filteredTemplates
 end
 
+--- Get all vanilla templates.
+---@return table A list of vanilla template IDs.
+function VCHelpers.Template:GetAllVanillaTemplates()
+    return self:GetTemplatesByType(true)
+end
+
+--- Get all modded templates.
+---@return table A list of modded template IDs.
 function VCHelpers.Template:GetAllModdedTemplates()
-    local function isVanillaFilename(filename)
-        local hasPublicGustav = string.find(filename, "Public/Gustav")
-        local hasPublicGustavDev = string.find(filename, "Public/GustavDev")
-        local hasPublicShared = string.find(filename, "Public/Shared")
-        local hasPublicSharedDev = string.find(filename, "Public/SharedDev")
-
-        local hasModsGustav = string.find(filename, "Mods/Gustav")
-        local hasModsGustavDev = string.find(filename, "Mods/GustavDev")
-        local hasModsShared = string.find(filename, "Mods/Shared")
-        local hasModsSharedDev = string.find(filename, "Mods/SharedDev")
-        local hasPublicHonour = string.find(filename, "Public/Honour")
-        local hasModsHonour = string.find(filename, "Mods/Honour")
-
-        return hasPublicGustav or hasPublicGustavDev or hasPublicShared or hasPublicSharedDev or hasModsGustav or
-            hasModsGustavDev or hasModsShared or hasModsSharedDev or hasModsHonour or hasPublicHonour
-    end
-
-    local templates = Ext.Template.GetAllRootTemplates()
-
-    local moddedTemplates = {}
-    for templateId, templateData in pairs(templates) do
-        if not isVanillaFilename(templateData.FileName) then
-            table.insert(moddedTemplates, templateId)
-        else
-            local template = Ext.Template.GetTemplate(templateId)
-            VCWarn(1, "Skipping template: " .. templateId .. " (probably vanilla)")
-        end
-    end
-    return moddedTemplates
+    return self:GetTemplatesByType(false)
 end
 
 ---@class TemplateData
