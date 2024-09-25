@@ -21,12 +21,6 @@ end
 
 if VCHelpers.Commander.IsServer then
     Ext.Events.SessionLoaded:Subscribe(function()
-        local function playEffect(guid)
-            Osi.PlayEffect(Osi.GetHostCharacter(), guid)
-            Osi.PlaySound(Osi.GetHostCharacter(), guid)
-            Osi.PlaySoundResource(Osi.GetHostCharacter(), guid)
-        end
-
         local function restore()
             VCHelpers.Resource:SetActionResource(_C(), "ActionPoint", "Max")
             VCHelpers.Resource:SetActionResource(_C(), "BonusActionPoint", "Max")
@@ -36,7 +30,7 @@ if VCHelpers.Commander.IsServer then
             end)
         end
 
-        VCHelpers.Commander:Register("pe", playEffect)
+        VCHelpers.Commander:Register("pe", function(guid) VCHelpers.Feedback:PlayEffect(guid) end)
         Ext.Events.ResetCompleted:Subscribe(restore)
         VCHelpers.Commander:Register("Restore", function()
             restore()
