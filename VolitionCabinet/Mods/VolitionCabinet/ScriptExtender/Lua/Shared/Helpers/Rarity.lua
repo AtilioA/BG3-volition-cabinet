@@ -19,7 +19,7 @@ VCHelpers.Rarity.RarityToEnumKey = {
 }
 
 --- Get the rarity of an item
----@param item EsvItem The item to check
+---@param object EsvItem The item to check
 ---@return ItemDataRarity rarity The enum string value for the rarity of the item
 function VCHelpers.Rarity:GetItemRarity(object)
     local item = VCHelpers.Object:GetItem(object)

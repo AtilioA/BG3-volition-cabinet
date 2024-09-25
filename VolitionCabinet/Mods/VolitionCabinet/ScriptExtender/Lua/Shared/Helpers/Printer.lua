@@ -64,7 +64,7 @@ function VolitionCabinetPrinter:Print(debugLevel, ...)
     if self.DebugLevel >= (debugLevel and tonumber(debugLevel) or 0) then
         local s
         if self.DebugLevel > 0 then
-            s = string.format("[%s][D%s]: ", self.Prefix, self.DebugLevel)
+            s = string.format("[%s][D%s]: ", self.Prefix, debugLevel)
         else
             s = string.format("[%s]: ", self.Prefix)
         end

@@ -76,7 +76,7 @@ end
 
 -- Function to check if a character is in camp
 -- Alternatively, use DB_PlayerInCamp(CHARACTER) or DB_InCamp(CHARACTER), but these return some bad tables
----@param characterGuid Guid The character to check
+---@param characterGuid GUIDSTRING The character to check
 function VCHelpers.Character:IsCharacterInCamp(characterGuid)
   local characterEntity = Ext.Entity.Get(characterGuid)
   return characterEntity.CampPresence ~= nil
