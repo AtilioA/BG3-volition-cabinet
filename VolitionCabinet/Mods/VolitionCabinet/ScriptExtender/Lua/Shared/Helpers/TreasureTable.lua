@@ -200,7 +200,7 @@ end
 function VCHelpers.TreasureTable:GetTableOfItemsFromTreasureTable(treasureTableName, visited)
     visited = visited or {}
     if visited[treasureTableName] then
-        VCWarn(1, "Cycle detected in treasure tables, stopping recursion.")
+        VCWarn(0, "Cycle detected in treasure tables, stopping recursion.")
         return {}
     end
     visited[treasureTableName] = true
@@ -241,7 +241,7 @@ function VCHelpers.TreasureTable:GetTableOfItemsFromTreasureTable(treasureTableN
     end
 
     visited[treasureTableName] = nil
-    
+
     return result
 end
 

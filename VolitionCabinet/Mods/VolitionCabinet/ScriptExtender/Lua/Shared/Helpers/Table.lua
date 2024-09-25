@@ -68,6 +68,9 @@ end
 
 --- Check if a table is empty ([], {})
 function table.isEmpty(tbl)
+    if not tbl then
+        return true
+    end
     return next(tbl) == nil
 end
 
@@ -90,4 +93,24 @@ function table.lazyLoad(t, key, loader)
             return cache[key]
         end
     })
+end
+
+-- Utility function to check if two tables have common elements
+---@param table1 table
+---@param table2 table
+---@return boolean - Whether the tables have common elements
+function table.hasCommonElements(table1, table2)
+    local elementsSet = {}
+
+    for _, element in ipairs(table1) do
+        elementsSet[element] = true
+    end
+
+    for _, element in ipairs(table2) do
+        if elementsSet[element] then
+            return true
+        end
+    end
+
+    return false
 end
