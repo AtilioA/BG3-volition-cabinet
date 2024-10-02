@@ -129,7 +129,7 @@ end
 --- Debounce a function call to prevent it from being called multiple times in a given time frame.
 ---@param time integer milliseconds
 ---@param func function The function to debounce.
-function VCHelpers.Timer:Debounce(time, func)
+function VCHelpers.Timer:Debounce(timeInMs, func)
     local timer = nil
 
     return function(...)
@@ -139,7 +139,7 @@ function VCHelpers.Timer:Debounce(time, func)
             Ext.Timer.Cancel(timer)
         end
 
-        timer = Ext.Timer.WaitFor(time, function()
+        timer = Ext.Timer.WaitFor(timeInMs, function()
             func(table.unpack(args))
             timer = nil
         end)
