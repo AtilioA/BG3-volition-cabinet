@@ -41,11 +41,14 @@ end
 ---@return number
 function VCHelpers.Grid:GetDistance(origin, target, ignoreHeight)
     ignoreHeight = ignoreHeight == nil and self.Defaults.IgnoreHeight or ignoreHeight
-    return math.sqrt(
-        (origin[1] - target[1]) ^ 2
-        + ((ignoreHeight and 0) or (origin[2] - target[2]) ^ 2)
-        + (origin[3] - target[3]) ^ 2
-    )
+    return self:GetDistancePOW(origin, target, ignoreHeight)
+end
+
+function VCHelpers.Grid:GetDistancePOW(pos, position2, ignoreHeight)
+    local xDiff = pos[1] - position2[1]
+    local yDiff = ignoreHeight and 0 or (pos[2] - position2[2])
+    local zDiff = pos[3] - position2[3]
+    return math.sqrt((xDiff * xDiff) + (yDiff * yDiff) + (zDiff * zDiff))
 end
 
 ---@param position1 vec3
