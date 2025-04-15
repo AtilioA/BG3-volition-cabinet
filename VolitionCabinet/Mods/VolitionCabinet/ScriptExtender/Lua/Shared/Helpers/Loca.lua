@@ -101,3 +101,27 @@ function VCHelpers.Loca:UpdateLocalizedMessage(handle, dynamicContent)
     Ext.Loca.UpdateTranslatedString(handle, updatedMessage)
     return Ext.Loca.GetTranslatedString(handle)
 end
+
+--- Update a localized message with dynamic content.
+---@param handle string The handle of the localized message to update
+---@vararg string One or more dynamic content values to replace the corresponding placeholders [1], [2], [3], etc.
+function VCHelpers.Loca:InterpolateLocalizedMessage(handle, ...)
+    -- Retrieve the current translated string for the given handle.
+    local currentMessage = Ext.Loca.GetTranslatedString(handle)
+    local updatedMessage = currentMessage
+
+    -- Gather all dynamic content values passed as varargs.
+    local args = { ... }
+
+    -- Iterate over each argument and replace the corresponding placeholder.
+    for i, value in ipairs(args) do
+        -- The pattern dynamically matches [i]. The %[] escapes the brackets.
+        updatedMessage = string.gsub(updatedMessage, "%[" .. i .. "%]", value)
+    end
+
+    -- Update the translated string with the new content during runtime.
+    if args.updateHandle then
+        Ext.Loca.UpdateTranslatedString(handle, updatedMessage)
+    end
+    return VCString:ReplaceBrWithNewlines(updatedMessage)
+end
