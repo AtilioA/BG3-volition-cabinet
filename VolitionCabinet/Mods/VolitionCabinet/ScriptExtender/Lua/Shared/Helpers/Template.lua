@@ -30,7 +30,8 @@ end
 function VCHelpers.Template:GetTemplatesByType(isVanilla)
     local function generateVanillaPatterns()
         local folderNames = { "Public", "Mods", "Shared", "SharedDev" }
-        local modNames = { "Gustav", "GustavDev", "Shared", "SharedDev", "Honour", "MainUI", "ModBrowser" }
+        local modNames = { "GustavX", "Gustav", "GustavDev", "Shared", "SharedDev", "Honour", "HonourX", "MainUI",
+        "ModBrowser" }
         local vanillaPatterns = {}
 
         for _, folder in ipairs(folderNames) do
