@@ -347,11 +347,12 @@ function VCHelpers.Inventory:GetCampChestInventory(shallow)
 end
 
 ---@param item Guid
+---@param recursive? boolean
 ---@return boolean
-function VCHelpers.Inventory:IsItemInCampChest(item)
+function VCHelpers.Inventory:IsItemInCampChest(item, recursive)
     local chestGUID = VCHelpers.Camp:GetChestTemplateUUID()
     if chestGUID then
-        return VCHelpers.Inventory:GetItemTemplateInInventory(item, chestGUID) ~= nil
+        return VCHelpers.Inventory:GetItemTemplateInInventory(item, chestGUID, recursive) ~= nil
     else
         return false
     end
