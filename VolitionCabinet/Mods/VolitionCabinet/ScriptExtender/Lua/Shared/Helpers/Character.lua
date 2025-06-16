@@ -6,6 +6,8 @@ VCHelpers.Character = _Class:Create("HelperCharacter", Helper)
 ---@return boolean isSneaking true if the character is sneaking
 function VCHelpers.Character:IsSneaking(character)
   local characterEntity = Ext.Entity.Get(character)
+  if not characterEntity then return false end
+  
   -- REVIEW: There's probably a better way to detect sneaking
   return characterEntity.SpellModificationContainer and characterEntity.SpellModificationContainer.Modifications and
       characterEntity.SpellModificationContainer.Modifications.Shout_Hide ~= nil
@@ -79,6 +81,8 @@ end
 ---@param characterGuid GUIDSTRING The character to check
 function VCHelpers.Character:IsCharacterInCamp(characterGuid)
   local characterEntity = Ext.Entity.Get(characterGuid)
+  if not characterEntity then return false end
+  
   return characterEntity.CampPresence ~= nil
 end
 
@@ -87,7 +91,8 @@ end
 ---@param ability string The ability to check
 function VCHelpers.Character:GetAbilityScore(characterGuid, ability)
   local characterEntity = Ext.Entity.Get(characterGuid)
-  if not characterEntity or not characterEntity.Stats or not characterEntity.Stats.Abilities then return nil end
+  if not characterEntity then return nil end
+  if not characterEntity.Stats or not characterEntity.Stats.Abilities then return nil end
 
   local abilityIndex = nil
   for index, value in pairs(Ext.Enums.AbilityId) do
