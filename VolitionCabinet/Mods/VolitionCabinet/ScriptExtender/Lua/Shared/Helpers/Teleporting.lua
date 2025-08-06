@@ -18,6 +18,40 @@ function VCHelpers.Teleporting:IsCharacterInDialogue(character)
     return success and inDialogue or false
 end
 
+--- Checks if a character can be teleported based on game state
+---@param character string The character to check
+---@return boolean canTeleport True if the character can be teleported, false otherwise
+---@return string? reason The reason why teleport is blocked, if any
+function VCHelpers.Teleporting:CanCharacterTeleport(character)
+    if not character then return false, "Invalid character" end
+    
+    -- Check if character is in dialogue
+    if self:IsCharacterInDialogue(character) then
+        return false, "Character is in dialogue"
+    end
+    
+    -- Check fast travel and movement restrictions
+    local function isRestricted()
+        return next(Osi.DB_InDangerZone:Get(character, nil)) ~= nil or
+               next(Osi.DB_FastTravelBlock_BlockedZone_StatusSet:Get(character)) ~= nil or
+               next(Osi.DB_FastTravelBlock_CantMove_StatusSet:Get(character)) ~= nil or
+               next(Osi.DB_FastTravelBlock_Arrested_StatusSet:Get(character)) ~= nil or
+               next(Osi.DB_FastTravelBlock_CampNightMode_StatusSet:Get(character)) ~= nil or
+               next(Osi.DB_FastTravelBlock_FugitiveInPrison_StatusSet:Get(character, nil)) ~= nil
+    end
+    
+    local success, restricted = xpcall(isRestricted, function(err)
+        VCWarn(1, "Error checking teleport restrictions for character " .. tostring(character) .. ": " .. tostring(err))
+        return false
+    end)
+    
+    if success and restricted then
+        return false, "Teleport restricted by game state"
+    end
+    
+    return true
+end
+
 --- Teleports a character and summons to the specified position.
 --- It is just a wrapper for Osi.TeleportToPosition teleporting only summons + snapping to ground.
 ---@param character string
@@ -31,8 +65,9 @@ function VCHelpers.Teleporting:TeleportToPosition(character, x, y, z, vfx)
         return
     end
     
-    if self:IsCharacterInDialogue(character) then
-        VCDebug(1, "Skipping teleport for character in dialogue: " .. tostring(character))
+    local canTeleport, reason = self:CanCharacterTeleport(character)
+    if not canTeleport then
+        VCDebug(1, "Skipping teleport for character " .. tostring(character) .. ": " .. (reason or "Unknown reason"))
         return
     end
 
@@ -66,9 +101,10 @@ function VCHelpers.Teleporting:TeleportCharactersToCharacter(targetCharacter, ch
         return
     end
     
-    -- Skip if target character is in dialogue
-    if self:IsCharacterInDialogue(targetCharacter) then
-        VCDebug(1, "Skipping teleport to character in dialogue: " .. tostring(targetCharacter))
+    -- Check if target character can be teleported to
+    local canTeleport, reason = self:CanCharacterTeleport(targetCharacter)
+    if not canTeleport then
+        VCDebug(1, "Skipping teleport to character " .. tostring(targetCharacter) .. ": " .. (reason or "Unknown reason"))
         return
     end
 
