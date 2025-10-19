@@ -90,6 +90,14 @@ function VCHelpers.String:Lowercase(str)
 end
 
 --- Replace <br> tags with newlines in a string
-function VCHelpers.ReplaceBrWithNewlines(description)
+function VCHelpers.String:ReplaceBrWithNewlines(description)
     return string.gsub(description, "<br>", "\n")
+end
+
+--- Escapes '%' in a string for safe use as a replacement in string.gsub
+---@param str string
+---@return string
+function VCHelpers.String:EscapeReplacement(str)
+    if str == nil then return "" end
+    return str:gsub("%%", "%%%%")
 end
