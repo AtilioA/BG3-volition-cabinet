@@ -20,13 +20,19 @@ end
 
 --- Checks if a character can be teleported based on game state
 ---@param character string The character to check
+---@param settings table|nil Settings for the check (IgnoreDialogue, IgnoreRestricted)
 ---@return boolean canTeleport True if the character can be teleported, false otherwise
 ---@return string? reason The reason why teleport is blocked, if any
-function VCHelpers.Teleporting:CanCharacterTeleport(character)
+function VCHelpers.Teleporting:CanCharacterTeleport(character, settings)
     if not character then return false, "Invalid character" end
 
+    settings = settings or {}
+    -- Default to true if nil, so we check by default
+    local checkDialogue = settings.IgnoreDialogue ~= false
+    local checkRestricted = settings.IgnoreRestricted ~= false
+
     -- Check if character is in dialogue
-    if self:IsCharacterInDialogue(character) then
+    if checkDialogue and self:IsCharacterInDialogue(character) then
         return false, "Character is in dialogue"
     end
 
@@ -40,13 +46,16 @@ function VCHelpers.Teleporting:CanCharacterTeleport(character)
             next(Osi.DB_FastTravelBlock_FugitiveInPrison_StatusSet:Get(character, nil)) ~= nil
     end
 
-    local success, restricted = xpcall(isRestricted, function(err)
-        VCWarn(1, "Error checking teleport restrictions for character " .. tostring(character) .. ": " .. tostring(err))
-        return false
-    end)
+    if checkRestricted then
+        local success, restricted = xpcall(isRestricted, function(err)
+            VCWarn(1,
+                "Error checking teleport restrictions for character " .. tostring(character) .. ": " .. tostring(err))
+            return false
+        end)
 
-    if success and restricted then
-        return false, "Teleport restricted by game state"
+        if success and restricted then
+            return false, "Teleport restricted by game state"
+        end
     end
 
     return true
@@ -59,13 +68,14 @@ end
 ---@param y number
 ---@param z number
 ---@param vfx GUIDSTRING | nil The VFX to play when teleporting the character.
-function VCHelpers.Teleporting:TeleportToPosition(character, x, y, z, vfx)
+---@param settings table | nil Settings for the teleport check.
+function VCHelpers.Teleporting:TeleportToPosition(character, x, y, z, vfx, settings)
     if not character or not x or not y or not z then
         VCWarn(0, "VCHelpers.Teleporting:TeleportToPosition() - Invalid parameters provided.")
         return
     end
 
-    local canTeleport, reason = self:CanCharacterTeleport(character)
+    local canTeleport, reason = self:CanCharacterTeleport(character, settings)
     if not canTeleport then
         VCDebug(1, "Skipping teleport for character " .. tostring(character) .. ": " .. (reason or "Unknown reason"))
         return
@@ -96,20 +106,18 @@ end
 ---@param targetCharacter string
 ---@param charactersToTeleport table
 ---@param vfx GUIDSTRING | nil The VFX to play when teleporting the characters.
----@param skipChecks boolean | nil Whether to skip the teleport checks.
-function VCHelpers.Teleporting:TeleportCharactersToCharacter(targetCharacter, charactersToTeleport, vfx, skipChecks)
+---@param settings table | nil Settings for the teleport check.
+function VCHelpers.Teleporting:TeleportCharactersToCharacter(targetCharacter, charactersToTeleport, vfx, settings)
     if not targetCharacter or #charactersToTeleport == 0 then
         return
     end
 
     -- Check if target character can be teleported to
-    if not skipChecks then
-        local canTeleport, reason = self:CanCharacterTeleport(targetCharacter)
-        if not canTeleport then
-            VCDebug(1,
-                "Skipping teleport to character " .. tostring(targetCharacter) .. ": " .. (reason or "Unknown reason"))
-            return
-        end
+    local canTeleport, reason = self:CanCharacterTeleport(targetCharacter, settings)
+    if not canTeleport then
+        VCDebug(1,
+            "Skipping teleport to character " .. tostring(targetCharacter) .. ": " .. (reason or "Unknown reason"))
+        return
     end
 
     local x, y, z = Osi.GetPosition(targetCharacter)
@@ -119,6 +127,6 @@ function VCHelpers.Teleporting:TeleportCharactersToCharacter(targetCharacter, ch
     end
 
     for _, character in ipairs(charactersToTeleport) do
-        VCHelpers.Teleporting:TeleportToPosition(character, x, y, z, vfx)
+        VCHelpers.Teleporting:TeleportToPosition(character, x, y, z, vfx, settings)
     end
 end
