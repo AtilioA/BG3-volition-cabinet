@@ -6,7 +6,7 @@ VCHelpers.Teleporting = _Class:Create("HelperTeleporting", Helper)
 ---@return boolean isInDialogue True if the character is in dialogue, false otherwise
 function VCHelpers.Teleporting:IsCharacterInDialogue(character)
     if not character then return false end
-    
+
     local success, inDialogue = xpcall(function()
         local entity = Ext.Entity.Get(character)
         return entity and entity.ServerCharacter and entity.ServerCharacter.Flags.InDialog or false
@@ -14,7 +14,7 @@ function VCHelpers.Teleporting:IsCharacterInDialogue(character)
         VCWarn(1, "Error checking if character is in dialogue: " .. tostring(err))
         return false
     end)
-    
+
     return success and inDialogue or false
 end
 
@@ -24,31 +24,31 @@ end
 ---@return string? reason The reason why teleport is blocked, if any
 function VCHelpers.Teleporting:CanCharacterTeleport(character)
     if not character then return false, "Invalid character" end
-    
+
     -- Check if character is in dialogue
     if self:IsCharacterInDialogue(character) then
         return false, "Character is in dialogue"
     end
-    
+
     -- Check fast travel and movement restrictions
     local function isRestricted()
         return next(Osi.DB_InDangerZone:Get(character, nil)) ~= nil or
-               next(Osi.DB_FastTravelBlock_BlockedZone_StatusSet:Get(character)) ~= nil or
-               next(Osi.DB_FastTravelBlock_CantMove_StatusSet:Get(character)) ~= nil or
-               next(Osi.DB_FastTravelBlock_Arrested_StatusSet:Get(character)) ~= nil or
-               next(Osi.DB_FastTravelBlock_CampNightMode_StatusSet:Get(character)) ~= nil or
-               next(Osi.DB_FastTravelBlock_FugitiveInPrison_StatusSet:Get(character, nil)) ~= nil
+            next(Osi.DB_FastTravelBlock_BlockedZone_StatusSet:Get(character)) ~= nil or
+            next(Osi.DB_FastTravelBlock_CantMove_StatusSet:Get(character)) ~= nil or
+            next(Osi.DB_FastTravelBlock_Arrested_StatusSet:Get(character)) ~= nil or
+            next(Osi.DB_FastTravelBlock_CampNightMode_StatusSet:Get(character)) ~= nil or
+            next(Osi.DB_FastTravelBlock_FugitiveInPrison_StatusSet:Get(character, nil)) ~= nil
     end
-    
+
     local success, restricted = xpcall(isRestricted, function(err)
         VCWarn(1, "Error checking teleport restrictions for character " .. tostring(character) .. ": " .. tostring(err))
         return false
     end)
-    
+
     if success and restricted then
         return false, "Teleport restricted by game state"
     end
-    
+
     return true
 end
 
@@ -64,7 +64,7 @@ function VCHelpers.Teleporting:TeleportToPosition(character, x, y, z, vfx)
         VCWarn(0, "VCHelpers.Teleporting:TeleportToPosition() - Invalid parameters provided.")
         return
     end
-    
+
     local canTeleport, reason = self:CanCharacterTeleport(character)
     if not canTeleport then
         VCDebug(1, "Skipping teleport for character " .. tostring(character) .. ": " .. (reason or "Unknown reason"))
@@ -96,16 +96,20 @@ end
 ---@param targetCharacter string
 ---@param charactersToTeleport table
 ---@param vfx GUIDSTRING | nil The VFX to play when teleporting the characters.
-function VCHelpers.Teleporting:TeleportCharactersToCharacter(targetCharacter, charactersToTeleport, vfx)
+---@param skipChecks boolean | nil Whether to skip the teleport checks.
+function VCHelpers.Teleporting:TeleportCharactersToCharacter(targetCharacter, charactersToTeleport, vfx, skipChecks)
     if not targetCharacter or #charactersToTeleport == 0 then
         return
     end
-    
+
     -- Check if target character can be teleported to
-    local canTeleport, reason = self:CanCharacterTeleport(targetCharacter)
-    if not canTeleport then
-        VCDebug(1, "Skipping teleport to character " .. tostring(targetCharacter) .. ": " .. (reason or "Unknown reason"))
-        return
+    if not skipChecks then
+        local canTeleport, reason = self:CanCharacterTeleport(targetCharacter)
+        if not canTeleport then
+            VCDebug(1,
+                "Skipping teleport to character " .. tostring(targetCharacter) .. ": " .. (reason or "Unknown reason"))
+            return
+        end
     end
 
     local x, y, z = Osi.GetPosition(targetCharacter)
