@@ -4,12 +4,12 @@ VCHelpers.Resource = _Class:Create("HelperResource", Helper, {
     ActionResources = {}
 })
 
-Ext.Events.SessionLoaded:Subscribe(function()
-    for _, resourceGuid in pairs(Ext.StaticData.GetAll("ActionResource")) do
-        local resource = Ext.StaticData.Get(resourceGuid, "ActionResource")
-        VCHelpers.Resource.ActionResources[resource.Name] = resourceGuid
-    end
-end)
+-- Ext.Events.SessionLoaded:Subscribe(function()
+--     for _, resourceGuid in pairs(Ext.StaticData.GetAll("ActionResource")) do
+--         local resource = Ext.StaticData.Get(resourceGuid, "ActionResource")
+--         VCHelpers.Resource.ActionResources[resource.Name] = resourceGuid
+--     end
+-- end)
 
 
 ---@param object any
