@@ -31,7 +31,7 @@ if VCHelpers.Commander.IsServer then
         end
 
         VCHelpers.Commander:Register("pe", function(guid) VCHelpers.Feedback:PlayEffect(guid) end)
-        Ext.Events.ResetCompleted:Subscribe(restore)
+        -- Ext.Events.ResetCompleted:Subscribe(restore)
         VCHelpers.Commander:Register("Restore", function()
             restore()
             Osi.RestoreParty(Osi.GetHostCharacter())
