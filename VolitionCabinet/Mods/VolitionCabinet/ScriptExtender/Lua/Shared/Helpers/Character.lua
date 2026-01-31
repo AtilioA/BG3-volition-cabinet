@@ -7,7 +7,7 @@ VCHelpers.Character = _Class:Create("HelperCharacter", Helper)
 function VCHelpers.Character:IsSneaking(character)
   local characterEntity = Ext.Entity.Get(character)
   if not characterEntity then return false end
-  
+
   -- REVIEW: There's probably a better way to detect sneaking
   return characterEntity.SpellModificationContainer and characterEntity.SpellModificationContainer.Modifications and
       characterEntity.SpellModificationContainer.Modifications.Shout_Hide ~= nil
@@ -82,7 +82,7 @@ end
 function VCHelpers.Character:IsCharacterInCamp(characterGuid)
   local characterEntity = Ext.Entity.Get(characterGuid)
   if not characterEntity then return false end
-  
+
   return characterEntity.CampPresence ~= nil
 end
 
@@ -109,4 +109,23 @@ function VCHelpers.Character:GetAbilityScore(characterGuid, ability)
   if not abilityScore then return nil end
 
   return abilityScore
+end
+
+-- Check if an entity is transformed (wildshape, disguise, etc.)
+---@param characterGuid Guid The character to check
+---@return boolean isTransformed true if the character is transformed
+function VCHelpers.Character:IsTransformed(characterGuid)
+    local entity = Ext.Entity.Get(characterGuid)
+
+    -- Check if the component exists
+    if entity and entity.ServerShapeshiftStates then
+        -- The 'States' field is an array of active shapeshift layers.
+        -- If the array has entries, the character is transformed.
+        local states = entity.ServerShapeshiftStates.States
+        if states and #states > 0 then
+            return true
+        end
+    end
+
+    return false
 end
