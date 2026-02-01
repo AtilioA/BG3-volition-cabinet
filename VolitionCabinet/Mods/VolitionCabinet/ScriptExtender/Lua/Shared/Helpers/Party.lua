@@ -30,8 +30,8 @@ function VCHelpers.Party:GetAllPartyMembers()
     for _, player in ipairs(teamplayer) do
         if player and player[1] then
             local playerLower = player[1]:lower()
-            local isDummy = string.match(playerLower, "%f[%A]dummy%f[%A]")
-            local isJergal = string.match(playerLower, "%f[%A]jergalavatar%f[%A]")
+            local isDummy = string.match(playerLower, "dummy")
+            local isJergal = string.match(playerLower, "jergalavatar")
             if isDummy == nil and isJergal == nil then
                 teamMembers[#teamMembers + 1] = VCHelpers.Format:Guid(player[1])
             end
