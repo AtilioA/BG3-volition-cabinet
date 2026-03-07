@@ -180,6 +180,25 @@ function VCHelpers.Object:GetTags(object)
     return tags
 end
 
+---@param object any
+---@param tag Guid|string
+---@return boolean
+function VCHelpers.Object:HasTag(object, tag)
+    local normalizedTag = tostring(tag)
+
+    for _, componentTags in pairs(self:GetTags(object) or {}) do
+        if type(componentTags) == "table" then
+            for _, value in pairs(componentTags) do
+                if tostring(value) == normalizedTag then
+                    return true
+                end
+            end
+        end
+    end
+
+    return false
+end
+
 --Returns a distance-sorted array of characters nearby a position or object
 ---@param source EntityHandle|Guid|vec3
 ---@param radius? number
