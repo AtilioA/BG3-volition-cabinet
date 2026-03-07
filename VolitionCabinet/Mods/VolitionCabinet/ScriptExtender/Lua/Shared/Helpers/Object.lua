@@ -184,16 +184,17 @@ end
 ---@param tag Guid|string
 ---@return boolean
 function VCHelpers.Object:HasTag(object, tag)
-    local normalizedTag = tostring(tag)
+    local entity = object
+    if type(object) ~= "userdata" then
+        entity = Ext.Entity.Get(object)
+        if not entity then return false end
+    end
 
-    for _, componentTags in pairs(self:GetTags(object) or {}) do
-        if type(componentTags) == "table" then
-            for _, value in pairs(componentTags) do
-                if tostring(value) == normalizedTag then
-                    return true
-                end
-            end
-        end
+    -- Iterate Tags in search of input tag
+    if not entity.Tag and not entity.Tag.Tags then return false end
+
+    for _, t in pairs(entity.Tag.Tags) do
+        if t == tag then return true end
     end
 
     return false
