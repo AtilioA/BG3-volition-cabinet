@@ -101,3 +101,11 @@ function VCHelpers.String:EscapeReplacement(str)
     if str == nil then return "" end
     return str:gsub("%%", "%%%%")
 end
+
+
+---@param value string
+---@param prefix string
+---@return boolean
+function VCHelpers.String:StartsWith(value, prefix)
+  return string.sub(value, 1, string.len(prefix)) == prefix
+end
