@@ -101,3 +101,8 @@ function VCHelpers.Camp:GetAllCampChestUUIDs()
     end
     return campChestUUIDs
 end
+
+--- Gets all characters in camp
+function VCHelpers.Camp:GetAllCharactersInCamp()
+    return Osi.DB_InCamp:Get(nil)
+end
