@@ -1,6 +1,37 @@
 ---@class HelperCharacter: Helper
 VCHelpers.Character = _Class:Create("HelperCharacter", Helper)
 
+
+---@param levelName string|nil
+---@return string
+local function getActFromLevelName(levelName)
+  if levelName == nil or levelName == "" then
+    return "Unknown"
+  end
+
+  if VCHelpers.String:StartsWith(levelName, "TUT_") then
+    return "Prologue"
+  end
+
+  if VCHelpers.String:StartsWith(levelName, "WLD_") or VCHelpers.String:StartsWith(levelName, "URB_") or VCHelpers.String:StartsWith(levelName, "CRE_") then
+    return "Act 1"
+  end
+
+  if VCHelpers.String:StartsWith(levelName, "SCL_") then
+    return "Act 2"
+  end
+
+  if VCHelpers.String:StartsWith(levelName, "INT_") or VCHelpers.String:StartsWith(levelName, "BGO_") or VCHelpers.String:StartsWith(levelName, "CTY_") or VCHelpers.String:StartsWith(levelName, "IRN_") then
+    return "Act 3"
+  end
+
+  if VCHelpers.String:StartsWith(levelName, "END_") then
+    return "Epilogue"
+  end
+
+  return "Unknown"
+end
+
 -- Detect if a character is sneaking
 ---@param character Guid The character to check
 ---@return boolean isSneaking true if the character is sneaking
@@ -86,6 +117,17 @@ function VCHelpers.Character:IsCharacterInCamp(characterGuid)
   return characterEntity.CampPresence ~= nil
 end
 
+---@param characterUuid string The GUID of the player character
+---@return string "Prologue"|"Act 1"|"Act 2"|"Act 3"|"Epilogue"|"Unknown"
+function VCHelpers.Character:GetCharacterAct(characterUuid)
+  local characterEntity = Ext.Entity.Get(characterUuid)
+  if not characterEntity or characterEntity.Level == nil or characterEntity.Level.LevelName == nil then
+    return "Unknown"
+  end
+
+  return getActFromLevelName(tostring(characterEntity.Level.LevelName))
+end
+
 --- Function to get the ability score of a character
 ---@param characterGuid Guid The character to check
 ---@param ability string The ability to check
@@ -115,17 +157,17 @@ end
 ---@param characterGuid Guid The character to check
 ---@return boolean isTransformed true if the character is transformed
 function VCHelpers.Character:IsTransformed(characterGuid)
-    local entity = Ext.Entity.Get(characterGuid)
+  local entity = Ext.Entity.Get(characterGuid)
 
-    -- Check if the component exists
-    if entity and entity.ServerShapeshiftStates then
-        -- The 'States' field is an array of active shapeshift layers.
-        -- If the array has entries, the character is transformed.
-        local states = entity.ServerShapeshiftStates.States
-        if states and #states > 0 then
-            return true
-        end
+  -- Check if the component exists
+  if entity and entity.ServerShapeshiftStates then
+    -- The 'States' field is an array of active shapeshift layers.
+    -- If the array has entries, the character is transformed.
+    local states = entity.ServerShapeshiftStates.States
+    if states and #states > 0 then
+      return true
     end
+  end
 
-    return false
+  return false
 end
