@@ -47,5 +47,6 @@ RequireFiles("Shared/Helpers/", {
     "Template",
     "Timer",
     "TreasureTable",
+    "Types",
     "Ware",
 })
