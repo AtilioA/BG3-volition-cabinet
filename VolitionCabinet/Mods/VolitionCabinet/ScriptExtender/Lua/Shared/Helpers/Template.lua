@@ -31,7 +31,7 @@ function VCHelpers.Template:GetTemplatesByType(isVanilla)
     local function generateVanillaPatterns()
         local folderNames = { "Public", "Mods", "Shared", "SharedDev" }
         local modNames = { "GustavX", "Gustav", "GustavDev", "Shared", "SharedDev", "Honour", "HonourX", "MainUI",
-        "ModBrowser" }
+            "ModBrowser" }
         local vanillaPatterns = {}
 
         for _, folder in ipairs(folderNames) do
@@ -106,6 +106,15 @@ function VCHelpers.Template:CreateTemplateNameToTemplateIDTable()
     -- VCDebug(0, "Dumped template name to UUID table to " .. fullFileName)
 
     return templateNameToUUID
+end
+
+---@param templateUuid string
+---@return string|nil
+function VCHelpers.Template:IsCharacterTemplate(templateUuid)
+    if not templateUuid or templateUuid == "" then return nil end
+    local template = Ext.Template.GetTemplate(templateUuid)
+    if not template then return nil end
+    return template.TemplateType == 'character'
 end
 
 table.lazyLoad(VCHelpers.Template, "TemplateNameToUUID", function()
