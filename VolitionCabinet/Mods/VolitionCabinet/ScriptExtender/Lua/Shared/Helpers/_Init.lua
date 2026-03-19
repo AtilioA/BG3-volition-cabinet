@@ -40,6 +40,8 @@ RequireFiles("Shared/Helpers/", {
     "Resource",
     "SpellBook",
     "SpellCast",
+    "SpellStats",
+    "Summon",
     "Status",
     "String",
     "Table",

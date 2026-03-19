@@ -25,3 +25,14 @@ function VCHelpers.Types:SafeGet(obj, property)
     end
     return nil
 end
+
+--- Returns the BG3SE type name string for a root template UUID, or nil if not found.
+---@param templateUuid string
+---@return string|nil
+function VCHelpers.Types:GetTemplateTypeName(templateUuid)
+    if not templateUuid or templateUuid == "" then return nil end
+    local template = Ext.Template.GetTemplate(templateUuid)
+    if not template then return nil end
+    _D(templateUuid)
+    return Ext.Types.GetValueType(template)
+end
