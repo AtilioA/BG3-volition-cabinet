@@ -25,7 +25,7 @@ function VCHelpers.Resource:SetActionResource(object, resource, amount, subResou
         if entityRes ~= nil then
             subResourceId = subResourceId or 0
             for _, subRes in pairs(entityRes) do
-                if subRes.ResourceId == subResourceId then
+                if subRes.ResourceUUID == res then
                     local finalAmount = amount == "Max" and subRes.MaxAmount or amount
                     if addTo then
                         subRes.Amount = Ext.Math.Clamp(subRes.Amount + finalAmount, 0, subRes.MaxAmount)
@@ -34,7 +34,6 @@ function VCHelpers.Resource:SetActionResource(object, resource, amount, subResou
                     end
 
                     entity:Replicate("ActionResources")
-                    break
                 end
             end
         end
@@ -53,7 +52,7 @@ function VCHelpers.Resource:GetActionResource(object, resource, subResourceId)
         if entityRes ~= nil then
             subResourceId = subResourceId or 0
             for _, subRes in pairs(entityRes) do
-                if subRes.ResourceId == subResourceId then
+                if subRes.ResourceUUID == subResourceId then
                     return subRes.Amount
                 end
             end

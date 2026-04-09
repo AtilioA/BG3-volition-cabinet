@@ -108,6 +108,15 @@ function VCHelpers.Template:CreateTemplateNameToTemplateIDTable()
     return templateNameToUUID
 end
 
+---@param templateUuid string
+---@return string|nil
+function VCHelpers.Template:IsCharacterTemplate(templateUuid)
+    if not templateUuid or templateUuid == "" then return nil end
+    local template = Ext.Template.GetTemplate(templateUuid)
+    if not template then return nil end
+    return template.TemplateType == 'character'
+end
+
 table.lazyLoad(VCHelpers.Template, "TemplateNameToUUID", function()
     return VCHelpers.Template:CreateTemplateNameToTemplateIDTable()
 end)

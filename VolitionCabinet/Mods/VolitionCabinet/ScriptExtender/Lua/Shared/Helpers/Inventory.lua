@@ -246,6 +246,75 @@ function VCHelpers.Inventory:DestroyEntireStack(item)
     end
 end
 
+---@param item any
+---@param n? integer
+function VCHelpers.Inventory:DestroyItemOrStack(item, n)
+    local entity = VCHelpers.Object:GetItem(item)
+    if not entity then
+        return false
+    end
+
+    n = n or 1
+
+    -- Non-stacked item
+    if entity.InventoryStack == nil and entity.InventoryStackMember == nil then
+        Osi.RequestDelete(entity.Uuid.EntityUuid)
+        return true
+    end
+
+    -- Resolve stack root
+    local mainEntity = entity
+    if entity.InventoryStackMember and entity.InventoryStackMember.Stack then
+        mainEntity = entity.InventoryStackMember.Stack
+    end
+
+    if not mainEntity or not mainEntity.InventoryStack or not mainEntity.InventoryStack.Elements then
+        -- Fallback: treat as normal item
+        Osi.RequestDelete(entity.Uuid.EntityUuid)
+        return true
+    end
+
+    local elements = mainEntity.InventoryStack.Elements
+    local stackSize = #elements
+
+    if stackSize == 0 then
+        return false
+    end
+
+    -- Delete whole stack
+    if n >= stackSize then
+        Osi.RequestDelete(mainEntity.Uuid.EntityUuid)
+        return true
+    end
+
+    local deleted = 0
+    local rootUuid = mainEntity.Uuid.EntityUuid
+
+    -- Prefer deleting non-root elements first
+    for _, stackEntity in pairs(elements) do
+        if deleted >= n then
+            break
+        end
+
+        local stackUuid = stackEntity.Uuid.EntityUuid
+        if stackUuid ~= rootUuid then
+            Osi.RequestDelete(stackUuid)
+            deleted = deleted + 1
+        end
+    end
+
+    -- If we still need to delete more, only delete root if it's the last remaining one
+    if deleted < n then
+        local remainingAfterNonRootDeletes = stackSize - deleted
+        if remainingAfterNonRootDeletes <= 1 then
+            Osi.RequestDelete(rootUuid)
+            deleted = deleted + 1
+        end
+    end
+
+    return deleted > 0
+end
+
 ---@param object any
 ---@param slot StatsItemSlot|EQUIPMENTSLOTNAME|integer
 ---@return EntityHandle|nil

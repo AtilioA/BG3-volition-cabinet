@@ -109,3 +109,18 @@ end
 function VCHelpers.String:StartsWith(value, prefix)
   return string.sub(value, 1, string.len(prefix)) == prefix
 end
+
+---@param value any
+---@return string|nil
+function VCHelpers.String:StripQuotes(value)
+    if value == nil then return nil end
+    local text = tostring(value)
+    text = text:gsub("^%s+", ""):gsub("%s+$", "")
+    local first = text:sub(1, 1)
+    local last = text:sub(-1)
+    if (first == "'" and last == "'") or (first == '"' and last == '"') then
+        text = text:sub(2, -2)
+    end
+    text = text:gsub("^%s+", ""):gsub("%s+$", "")
+    return text
+end

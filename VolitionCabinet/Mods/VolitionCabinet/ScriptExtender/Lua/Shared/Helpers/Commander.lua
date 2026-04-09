@@ -22,18 +22,21 @@ end
 if VCHelpers.Commander.IsServer then
     Ext.Events.SessionLoaded:Subscribe(function()
         local function restore()
-            VCHelpers.Resource:SetActionResource(_C(), "ActionPoint", "Max")
-            VCHelpers.Resource:SetActionResource(_C(), "BonusActionPoint", "Max")
-            VCHelpers.Resource:SetActionResource(_C(), "ReactionActionPoint", "Max")
-            VCHelpers.Timer:LaunchRealtimeObjectTimerOneShot(_C(), 200, "VolitionCabinetRestore", function()
-                --Apply statuses here
-            end)
+            -- Iterate whole party
+            local party = VCHelpers.Party:GetPartyMembers()
+            for _, character in pairs(party) do
+                VCHelpers.Resource:SetActionResource(character, "SpellSlot", "Max")
+                VCHelpers.Resource:SetActionResource(character, "WarlockSpellSlot", "Max")
+            end
+            -- VCHelpers.Timer:LaunchRealtimeObjectTimerOneShot(_C(), 200, "VolitionCabinetRestore", function()
+            --     --Apply statuses here
+            -- end)
         end
+        -- Ext.Events.ResetCompleted:Subscribe(restore)
 
         VCHelpers.Commander:Register("pe", function(guid) VCHelpers.Feedback:PlayEffect(guid) end)
-        -- Ext.Events.ResetCompleted:Subscribe(restore)
-        VCHelpers.Commander:Register("Restore", function()
-            restore()
+        VCHelpers.Commander:Register("r", function()
+            -- restore()
             Osi.RestoreParty(Osi.GetHostCharacter())
         end)
         VCHelpers.Commander:Register("RestoreResources", restore)

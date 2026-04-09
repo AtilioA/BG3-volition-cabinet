@@ -11,7 +11,7 @@ function VCHelpers.Summon:GetStackId(spellId)
         for _, functor in ipairs(propGroup.Functors) do
             local typeId = functor.TypeId
             if (typeId == "Summon" or typeId == "Spawn") and functor.StackId and functor.StackId ~= "" then
-                return functor.StackId
+                return VCHelpers.String:StripQuotes(functor.StackId)
             end
         end
     end
