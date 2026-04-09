@@ -91,17 +91,16 @@ end
 
 --- Replace <br> tags with newlines in a string
 function VCHelpers.String:ReplaceBrWithNewlines(description)
-    return string.gsub(description, "<br>", "\n")
+  return string.gsub(description, "<br>", "\n")
 end
 
 --- Escapes '%' in a string for safe use as a replacement in string.gsub
 ---@param str string
 ---@return string
 function VCHelpers.String:EscapeReplacement(str)
-    if str == nil then return "" end
-    return str:gsub("%%", "%%%%")
+  if str == nil then return "" end
+  return str:gsub("%%", "%%%%")
 end
-
 
 ---@param value string
 ---@param prefix string
@@ -113,14 +112,20 @@ end
 ---@param value any
 ---@return string|nil
 function VCHelpers.String:StripQuotes(value)
-    if value == nil then return nil end
-    local text = tostring(value)
-    text = text:gsub("^%s+", ""):gsub("%s+$", "")
-    local first = text:sub(1, 1)
-    local last = text:sub(-1)
-    if (first == "'" and last == "'") or (first == '"' and last == '"') then
-        text = text:sub(2, -2)
-    end
-    text = text:gsub("^%s+", ""):gsub("%s+$", "")
-    return text
+  if value == nil then return nil end
+  local text = tostring(value)
+  text = text:gsub("^%s+", ""):gsub("%s+$", "")
+  local first = text:sub(1, 1)
+  local last = text:sub(-1)
+  if (first == "'" and last == "'") or (first == '"' and last == '"') then
+    text = text:sub(2, -2)
+  end
+  text = text:gsub("^%s+", ""):gsub("%s+$", "")
+  return text
+end
+
+---@param value string
+---@return string
+function VCHelpers.String:Trim(value)
+  return string.gsub(string.gsub(value, "^%s+", ""), "%s+$", "")
 end

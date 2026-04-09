@@ -114,3 +114,31 @@ function table.hasCommonElements(table1, table2)
 
     return false
 end
+
+---@class HelperTable: Helper
+VCHelpers.Table = _Class:Create("HelperTable", Helper)
+
+---@param source table|nil
+---@return table
+function VCHelpers.Table:CopyShallow(source)
+    local clone = {}
+
+    for key, value in pairs(source or {}) do
+        clone[key] = value
+    end
+
+    return clone
+end
+
+---@param source table<string, unknown>|nil
+---@return string[]
+function VCHelpers.Table:SortedKeys(source)
+    local keys = {}
+
+    for key, _ in pairs(source or {}) do
+        keys[#keys + 1] = key
+    end
+
+    table.sort(keys)
+    return keys
+end

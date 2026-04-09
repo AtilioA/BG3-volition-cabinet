@@ -140,3 +140,17 @@ function VCHelpers.Format:MonotonicTimeToString()
 
     return string.format("%02d:%02d:%02d.%03d", hours, minutes % 60, seconds % 60, timeInMilliseconds % 1000)
 end
+
+---@param value unknown
+---@return boolean
+function VCHelpers.Format:IsGuidString(value)
+    if type(value) ~= "string" then
+        return false
+    end
+
+    if string.len(value) ~= 36 then
+        return false
+    end
+
+    return string.match(value, "^[0-9a-fA-F%-]+$") ~= nil
+end
