@@ -163,13 +163,11 @@ function VCHelpers.Timer:CallWithInterval(callback, interval, totalTime)
         end
 
         local stop = callback()
-        if stop ~= nil or stop ~= false then
-            return
-        end
-
-        elapsedTime = elapsedTime + interval
-        if elapsedTime < totalTime then
-            Ext.Timer.WaitFor(interval, invokeCallback)
+        if stop == false then
+            elapsedTime = elapsedTime + interval
+            if elapsedTime < totalTime then
+                Ext.Timer.WaitFor(interval, invokeCallback)
+            end
         end
     end
 
