@@ -20,30 +20,6 @@
 local EventBurstInstance = {}
 EventBurstInstance.__index = EventBurstInstance
 
----@param source table|nil
----@return table
-local function copyShallow(source)
-    local clone = {}
-
-    for key, value in pairs(source or {}) do
-        clone[key] = value
-    end
-
-    return clone
-end
-
----@param source Guid[]|nil
----@return Guid[]
-local function copyArray(source)
-    local clone = {}
-
-    for _, value in ipairs(source or {}) do
-        clone[#clone + 1] = value
-    end
-
-    return clone
-end
-
 ---@param self VCEventBurstInstance
 function EventBurstInstance:ResetPending()
     self.pendingCount = 0
@@ -55,14 +31,14 @@ end
 ---@param self VCEventBurstInstance
 ---@return VCEventBurstBatch
 function EventBurstInstance:CreateBatch()
-    local participants = copyArray(self.pendingParticipants)
+    local participants = VCHelpers.Table:CopyArray(self.pendingParticipants)
 
     return {
         name = self.name,
         count = self.pendingCount,
         participants = participants,
-        participantSet = copyShallow(self.pendingParticipantSet),
-        payloads = copyArray(self.pendingPayloads),
+        participantSet = VCHelpers.Table:CopyShallow(self.pendingParticipantSet),
+        payloads = VCHelpers.Table:CopyArray(self.pendingPayloads),
         firstParticipant = participants[1],
         lastParticipant = participants[#participants],
     }

@@ -130,6 +130,18 @@ function VCHelpers.Table:CopyShallow(source)
     return clone
 end
 
+---@param source table|nil
+---@return table
+function VCHelpers.Table:CopyArray(source)
+    local clone = {}
+
+    for _, value in ipairs(source or {}) do
+        clone[#clone + 1] = value
+    end
+
+    return clone
+end
+
 ---@param source table<string, unknown>|nil
 ---@return string[]
 function VCHelpers.Table:SortedKeys(source)
