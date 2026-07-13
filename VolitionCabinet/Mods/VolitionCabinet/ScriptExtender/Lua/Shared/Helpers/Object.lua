@@ -298,10 +298,15 @@ function VCHelpers.Object:GetNearbyContainers(source, radius, ignoreHeight, incl
     return self:GetNearbyItems(source, radius, ignoreHeight, includeInSourceInventory)
 end
 
--- Main function to get both nearby characters and items
+-- Main function to get both nearby characters and items, with nil checks for Transform
 function VCHelpers.Object:GetNearbyCharactersAndItems(source, radius, ignoreHeight, includeInSourceInventory)
     local sourceEntity = self:GetEntity(source)
-    local pos = sourceEntity ~= nil and sourceEntity.Transform.Transform.Translate or source
+    local pos
+    if sourceEntity and sourceEntity.Transform and sourceEntity.Transform.Transform and sourceEntity.Transform.Transform.Translate then
+        pos = sourceEntity.Transform.Transform.Translate
+    else
+        pos = source
+    end
     radius = radius or self.DefaultNearbyRadius
 
     local nearbyEntities = Ext.Entity.GetEntitiesAroundPosition(pos, radius, true, true)
@@ -310,17 +315,23 @@ function VCHelpers.Object:GetNearbyCharactersAndItems(source, radius, ignoreHeig
     for _, entity in ipairs(nearbyEntities) do
         if entity then
             local isItem = entity.IsItem
-            -- For characters, includeInSourceInventory is irrelevant
-            -- For items, check if we should include it
-            if not isItem or (includeInSourceInventory or not VCHelpers.Inventory:ItemIsInInventory(entity, sourceEntity)) then
-                local distance = VCHelpers.Grid:GetDistance(pos, entity.Transform.Transform.Translate, ignoreHeight)
-                table.insert(results, {
-                    Entity = entity,
-                    Guid = entity.Uuid.EntityUuid,
-                    Distance = distance,
-                    Name = VCHelpers.Loca:GetDisplayName(entity),
-                    TemplateId = isItem and entity.ServerItem.Template.Id or nil
-                })
+            -- Check Transform presence for position and continue if missing
+            local entityPos = (entity.Transform and entity.Transform.Transform and entity.Transform.Transform.Translate) or
+            nil
+            if entityPos then
+                -- For characters, includeInSourceInventory is irrelevant
+                -- For items, check if we should include it
+                if not isItem or (includeInSourceInventory or not VCHelpers.Inventory:ItemIsInInventory(entity, sourceEntity)) then
+                    local distance = VCHelpers.Grid:GetDistance(pos, entityPos, ignoreHeight)
+                    table.insert(results, {
+                        Entity = entity,
+                        Guid = entity.Uuid and entity.Uuid.EntityUuid or nil,
+                        Distance = distance,
+                        Name = VCHelpers.Loca:GetDisplayName(entity),
+                        TemplateId = (isItem and entity.ServerItem and entity.ServerItem.Template and entity.ServerItem.Template.Id) or
+                        nil
+                    })
+                end
             end
         end
     end
