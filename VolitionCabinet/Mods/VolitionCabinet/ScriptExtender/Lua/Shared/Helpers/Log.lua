@@ -22,15 +22,16 @@ function VCHelpers.Log:LogGameStates()
     end
 end
 
-Ext.RegisterConsoleCommand("ROL", function(_, osiFunction, arity)
-    Ext.Osiris.RegisterListener(osiFunction, arity, "before", function(...)
-        local args = Ext.DumpExport({ ... })
-        VCDebug(1, osiFunction .. ": %s", args)
-    end)
+Ext.RegisterConsoleCommand("ROL", function(_, osiFunction)
+    if Osi[osiFunction] then
+        Ext.Osiris.RegisterListener(osiFunction, Osi[osiFunction].Arities[1], "before", function(...)
+            VCDebug(osiFunction..": %s", Ext.DumpExport({...}))
+        end)
+    end
 end)
 
 Ext.RegisterConsoleCommand("REL", function(_, extenderEvent)
     Ext.Events[extenderEvent]:Subscribe(function(e)
-        VCDump(1, { extenderEvent, { e } })
+        VCDump({extenderEvent, {e}})
     end)
 end)
