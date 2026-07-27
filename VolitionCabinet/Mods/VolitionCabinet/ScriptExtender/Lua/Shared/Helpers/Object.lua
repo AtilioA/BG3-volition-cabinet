@@ -209,6 +209,7 @@ function VCHelpers.Object:GetNearbyCharacters(source, radius, ignoreHeight)
     local sourceEntity = self:GetEntity(source)
     local pos = sourceEntity ~= nil and sourceEntity.Transform.Transform.Translate or source
     radius = radius or self.DefaultNearbyRadius
+    if not pos then return {} end
 
     local nearbyEntities = Ext.Entity.GetEntitiesAroundPosition(pos, radius, true, false)
     local results = {}
@@ -265,6 +266,7 @@ function VCHelpers.Object:GetNearbyItems(source, radius, ignoreHeight, includeIn
     local sourceEntity = self:GetEntity(source)
     local pos = sourceEntity ~= nil and sourceEntity.Transform.Transform.Translate or source
     radius = radius or self.DefaultNearbyRadius
+    if not pos then return {} end
 
     local nearbyEntities = Ext.Entity.GetEntitiesAroundPosition(pos, radius, false, true)
     local results = {}
@@ -308,6 +310,7 @@ function VCHelpers.Object:GetNearbyCharactersAndItems(source, radius, ignoreHeig
         pos = source
     end
     radius = radius or self.DefaultNearbyRadius
+    if not pos then return {} end
 
     local nearbyEntities = Ext.Entity.GetEntitiesAroundPosition(pos, radius, true, true)
     local results = {}
