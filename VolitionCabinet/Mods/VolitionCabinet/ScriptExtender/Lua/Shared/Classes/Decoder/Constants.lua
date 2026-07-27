@@ -97,4 +97,4 @@ M.ATTRIBUTE_NAME_BY_ID = {
   [33] = "TranslatedFSString",
 }
 
-return M
+VCHelpers.DecoderConstants = M

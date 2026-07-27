@@ -1,5 +1,5 @@
-local C = Ext.Require("Shared/Classes/Decoder/Constants.lua")
-local Reader = Ext.Require("Shared/Classes/Decoder/BinaryReader.lua")
+local C = VCHelpers.DecoderConstants
+local Reader = VCHelpers.BinaryReader
 
 local Decoder = {}
 Decoder.__index = Decoder
@@ -645,4 +645,4 @@ function M.decode(binary, options)
   return d:decode(binary)
 end
 
-return M
+VCHelpers.Decoder = M

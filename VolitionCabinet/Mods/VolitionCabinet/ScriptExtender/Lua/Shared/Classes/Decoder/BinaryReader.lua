@@ -154,4 +154,4 @@ function Reader:read_f64()
   return out
 end
 
-return Reader
+VCHelpers.BinaryReader = Reader
