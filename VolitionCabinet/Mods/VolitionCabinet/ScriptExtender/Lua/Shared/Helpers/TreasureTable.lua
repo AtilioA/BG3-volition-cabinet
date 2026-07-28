@@ -155,7 +155,7 @@ local function warnForCycle(state, treasureTableName)
     local cyclePath = table.concat(cycle, " -> ")
     if not state.reportedCycles[cyclePath] then
         state.reportedCycles[cyclePath] = true
-        VCWarn(0, "Treasure table cycle detected: " .. cyclePath)
+        VCWarn(1, "Treasure table cycle detected: " .. cyclePath)
     end
 end
 
@@ -177,7 +177,7 @@ end
 local function appendTreasureCategoryCandidates(helper, treasureCategoryName, candidates, state)
     local treasureCategory = helper:GetTC(treasureCategoryName)
     if not treasureCategory then
-        VCWarn(0, "Treasure category not found: " .. treasureCategoryName)
+        VCWarn(1, "Treasure category not found: " .. treasureCategoryName)
         return
     end
 
@@ -194,7 +194,7 @@ local function appendTreasureCategoryCandidates(helper, treasureCategoryName, ca
             ---@type ItemTemplate?
             local template = templateInfo and state.rootTemplates[templateInfo.Id]
             if not template then
-                VCWarn(0, "Treasure template not found: " .. item.Name)
+                VCWarn(1, "Treasure template not found: " .. item.Name)
             else
                 local candidate = {
                     Name = template.Name,
@@ -233,7 +233,7 @@ resolveTreasureTable = function(helper, treasureTableName, state, isRoot)
 
     local treasureTable = helper:GetTT(treasureTableName)
     if not treasureTable then
-        VCWarn(0, "Treasure table not found: " .. treasureTableName)
+        VCWarn(1, "Treasure table not found: " .. treasureTableName)
         if isRoot then
             return nil
         end
