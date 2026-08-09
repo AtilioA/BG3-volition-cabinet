@@ -1,6 +1,11 @@
 ---@class HelperInventory: Helper
 VCHelpers.Inventory = _Class:Create("HelperInventory", Helper)
 
+local EQUIPMENT_SLOT_ALIASES = {
+    MeleeMainHand = "MainHand",
+    MeleeOffHand = "OffHand",
+}
+
 --- Returns a name-sorted array of all items in an object's inventory
 ---@param object any
 ---@param primaryOnly? boolean
@@ -334,7 +339,15 @@ function VCHelpers.Inventory:GetEquippedItem(object, slot)
                 elseif slot == "Ranged Offhand Weapon" then
                     slot = "RangedOffHand"
                 end
-                equipmentSlot = Ext.Enums.StatsItemSlot[slot].Value
+                local slotInfo = Ext.Enums.StatsItemSlot[slot]
+                if slotInfo == nil then
+                    local alias = EQUIPMENT_SLOT_ALIASES[slot]
+                    slotInfo = alias and Ext.Enums.StatsItemSlot[alias] or nil
+                end
+                if slotInfo == nil then
+                    return nil
+                end
+                equipmentSlot = slotInfo.Value
             else
                 equipmentSlot = slot
             end

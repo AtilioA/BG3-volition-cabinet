@@ -33,10 +33,18 @@ function VCHelpers.Format:Parse(data)
     end
 end
 
----@param guid string
----@return Guid guid
+---@param guid string|nil
+---@return Guid|nil guid
 function VCHelpers.Format:Guid(guid)
-    return string.sub(tostring(guid), -36)
+    if guid == nil then
+        return nil
+    end
+
+    local normalized = string.sub(tostring(guid), -36)
+    if normalized == "" or normalized == self.NullUuid then
+        return nil
+    end
+    return normalized
 end
 
 ---@param object EntityHandle
@@ -115,9 +123,10 @@ end
 
 ---@return Guid
 function VCHelpers.Format:CreateUUID()
-    return string.gsub("xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx", "[xy]", function(c)
+    local uuid = string.gsub("xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx", "[xy]", function(c)
         return string.format("%x", c == "x" and Ext.Math.Random(0, 0xf) or Ext.Math.Random(8, 0xb))
     end)
+    return uuid
 end
 
 function VCHelpers.Format:CreateHandle()

@@ -53,7 +53,7 @@ end
 function VCHelpers.UserVars:Dirty(entity, key)
     local entityObj = VCHelpers.Object:GetEntity(entity)
     if entityObj then
-        Ext.Vars.DirtyUserVariables(entity.Uuid.EntityUuid, key)
+        Ext.Vars.DirtyUserVariables(entityObj.Uuid.EntityUuid, key)
     end
 end
 
