@@ -80,18 +80,21 @@ end
 --- Capitalize the first letter of a string
 ---@param str string The string to capitalize
 function VCHelpers.String:Capitalize(str)
-  return str:gsub("^%l", string.upper)
+  local capitalized = str:gsub("^%l", string.upper)
+  return capitalized
 end
 
 --- Lowercase the first letter of a string
 ---@param str string The string to lowercase
 function VCHelpers.String:Lowercase(str)
-  return str:gsub("^%u", string.lower)
+  local lowercased = str:gsub("^%u", string.lower)
+  return lowercased
 end
 
 --- Replace <br> tags with newlines in a string
 function VCHelpers.String:ReplaceBrWithNewlines(description)
-  return string.gsub(description, "<br>", "\n")
+  local sanitized = string.gsub(description, "<br>", "\n")
+  return sanitized
 end
 
 --- Escapes '%' in a string for safe use as a replacement in string.gsub
@@ -99,7 +102,8 @@ end
 ---@return string
 function VCHelpers.String:EscapeReplacement(str)
   if str == nil then return "" end
-  return str:gsub("%%", "%%%%")
+  local escaped = str:gsub("%%", "%%%%")
+  return escaped
 end
 
 ---@param value string
@@ -127,5 +131,6 @@ end
 ---@param value string
 ---@return string
 function VCHelpers.String:Trim(value)
-  return string.gsub(string.gsub(value, "^%s+", ""), "%s+$", "")
+  local trimmed = string.gsub(string.gsub(value, "^%s+", ""), "%s+$", "")
+  return trimmed
 end
