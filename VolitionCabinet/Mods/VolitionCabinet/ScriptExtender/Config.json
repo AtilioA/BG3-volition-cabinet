@@ -1,5 +1,5 @@
 {
-    "RequiredVersion": 27,
+    "RequiredVersion": 32,
     "ModTable": "VolitionCabinet",
     "FeatureFlags": ["Lua"]
 }
